@@ -2,9 +2,11 @@ package kr.or.ddit.servlet01;
 
 import javax.servlet.http.*;
 import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+
 import java.io.*;
 
-
+@WebServlet("/01/image.do")
 public class ImageServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
 		String imageFilename = req.getParameter("image");

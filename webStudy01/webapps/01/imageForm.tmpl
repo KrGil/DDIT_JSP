@@ -1,0 +1,17 @@
+<html>
+<body>
+<h4>%today%</h4>
+<form action="image.do">
+	<select name = "image" id = "image">
+		%options%
+	</select>
+	<input type = "submit" value = "전송" style = "background-color : red;"/>
+</form>
+<script type="text/javascript">
+	var select = document.querySelector("#image");
+	select.onchange = function(event){
+		event.target.form.submit();
+	}
+</script>
+</body>
+</html>
