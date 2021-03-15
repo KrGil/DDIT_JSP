@@ -29,3 +29,6 @@ HelloWorld_01/HelloWorld/WebContent/mp4/황리단길.mp4
 HelloWorld_01/HelloWorld/WebContent/mp4/firstPage.mp4
 HelloWorld_01/HelloWorld/WebContent/mp4/firstPage01.mp4
 HelloWorld_01/HelloWorld/WebContent/mp4/main.mp4
+*.mp3
+*.mp4
+*.ogv

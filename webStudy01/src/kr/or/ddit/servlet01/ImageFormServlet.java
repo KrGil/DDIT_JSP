@@ -9,7 +9,7 @@ import java.util.Date;
 
 @WebServlet("/01/imageForm.tmpl")
 public class ImageFormServlet extends AbstractUseTmplServlet {
-
+	// 서블릿 - tomcat이 관리함.
 	@Override
 	protected void setContentType(HttpServletResponse resp) {
 		// TODO Auto-generated method stub
