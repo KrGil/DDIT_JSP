@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/01/textViewer.tmpl")
+@WebServlet("/01/textViewer_1.tmpl")
 public class textFormServlet extends AbstractUseTmplServlet {
 	@Override
 	protected void setContentType(HttpServletResponse resp) {

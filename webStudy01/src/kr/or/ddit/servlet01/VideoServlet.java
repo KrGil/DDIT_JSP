@@ -5,36 +5,37 @@ import javax.servlet.annotation.WebServlet;
 
 import java.io.*;
 
-@WebServlet("/01/textView_1.do")
-public class textServlet extends HttpServlet{
+@WebServlet("/01/videoView.do")
+public class VideoServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest req,
                      HttpServletResponse resp)
               throws ServletException,
                      IOException{
 	
-		String textFilename = req.getParameter("textFile");
-		if(textFilename == null || textFilename.isEmpty()) {
+		String videoFilename = req.getParameter("videoFile");
+		
+		if(videoFilename == null || videoFilename.isEmpty()) {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
 		
-		String folder = textFormServlet.class.getClassLoader().getResource("datas").toString();
-		folder = folder.substring(folder.indexOf("D"));
-		File textFile = new File(folder, textFilename);
-		if(!textFile.exists()) {
+		String folder = "d:/contents";
+		File videoFile = new File(folder, videoFilename);
+		if(!videoFile.exists()) {
 			resp.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}
 		
-		String mime = getServletContext().getMimeType(textFilename);
-		if(mime == null || !mime.startsWith("text/")) {
+		String mime = getServletContext().getMimeType(videoFilename);
+		System.out.println(mime);
+		if(mime == null || !mime.startsWith("video/") && !mime.startsWith("image/")) {
 			resp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 			return;
 		}
 		
 		resp.setContentType(mime);
 		
-		FileInputStream fis = new FileInputStream(textFile);				
+		FileInputStream fis = new FileInputStream(videoFile);				
 		OutputStream os = resp.getOutputStream();
 		byte[] buffer = new byte[1024];
 		int pointer = -1;

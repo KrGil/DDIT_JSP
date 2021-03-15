@@ -7,8 +7,8 @@ import javax.servlet.annotation.WebServlet;
 import java.io.*;
 import java.util.Date;
 
-@WebServlet("/01/textViewer.tmpl")
-public class TextFormServlet extends AbstractTextUseTmplServlet {
+@WebServlet("/01/videoViewer.tmpl")
+public class VideoFormServlet extends AbstractTextUseTmplServlet {
 
 	@Override
 	protected void setContentType(HttpServletResponse resp) {
@@ -22,17 +22,20 @@ public class TextFormServlet extends AbstractTextUseTmplServlet {
 		// - 개발환경 구축 완료 보고서
 		System.out.println("서블릿이요청 받았음");
 		
-		String folder = TextFormServlet.class.getClassLoader().getResource("datas").toString();
+		String folder = "d:/contents";
 //		System.out.println(folder.substring(folder.indexOf("D")));
-		File contents = new File(folder.substring(folder.indexOf("D")));
-		
+		File contents = new File(folder);
+//        <source src="../multi/trailer.mp4" type='video/mp4'>
+//        <source src="../multi/trailer.ogv"  type='video/ogg'>
+//        <source src="../multi/trailer.webm"  type='video/webM'>
+
 		
 		String[] children = contents.list(new FilenameFilter() {
 			
 			@Override
 			public boolean accept(File dir, String name) {
 				String mime = application.getMimeType(name);
-				return mime != null && mime.startsWith("mp4/") || mime.startsWith("");
+				return mime != null && (mime.startsWith("video/") || mime.startsWith("image/"));
 			}
 		});
 		StringBuffer options = new StringBuffer();
