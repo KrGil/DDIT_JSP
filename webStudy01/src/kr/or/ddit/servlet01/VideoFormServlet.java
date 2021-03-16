@@ -28,7 +28,6 @@ public class VideoFormServlet extends AbstractTextUseTmplServlet {
 //        <source src="../multi/trailer.mp4" type='video/mp4'>
 //        <source src="../multi/trailer.ogv"  type='video/ogg'>
 //        <source src="../multi/trailer.webm"  type='video/webM'>
-
 		
 		String[] children = contents.list(new FilenameFilter() {
 			
@@ -45,6 +44,5 @@ public class VideoFormServlet extends AbstractTextUseTmplServlet {
 		}
 		req.setAttribute("options", options);
 	}
-	
 	
 }

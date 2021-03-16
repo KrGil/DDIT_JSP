@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
  * Servlet implementation class VideoFrom_servlet
  */
 @WebServlet("/VideoFrom_servlet.do")
-public class VideoFrom_servlet extends HttpServlet {
+public class VideoForm_servlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	protected ServletContext application;
 	
