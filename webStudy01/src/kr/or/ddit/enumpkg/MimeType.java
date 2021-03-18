@@ -14,6 +14,7 @@ public enum MimeType {
 	public String getMime() {
 		return mime;
 	}
+	
 	public static MimeType searchMimeType(String accept) {
 		accept = accept.toUpperCase();
 		MimeType searched = HTML;

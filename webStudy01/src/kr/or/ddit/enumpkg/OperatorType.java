@@ -5,8 +5,8 @@ import javax.servlet.http.HttpServletResponse;
 import kr.or.ddit.vo.CalculateVO;
 
 public enum OperatorType {
-	PLUS('+', new RealOperator() {
-		public double operate(double left, double right) {
+	PLUS('+', new RealOperator() { // 인터페이스 구현체
+		public double operate(double left, double right) { 
 			return left + right;
 		}
 	}), MINUS('-', new RealOperator() {
@@ -17,14 +17,16 @@ public enum OperatorType {
 		public double operate(double left, double right) {
 			return left + right;
 		}
-	}), DIVIDE('/', new RealOperator() {
-		public double operate(double left, double right) {
-			return left + right;
-		}
+	}), DIVIDE('/', (left, right) ->{// lambda로 하기 / 해당 인터페이스 안에 하나의 메서드만 존재할 때
+		return left / right;
+		
+	}), MODULAR('%', (left, right) ->{
+		return left % right;
 	});
-
-	private interface RealOperator{
-		double operate(double left, double right);
+	
+	@FunctionalInterface
+	private interface RealOperator{ //다형성 functional interface. 한개의 매서드만 있을 경우
+		double operate(double left, double right); // 안에서 무엇을 할 것이다는 나중에 지정해줄 수 있다.
 	}
 	
 	private RealOperator realOperator;
