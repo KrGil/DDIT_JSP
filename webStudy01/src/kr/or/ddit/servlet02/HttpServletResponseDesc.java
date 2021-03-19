@@ -29,6 +29,10 @@ import javax.servlet.http.HttpServlet;
  * 	  response.setIntHeader(name, value(int))
  * 		How to use
  * 
+ * 	  1) 캐시 제어
+ * 	  2) auto request(polling)
+ * 	  3) 흐름 제어(redirect/forward[include])
+ * 
  * 3. Resposne Body(message body, content body)
  *	  response.getWriter() - character, response.getOutputStream() - 2진수 으로 기록.
  */

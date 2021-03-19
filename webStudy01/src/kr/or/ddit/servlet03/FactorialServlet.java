@@ -1,6 +1,8 @@
 package kr.or.ddit.servlet03;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,40 +12,75 @@ import javax.servlet.http.HttpServletResponse;
 
 import kr.or.ddit.enumpkg.MimeType;
 import kr.or.ddit.servlet03.view.JsonView;
-import kr.or.ddit.servlet03.view.XmlView;
 
 @WebServlet("/03/factorial")
 public class FactorialServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// jsp 연결
+		String view = "/WEB-INF/views/factorialForm.jsp";
+		req.getRequestDispatcher(view).forward(req, resp);
 	}
+	// RESTful URI[POST, PUT, DELETE]
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		req.setCharacterEncoding("utf-8");
 		// 받고 검증 연산 응답  enum으로 단항연산식이 가능한가?
-		// 검증 status
-		
-		// 연산
-		
-		// 응답
+		String single = req.getParameter("single");
 		String accept = req.getHeader("accept");
-		MimeType mimeType = MimeType.searchMimeType(accept);
-		resp.setContentType(mimeType.getMime());
-		
-		StringBuffer respData = new StringBuffer(); // 어차피 모두 text이기때문
+		// 3가지 return 
+		// 1. 동기  - html 
+		// 2. 비동기 / json
+		// 3. 비동기 / html
+		int status = 200;
+		String message = null; // 오류메세지
 		String view = null;
-		// model1이다. 혼자서 request받고 response내보내줬기 때문이다.
-		switch (mimeType) {
-			case JSON:
-				new JsonView().mergeModelAndView("", resp);
-				break;
-			case XML:
-				new XmlView().mergeModelAndView("", resp);
-				break;
-			default:
-				view = "/WEB-INF/views/factorialForm.jsp";
-				break;
+		
+		// 검증 status
+		if(single==null || !single.matches("[0-9]{1,2}")) {
+			status = 400;
+			message = "필수 파리미터 누락";
+		}else {
+			// 연산
+			long op = Long.parseLong(single);
+			try {
+				long result = factorial(op);
+				MimeType mime = MimeType.searchMimeType(accept); // return enum
+				Map<String, Object> target = new HashMap<>();
+				target.put("op", op);
+				target.put("result", result);
+				target.put("expression", String.format("%d!=%d", op, result));
+				
+				if(MimeType.JSON.equals(mime)) {
+					resp.setHeader("Content-Type", "application/json;charset=utf-8");
+					new JsonView().mergeModelAndView(target, resp);
+				}else {
+					req.setAttribute("target", target);
+					view = "/WEB-INF/views/factorialForm.jsp";
+				}
+				
+			}catch (IllegalArgumentException e) { // 500 -> 400으로 에러 변경
+				status = 400;
+				message = "음수는 연산 불가";
+			}
+		}
+		if(status == HttpServletResponse.SC_OK) {
+			if(view != null) {
+				req.getRequestDispatcher(view).forward(req, resp);
+			}
+		}else {
+			resp.sendError(status, message);
+		}
+			
+	}
+	// 재귀호출 (recursive calling)
+	private long factorial(long op) {
+		if(op <=0) {
+			throw new IllegalArgumentException("양수만 대상으로 연산 수행 가능");
+		}
+		if(op == 1) {
+			return 1;
+		}else {
+			return op * factorial(op -1);
 		}
 	}
 }

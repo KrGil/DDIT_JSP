@@ -1,3 +1,4 @@
+<%@page import="java.util.Map"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -12,9 +13,13 @@
 <!-- 비동기 처리 연산 수행(JSON, HTML) -->
 
 <!-- form에 아무것도 없다면 submit시 주소상의 위치로 다시 가게된다. -->
+<%--
+	Map<String, Object>target = (Map) request.getAttribute("target");
+--%>
 <form method = "post">
-	<input type = "number" name = "single" />
+	<input type = "number" name = "single" value = "${target.op}"/>
 	<input type = "submit" value = "="/>
+	${target["result"]}
 </form>
 
 </body>
