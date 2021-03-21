@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import kr.or.ddit.enumpkg.MimeType;
 import kr.or.ddit.enumpkg.OperatorType;
 import kr.or.ddit.servlet03.view.JsonView;
