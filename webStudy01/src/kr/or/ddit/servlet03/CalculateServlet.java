@@ -16,7 +16,6 @@ import kr.or.ddit.enumpkg.OperatorType;
 import kr.or.ddit.servlet03.view.JsonView;
 import kr.or.ddit.servlet03.view.XmlView;
 import kr.or.ddit.vo.CalculateVO;
-import sun.net.www.MimeTable;
 
 @WebServlet("/03/calculator")
 public class CalculateServlet extends HttpServlet{
