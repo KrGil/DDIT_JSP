@@ -3,7 +3,6 @@
 
 test01/Server
 *.pydevproject
-.project
 .metadata
 bin/**
 tmp/**
