@@ -22,5 +22,4 @@
     <servlet-name>DescriptionServlet</servlet-name>
     <url-pattern>/desc.do</url-pattern>
   </servlet-mapping>
-  
 </web-app>
