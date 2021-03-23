@@ -20,9 +20,9 @@ public class ImageFormServlet extends AbstractUseTmplServlet {
 	protected void makeData(HttpServletRequest req) {
 		// 이미지를 제외한 파일 표기 x
 		// - 개발환경 구축 완료 보고서
-		System.out.println("서블릿이요청 받았음");
+		System.out.println("서블릿이요청 받았음"+application.hashCode());
 		
-		String folder = "d:/contents";
+		String folder = application.getInitParameter("contentFolder");
 		File contents = new File(folder);
 	
 		String[] children = contents.list(new FilenameFilter() {
