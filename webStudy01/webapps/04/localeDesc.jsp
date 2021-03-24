@@ -18,7 +18,6 @@
 		Locale locale =request.getLocale();
 		out.println(locale.getDisplayLanguage());
 		out.println(locale.getDisplayCountry());
-		
 	%>
 </pre>
 <%

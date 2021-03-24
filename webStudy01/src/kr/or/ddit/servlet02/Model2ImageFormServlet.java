@@ -24,6 +24,7 @@ public class Model2ImageFormServlet extends HttpServlet{
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
 		String folder = "d:/contents";
 		File contents = new File(folder);
 		String[] children = contents.list(new FilenameFilter() {

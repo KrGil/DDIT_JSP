@@ -8,6 +8,7 @@
 	<script type= "text/javascript" src = "https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script type = "text/javascript">
 		$(function(){ //이 입력된 후에 script 작성해야함. == $(document).on("ready")...
+			let resultArea = $("#resultArea");
 			const SRCPTRN = "%A?%N=%V";
 			const action = $("form")[0].action; //id가 아니라 태그 명을 가지고 왔다. 그래서 몇개인지 모르기에 배열로 return
 // 			console.log($("#image"));

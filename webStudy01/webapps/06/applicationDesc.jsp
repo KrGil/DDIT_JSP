@@ -27,6 +27,8 @@
 		file system path  = getRealPath(resource URL-server side 방식)
 		URL = getResource(resource URL-server side 방식)
 		InputStream = getResourceAsStream(resource URL-server side 방식)
+	application은 이 목적을 위해 많이 사용한다.
+	
 </pre>
 </body>
 </html>

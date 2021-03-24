@@ -9,7 +9,10 @@ import java.io.*;
 @WebServlet("/01/image.do")
 public class ImageServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+		resp.setContentType("text/html;charset=utf-8");
+		req.setCharacterEncoding("utf-8");
 		String imageFilename = req.getParameter("image");
+		System.out.println(imageFilename);
 		if(imageFilename == null || imageFilename.isEmpty()) { // 만약 null일때 400
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;

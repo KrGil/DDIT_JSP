@@ -1,3 +1,4 @@
+<%@page import="java.util.List"%>
 <%@page import="java.util.Map.Entry"%>
 <%@page import="java.util.Map"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -7,29 +8,43 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<%--
+	pageContext.include("/includee/preScript.jsp");
+--%>
+<jsp:include page ="/includee/preScript.jsp"/>
 </head>
 <body>
 	<form  method = "post">
-		<select id = "member" name = "member">
+		<input type = "text" name = "test"/>
 	<%
-		Map<String, String> member = (Map) application.getAttribute("bts");
-		for(Entry<String, String> entry :member.entrySet()){
-			String key = entry.getKey();
-			String value = entry.getValue();
+		Map<String, List<String>> btsMap = (Map) application.getAttribute("btsMap");
 	%>
-			<option value = "<%=key %>"><%=value %></option>			
+		<select name = "member" onchange="$(this.form).trigger('submit');">
+	<%
+		for(Entry<String, List<String>> entry : btsMap.entrySet()){
+			String id = entry.getKey();
+			String name = entry.getValue().get(0);
+	%>
+			<option value = <%=id %>><%=name %></option>
 	<%
 		}
 	%>
 		</select>
 	</form>
-		<script type= "text/javascript" src = "https://code.jquery.com/jquery-3.6.0.min.js"></script>
-		<script type="text/javascript">
-			var select = $("#member").val();
-			$("#member").change(function(){
-				console.log(select)
-				$("form").submit();
-			})
-		</script>
+	<div id = "resultArea">
+	
+	</div>
+<script></script>
+<script type="text/javascript">
+	console.log();
+	let resultArea = $("#resultArea");
+	$("form").test2().formToAjax({
+		dataType : "html",
+		success:function(resp){
+			resultArea.html(resp);
+		}
+	});
+
+</script>
 </body>
 </html>
