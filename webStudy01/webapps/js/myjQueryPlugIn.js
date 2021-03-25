@@ -42,22 +42,3 @@ $.fn.formToAjax=function(param){
 	})
 	return this;
 }
-
-$.fn.formToAjax=function(param){
-	const SRCPTRN = "%A?%N=%V";
-	const action = $("form")[0].action; //id가 아니라 태그 명을 가지고 왔다. 그래서 몇개인지 모르기에 배열로 return
-	$("form").on("submit", function(event){
-		param.resultArea.empty();
-		var name = this.name; // 넘어갈 param값
-		var values = $(this).val(); // 다중 선택시 배열로 돌아온다.
-		var imgs = []
-		$(values).each(function(idx, value){
-			var src =  SRCPTRN.replace("%A", action)
-								.replace("%N", name)
-								.replace("%V", value)
-			img = $("<img>").attr("src", src);
-			imgs.push(img);
-		})
-		param.resultArea.html(imgs);
-	})
-}
