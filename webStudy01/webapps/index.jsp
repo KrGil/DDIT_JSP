@@ -25,7 +25,7 @@
 	<%
 		}else{
 	%>
-			<a href="<%=request.getContextPath() %>/login/loginForm.jsp">로그인</a>
+			<a href="<%=request.getContextPath() %>/login/loginForm_cookie.jsp">로그인</a>
 	<%
 		}
 	%>

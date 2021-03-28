@@ -3,7 +3,7 @@
 <%@page import="java.text.DateFormatSymbols"%>
 <%@page import="java.util.Calendar"%>
 <%@page import="static java.util.Calendar. *"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%   
    // 파라미터 받기 => 있나 없나 확인 => 없으면 현재 달력
