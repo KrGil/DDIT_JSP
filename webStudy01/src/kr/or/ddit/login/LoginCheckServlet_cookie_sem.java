@@ -2,6 +2,7 @@ package kr.or.ddit.login;
 
 import java.io.IOException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
@@ -10,16 +11,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-//@WebServlet("/login/loginCheck.do")
-public class LoginCheckServlet_cookie extends HttpServlet {
+@WebServlet("/login/loginCheck.do")
+public class LoginCheckServlet_cookie_sem extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession session = req.getSession();
-		// 1. param 값 들고오기
-		String checkBox = req.getParameter("saveId");
-		System.out.println("checkBox : "+checkBox );
-		// 1_2.체크 확인, 체크 시
-		Cookie CheckBoxCookie = null;
+		// 로그인 한적도 없는 놈이 여기 접근하려고 한다.
+		if(session.isNew()) {
+			resp.sendError(400);
+			return;
+		}
 		// 요청 분석
 		String mem_id = req.getParameter("mem_id");
 		String mem_pass = req.getParameter("mem_pass");
@@ -27,32 +28,7 @@ public class LoginCheckServlet_cookie extends HttpServlet {
 		boolean redirect = false;
 		String message = "null";
 		boolean valid = validate(mem_id, mem_pass);
-		CheckBoxCookie = new Cookie("saveId", mem_id);
-		
-		if(checkBox != null && !checkBox.isEmpty()) {
-			// 2. cookie 저장하기
-			CheckBoxCookie.setMaxAge(60*60*24*7);
-			resp.addCookie(CheckBoxCookie);
-		}else {
-			//1_3.비체크시  - cookie 삭제.
-			CheckBoxCookie.setMaxAge(0);
-			resp.addCookie(CheckBoxCookie);
-//			Cookie[] cookies = req.getCookies();
-//			if(cookies!=null){
-//				for(Cookie tmp : cookies){
-//					System.out.println(tmp.getName());
-//					tmp.setMaxAge(0);
-//					System.out.println(tmp.getMaxAge());
-//				}
-//			}
-		}
-		
-		// 로그인 한적도 없는 놈이 여기 접근하려고 한다.
-		if(session.isNew()) {
-			resp.sendError(400);
-			return;
-		}
-		
+		String saveId = req.getParameter("saveId");
 		// 인증을 실패했다면 무조건 redirect로 보내는게 원칙.
 		// 왜냐하면 로그인에 실패했다면 본인이 아닐 가능성이 높기때문
 		
@@ -64,10 +40,18 @@ public class LoginCheckServlet_cookie extends HttpServlet {
 				redirect = true;
 				view = "/";
 				session.setAttribute("authId", mem_id);
+				Cookie idCookie = new Cookie("idCookie", mem_id);
+				idCookie.setPath(req.getContextPath());
+				int maxAge = 0;
+				if("saveId".equals(saveId)) {
+					maxAge =(60*60*24*7);
+				}
+				idCookie.setMaxAge(maxAge);
+				resp.addCookie(idCookie);
 			}else {
 				redirect = true;
 				//	인증 실패시 loginForm.jsp로 이동
-				view = "/login/loginForm_cookie.jsp";
+				view = "/login/loginForm.jsp";
 				//  2) 인증 실패(아이디 상태 유지)
 				message = "비번 오류";
 				session.setAttribute("failedId", mem_id);
@@ -75,7 +59,7 @@ public class LoginCheckServlet_cookie extends HttpServlet {
 		}else {
 			//	1) 검증
 			redirect = true;
-			view = "/login/loginForm_cookie.jsp";
+			view = "/login/loginForm.jsp";
 			message = "아이디나 비번 누락";
 		}
 		
@@ -98,39 +82,7 @@ public class LoginCheckServlet_cookie extends HttpServlet {
 		boolean valid = true;
 		valid = !(mem_id ==null || mem_id.isEmpty() || mem_pass== null || mem_pass.isEmpty());
 		return valid;
-	}
+	}                                                                           
 }
 
-//		boolean check = true;
-//		
-//		if(mem_id != null || !mem_id.isEmpty()) {
-//			check = true;
-//		}else { // id를 공백 혹은 잘못 입력 했을 시.
-//			check = false;
-//		}
-//		if(mem_pass != null || !mem_pass.isEmpty()) {
-//			check = true;
-//		}else { // pass를 공백 혹은 잘못 입력 했을 시
-//			check = false;
-//		}
-////		인증(id == password)
-//		if(mem_id.equals(mem_pass) ){
-//			check = true;
-//		}else {
-//			check = false;
-//		}
-//		if(check) {
-////		view로 이동
-////		인증 성공시 index.jsp 로 이동(현재 요청 정보 삭제). //redirect
-//			String location = req.getContextPath()+"/";
-//			resp.sendRedirect(location);
-//			
-//		}else {
-////		인증 실패시 loginForm.jsp로 이동
-////			1) 검증
-////			2) 인증 실패(아이디 상태 유지)
-//			req.setAttribute("mem_id", mem_id);
-//			RequestDispatcher rd = req.getRequestDispatcher("/login/loginForm.jsp");
-//			rd.forward(req, resp);
-//		}
-	
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
