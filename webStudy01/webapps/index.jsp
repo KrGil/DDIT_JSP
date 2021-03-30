@@ -1,3 +1,4 @@
+<%@page import="kr.or.ddit.vo.MemberVO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -9,11 +10,11 @@
 <body>
 	<h4>Welcome Page~</h4>
 	<%	// 인증 시 무조건post방식으로 
-		String authId = (String)session.getAttribute("authId");
-		if(authId != null && !authId.isEmpty()){
+		MemberVO authMember = (MemberVO)session.getAttribute("authMember");
+		if(authMember != null){
 	%>
 			<form name = "logoutForm" method = "post" action = "<%=request.getContextPath() %>/login/logout.do"></form>
-			<%=authId %>님 
+			<a href="<%=request.getContextPath()%>/mypage.do?mem_id=<%=authMember.getMem_name() %>"><%=authMember.getMem_name() %></a>님 
 			<a href="#" onclick = "clickHandler(event);">로그아웃</a>
 			<script type="text/javascript">
 				function clickHandler(event){

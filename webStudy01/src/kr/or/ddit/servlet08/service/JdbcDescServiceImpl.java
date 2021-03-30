@@ -1,4 +1,4 @@
-package kr.or.ddit.servlet08;
+package kr.or.ddit.servlet08.service;
 
 import java.util.List;
 import java.util.Map;

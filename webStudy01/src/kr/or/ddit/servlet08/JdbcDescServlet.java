@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import kr.or.ddit.servlet08.dao.IJdbcDescService;
+import kr.or.ddit.servlet08.service.JdbcDescServiceImpl;
 
 @WebServlet("/10/jdbcDesc.do")
 public class JdbcDescServlet extends HttpServlet{

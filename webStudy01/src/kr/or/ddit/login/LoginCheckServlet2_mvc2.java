@@ -1,6 +1,11 @@
 package kr.or.ddit.login;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,8 +16,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-//@WebServlet("/login/loginCheck.do")
-public class LoginCheckServlet_cookie_sem extends HttpServlet {
+import kr.or.ddit.db.ConnectionFactory;
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.service.AuthenticateServiceImpl;
+import kr.or.ddit.service.IAuthenticateService;
+import kr.or.ddit.vo.MemberVO;
+
+@WebServlet("/login/loginCheck.do")
+public class LoginCheckServlet2_mvc2 extends HttpServlet {
+	private IAuthenticateService service = new AuthenticateServiceImpl();
+	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession session = req.getSession();
@@ -29,17 +42,19 @@ public class LoginCheckServlet_cookie_sem extends HttpServlet {
 		String message = "null";
 		boolean valid = validate(mem_id, mem_pass);
 		String saveId = req.getParameter("saveId");
+		
 		// 인증을 실패했다면 무조건 redirect로 보내는게 원칙.
 		// 왜냐하면 로그인에 실패했다면 본인이 아닐 가능성이 높기때문
-		
 		if(valid) {
 			//	인증(id == password)
-			boolean auth = authenticate(mem_id, mem_pass);
-			if(auth) {
-			// 인증 성공시 index.jsp 로 이동(현재 요청 정보 삭제). //redirect
+			MemberVO member = new MemberVO(mem_id, mem_pass);
+			ServiceResult result = service.authenticate(member);
+			switch (result) {
+			case OK :
+				// 인증 성공시 index.jsp 로 이동(현재 요청 정보 삭제). //redirect
 				redirect = true;
 				view = "/";
-				session.setAttribute("authId", mem_id);
+				session.setAttribute("authMember", member);
 				Cookie idCookie = new Cookie("idCookie", mem_id);
 				idCookie.setPath(req.getContextPath());
 				int maxAge = 0;
@@ -48,13 +63,22 @@ public class LoginCheckServlet_cookie_sem extends HttpServlet {
 				}
 				idCookie.setMaxAge(maxAge);
 				resp.addCookie(idCookie);
-			}else {
+				break;
+			case NOTEXIST  :
+				redirect = true;
+				//	인증 실패시 loginForm.jsp로 이동
+				view = "/login/loginForm.jsp";
+				//  2) 인증 실패(아이디 상태 유지)
+				message = "아이디 오류";
+				break;
+			case INVALIDPASSWORD:
 				redirect = true;
 				//	인증 실패시 loginForm.jsp로 이동
 				view = "/login/loginForm.jsp";
 				//  2) 인증 실패(아이디 상태 유지)
 				message = "비번 오류";
 				session.setAttribute("failedId", mem_id);
+				break;
 			}
 		}else {
 			//	1) 검증
@@ -72,17 +96,15 @@ public class LoginCheckServlet_cookie_sem extends HttpServlet {
 			req.setAttribute("message", message);
 			req.getRequestDispatcher(view).forward(req, resp);
 		}
-	}		
-	// 아이디와 비밀번호가 같다면.
-	private boolean authenticate(String mem_id, String mem_pass) {
-		return mem_id.equals(mem_pass);
 	}
+	
 	// 검증 제대로 값이 넘어왔는가
 	private boolean validate(String mem_id, String mem_pass) {
 		boolean valid = true;
-		valid = !(mem_id ==null || mem_id.isEmpty() || mem_pass== null || mem_pass.isEmpty());
+		valid = !(mem_id ==null || mem_id.isEmpty() || 
+				mem_pass== null || mem_pass.isEmpty());
 		return valid;
-	}                                                                           
+	}
 }
 
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+	
