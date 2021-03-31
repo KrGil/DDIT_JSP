@@ -1,9 +1,11 @@
 package kr.or.ddit.member.dao;
 
+import java.util.List;
+
 import kr.or.ddit.vo.MemberVO;
 
 /**
- *  회원 관리 및 인증을 위한 Persistence Layer
+ *  회원 관리(CRUD) 및 인증을 위한 Persistence Layer
  *	
  */
 public interface IMemberDAO {
@@ -13,6 +15,7 @@ public interface IMemberDAO {
 	 * @return 존재하지 않는 경우, null 반환.
 	 */
 	public MemberVO selectMemberForAuth(String mem_id);
+	
 	/**
 	 * 회원 정보 상세 조회
 	 * @param mem_id
@@ -20,4 +23,48 @@ public interface IMemberDAO {
 	 */
 	public MemberVO selectMemberDetail(String mem_id);
 	
+	/**
+	 * 신규 등록
+	 * @param member
+	 * @return 등록된 row count > 0 성공
+	 */
+	public int insertMember(MemberVO member);
+	
+	/**
+	 * 회원 정보 수정
+	 * @param member
+	 * @return 수정된 row count > 0 성공
+	 */
+	public int updateMember(MemberVO member);
+	
+	/**
+	 * 회원 정보 삭제(???)
+	 * @param mem_id
+	 * @return 삭제된 row count > 0 성공
+	 */
+	public int deleteMember(String mem_id);
+	
+	/**
+	 * 회원 목록 조회
+	 * @return 조건에 맞는 회원이 없다면, size() == 0
+	 */
+	public List<MemberVO> selectMeberList();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
