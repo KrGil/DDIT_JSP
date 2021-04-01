@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -18,29 +19,46 @@ import kr.or.ddit.service.IMemberService;
 import kr.or.ddit.service.MemberServiceImpl;
 import kr.or.ddit.vo.MemberVO;
 
-@WebServlet("/member/memberInsert.do")
-public class MemberInsertServlet extends HttpServlet {
-	private IMemberService service = new MemberServiceImpl();
-
+@WebServlet("/member/memberUpdate.do")
+public class MemberUpdateServlet extends HttpServlet{
+	IMemberService service = new MemberServiceImpl();
+	private void addCommandAttribute(HttpServletRequest req) {
+		req.setAttribute("command", "update");
+	}
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String view = "/WEB-INF/views/member/memberForm.jsp";
-		boolean redirect = false;
-		// logic
-		if (redirect) {
-			// redirect는 클라이언트 사이드의 경로 302로 보내주어야하니
-			resp.sendRedirect(req.getContextPath() + view);
-		} else {
-			req.getRequestDispatcher(view).forward(req, resp);
-		}
+		addCommandAttribute(req);
+		HttpSession session = req.getSession();
+		
+		// logincheckServlet  에서....
+		MemberVO authMember = (MemberVO) session.getAttribute("authMember");
+		
+		String authId = authMember.getMem_id();
+		MemberVO member = service.retrieveMember(authId);
+		
+		String view = "/WEB-INF/views/member/memberForm02_ajax.jsp";
+		// 자기자신의 정보가 필요하다
+		req.setAttribute("member", member);
+		
+		// memberForm.jsp 재활용 수정으로 사용
+		req.getRequestDispatcher(view).forward(req, resp);
 	}
-
+	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		addCommandAttribute(req);
+		
 		req.setCharacterEncoding("utf-8");
 //		1. 요청 접수
 		MemberVO member = new MemberVO();
 		req.setAttribute("member", member); //문제 생길까바 미리 집어넣음.
+		HttpSession session = req.getSession();
+		
+		// logincheckServlet  에서....
+		MemberVO authMember = (MemberVO) session.getAttribute("authMember");
+		// setid ?????
+		String authId = authMember.getMem_id();
+		member.setMem_id(authId);
 		
 		// 규칙성 Mem_id와 변수명 mem_id가 같다. 그럼 reflection을 쓸 수 있다.
 //		member.setMem_id(req.getParameter("mem_id"));
@@ -60,15 +78,16 @@ public class MemberInsertServlet extends HttpServlet {
 		String message = null;
 
 		if (valid) {
-			ServiceResult result = service.createMember(member);
+			ServiceResult result = service.modifyMember(member);
 			switch (result) {
-			case PKDUPLICATED:
+			case INVALIDPASSWORD:
 				view = "/WEB-INF/views/member/memberForm02_ajax.jsp";
-				message = "아이디 중복";
+				message = "비번 오류";
 				break;
 			case OK:
+				// 업데이트 완료. request 새로 하자.
 				redirect = true;
-				view = "/login/loginForm.jsp";
+				view = "/mypage.do";
 				break;
 			default:
 				message = "서버 오류, 잠시 후 다시 시도해주세요.";
@@ -93,10 +112,10 @@ public class MemberInsertServlet extends HttpServlet {
 
 	private boolean validate(MemberVO member, Map<String, String> errors) {
 		boolean valid = true;
-		if (member.getMem_id() == null || member.getMem_id().isEmpty()) {
-			valid = false;
-			errors.put("mem_id", "회원이름 누락");
-		}
+//		if (member.getMem_id() == null || member.getMem_id().isEmpty()) {
+//			valid = false;
+//			errors.put("mem_id", "회원이름 누락");
+//		}
 		if (member.getMem_pass() == null || member.getMem_pass().isEmpty()) {
 			valid = false;
 			errors.put("mem_pass", "비밀번호 누락");
@@ -123,4 +142,5 @@ public class MemberInsertServlet extends HttpServlet {
 		}
 		return valid;
 	}
+	
 }

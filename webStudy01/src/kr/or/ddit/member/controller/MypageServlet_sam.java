@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.member.UserNotFoundException;
 import kr.or.ddit.service.AuthenticateServiceImpl;
 import kr.or.ddit.service.IAuthenticateService;
 import kr.or.ddit.service.IMemberService;
@@ -25,11 +26,15 @@ public class MypageServlet_sam extends HttpServlet{
 		
 		MemberVO authMember = (MemberVO) session.getAttribute("authMember");
 		String mem_id = authMember.getMem_id();
-		MemberVO detailMember = service.retrieveMember(mem_id);
-		
-		req.setAttribute("member", detailMember);
-		
-		String view = "/WEB-INF/views/member/mypage.jsp";
-		req.getRequestDispatcher(view).forward(req, resp);
+		try {
+			MemberVO detailMember = service.retrieveMember(mem_id);
+			req.setAttribute("member", detailMember);
+			String view = "/WEB-INF/views/member/mypage.jsp";
+			req.getRequestDispatcher(view).forward(req, resp);
+		} catch (UserNotFoundException e) {
+//			resp.sendError(400);
+			// 500으로 다시 바꿔보기
+			throw new IOException(e);
+		}
 	}
 }

@@ -64,7 +64,6 @@ public class CalculateServlet extends HttpServlet{
 		}
 		
 		if(view!= null) {
-			
 			req.getRequestDispatcher(view).forward(req, resp);
 		}else {
 			// trycatch 자동으로 닫아주기

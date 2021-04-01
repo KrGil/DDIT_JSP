@@ -36,8 +36,12 @@
 		// 	MemberVO member = (MemberVO) request.getAttribute("member");
 		// 	if(member==null) member = new MemberVO();
 	%>
-	<form method="post" id="memberForm">
+	<form method="post" id="memberForm" action = "<%=request.getContextPath() %>/member/memberUpdate.do">
 		<table>
+			<%
+				String command = (String) request.getAttribute("command");
+				if(!"update".equals(command)){
+			%>
 			<tr>
 				<th>회원이름</th>
 				<td><input type="text" name="mem_id" required
@@ -46,10 +50,13 @@
 					<button type="button" id="idCheck" >아이디중복체크</button>
 				</td>
 			</tr>
+			<%
+				}
+			%>
 			<tr>
 				<th>비밀번호</th>
 				<td><input type="text" name="mem_pass" required
-					value="<%=member.getMem_pass()%>" />
+					 />
 				<span class="error"><%=errors.get("mem_pass")%></span></td>
 			</tr>
 			<tr>
@@ -144,69 +151,13 @@
 			</tr>
 		</table>
 	</form>
-<script type = "text/javascript">
-	// window함수를 jquery 함수로 변경
-	$.generateMessage = function (message){
-		let messageTag = $("<span>")
-					.text(message?message:"")
-					.addClass("message")
-					.addClass("error");
-		return messageTag;
+<%	
+// 선택적 렌더링 -
+	if(!"update".equals(command)){
+%>
+<script type = "text/javascript" src="<%=request.getContextPath() %>/js/member/memberForm.js"></script>
+<%
 	}
-		
-	// blur - tabkey나 커서 자체가 옮겨갈 때
-	let idTag = $("[name='mem_id']").on("change", function(){
-		idCheckBtn.trigger("click");
-		
-		return false;
-	});
-	
-	let idCheckBtn = $("#idCheck").on("click", function(){
-		memberForm.data("idcheck", "FAIL");
-		idTag.next(".message:first").remove();
-		let mem_id = idTag.val();
-		
-		$.ajax({
-			url : "<%=request.getContextPath() %>/member/idCheck.do",
-			method : "post",
-			data : {
-				id : mem_id
-			},
-			dataType: "json",
-			success:function(resp){
-				memberForm.data("idcheck", resp.result);
-				if(resp.result=="OK"){
-					// <> 새로 만들겠다.
-					let messageTag = $.generateMessage("아이디 중복");	
-					idTag.after(messageTag);
-					idTag.focus();
-				}else{
-// 					
-				}
-			}, 
-			error:function(xhr, error, msg){
-				console.log(xhr);
-				console.log(error);
-				console.log(msg);
-			}
-		});
-	});
-	// 
-	// 1. 아이디 중복 체크 하지 않고 전송 버튼 눌렀을 때.
-	// 2. ok
-	// 3. fail의 경우.
-	let memberForm = $("#memberForm").on("submit", function(){
-		let checked = $(this).data("idcheck")=="OK";
-		if(!checked){
-			let messageTag = idTag.next(".message:first");
-			if(!mesasgeTag || messageTag.length==0){
-				messageTag = $.generateMessage();
-			}
-			messageTag.text("아이디 중복 체크 하세요.");
-			idTag.after(messageTag);
-		}
-		return checked;
-	});
-</script>
+%>
 </body>
 </html>

@@ -6,6 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<jsp:include page="/includee/preScript.jsp"/>
 </head>
 <body>
 	<%
@@ -18,7 +19,7 @@
 	<table>
 		<tr>
 			<th>회원이름</th>
-			<td><%=member.getMem_id()%></td>
+			<td id = "id"><%=member.getMem_id()%></td>
 		</tr>
 		<tr>
 			<th>비밀번호</th>
@@ -92,6 +93,26 @@
 			<th>탈퇴여부</th>
 			<td><%=member.getMem_delete()%></td>
 		</tr>
+		<tr>
+			<td colspan="2">
+				<input type="button" value="수정" class = "controlBtn" id="updateBtn">
+				<button type="button" class="controlBtn" id="deleteBtn">탈퇴</button>
+			</td>
+		</tr>
 	</table>
+	<script type="text/javascript">
+		$(".controlBtn").on("click", function(){
+			let btnId = $(this).prop("id");
+			this.id;
+			if(btnId=="updateBtn"){
+				location.href="<%=request.getContextPath()%>/member/memberUpdate.do";
+			}else if(btnId == "deleteBtn"){
+				
+			}else{
+				console.log("deleteBtn");
+			}
+// 			/member/memberUpdate.do
+		})
+	</script>
 </body>
 </html>

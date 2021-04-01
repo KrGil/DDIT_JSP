@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import kr.or.ddit.db.ConnectionFactory;
+import kr.or.ddit.exception.DataAccessException;
 import kr.or.ddit.vo.MemberVO;
 
 public class MemberDAOImpl implements IMemberDAO {
@@ -34,7 +35,7 @@ public class MemberDAOImpl implements IMemberDAO {
 			}
 			return member;
 		} catch (SQLException e) { // unchecked 서버쪽으로 오류가 넘어간다.
-			throw new RuntimeException(e);
+			throw new DataAccessException(e);
 		}
 	}
 
@@ -83,7 +84,7 @@ public class MemberDAOImpl implements IMemberDAO {
 			}
 			return member;
 		} catch (SQLException e) { // unchecked 서버쪽으로 오류가 넘어간다.
-			throw new RuntimeException(e);
+			throw new DataAccessException(e);
 		}
 	}
 
@@ -125,7 +126,7 @@ public class MemberDAOImpl implements IMemberDAO {
 //			int cnt = pstmt.executeUpdate();
 //			return cnt;
 //		} catch (SQLException e) { // unchecked 서버쪽으로 오류가 넘어간다.
-//			throw new RuntimeException(e);
+//			throw new DataAccessException(e);
 //		}
 //	}
 	@Override
@@ -172,14 +173,55 @@ public class MemberDAOImpl implements IMemberDAO {
 			
 			return pstmt.executeUpdate();
 		} catch (SQLException e) { // unchecked 서버쪽으로 오류가 넘어간다.
-			throw new RuntimeException(e);
+			throw new DataAccessException(e);
 		}
 	}
 
 	@Override
 	public int updateMember(MemberVO member) {
-		// TODO Auto-generated method stub
-		return 0;
+		StringBuffer sql = new StringBuffer();
+		sql.append(" UPDATE MEMBER ");
+		sql.append("  SET");
+	    sql.append("  MEM_NAME =?,       ");
+	    sql.append("  MEM_BIR =?,        ");
+	    sql.append("  MEM_ZIP =?,        ");
+	    sql.append("  MEM_ADD1 =?,       ");
+	    sql.append("  MEM_ADD2 =?,       ");
+	    sql.append("  MEM_HOMETEL =?,    ");
+	    sql.append("  MEM_COMTEL =?,     ");
+	    sql.append("  MEM_HP =?,         ");
+	    sql.append("  MEM_MAIL =?,       ");
+	    sql.append("  MEM_JOB =?,        ");
+	    sql.append("  MEM_LIKE =?,       ");
+	    sql.append("  MEM_MEMORIAL =?,   ");
+	    sql.append("  MEM_MEMORIALDAY =? ");
+	    sql.append("  WHERE MEM_ID =? ");
+	 	    
+	    
+		try (Connection conn = ConnectionFactory.getConnection();
+			// Statement stmt = conn.createStatement();
+			// 쿼리가 먼저 결정됨
+			PreparedStatement pstmt = conn.prepareStatement(sql.toString());) {
+			int i = 1;
+			pstmt.setString(i++, member.getMem_name());
+			pstmt.setString(i++, member.getMem_bir());
+			pstmt.setString(i++, member.getMem_zip());
+			pstmt.setString(i++, member.getMem_add1());
+			pstmt.setString(i++, member.getMem_add2());
+			pstmt.setString(i++, member.getMem_hometel());
+			pstmt.setString(i++, member.getMem_comtel());
+			pstmt.setString(i++, member.getMem_hp());
+			pstmt.setString(i++, member.getMem_mail());
+			pstmt.setString(i++, member.getMem_job());
+			pstmt.setString(i++, member.getMem_like());
+			pstmt.setString(i++, member.getMem_memorial());
+			pstmt.setString(i++, member.getMem_memorialday());
+			pstmt.setString(i++, member.getMem_id());
+			
+			return pstmt.executeUpdate();
+		} catch (SQLException e) { // unchecked 서버쪽으로 오류가 넘어간다.
+			throw new DataAccessException(e);
+		}
 	}
 
 	@Override
