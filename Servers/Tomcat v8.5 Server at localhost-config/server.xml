@@ -60,12 +60,8 @@
          APR (HTTP/AJP) Connector: /docs/apr.html
          Define a non-SSL/TLS HTTP/1.1 Connector on port 8080
     -->
-    <Connector connectionTimeout="20000" port="80" 
-    protocol="HTTP/1.1" redirectPort="443" useBodyEncodingForURI="true"/>
-    <Connector port="443" protocol="org.apache.coyote.http11.Http11Protocol"
-	maxThreads="150" SSLEnabled="true" scheme="https" secure="true"
-	keystoreFile="D:/B_Util/10.openSSL/local_cert/keystore" keystorePass="java"
-	keystoreType="pkcs12" clientAuth="false" sslProtocol="TLS" />
+    <Connector connectionTimeout="20000" port="80" protocol="HTTP/1.1" redirectPort="443" useBodyEncodingForURI="true"/>
+    <Connector SSLEnabled="true" clientAuth="false" keystoreFile="D:/B_Util/10.openSSL/local_cert/keystore" keystorePass="java" keystoreType="pkcs12" maxThreads="150" port="443" protocol="org.apache.coyote.http11.Http11Protocol" scheme="https" secure="true" sslProtocol="TLS"/>
 	    
     <!-- A "Connector" using the shared thread pool-->
     <!--
@@ -159,7 +155,7 @@
              Note: The pattern used is equivalent to using pattern="common" -->
         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs" pattern="%h %l %u %t &quot;%r&quot; %s %b" prefix="localhost_access_log" suffix=".txt"/>
 
-      <Context docBase="webStudy01" path="/webStudy01" reloadable="true" source="org.eclipse.jst.jee.server:webStudy01"/><Context docBase="firstWeb" path="/firstWeb" reloadable="true" source="org.eclipse.jst.jee.server:firstWeb"/></Host>
+      <Context docBase="webStudy02_MVN" path="/webStudy02_MVN" reloadable="true" source="org.eclipse.jst.jee.server:webStudy02_MVN"/></Host>
     </Engine>
   </Service>
 </Server>
