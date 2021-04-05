@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import kr.or.ddit.enumpkg.ServiceResult;
 import kr.or.ddit.member.service.AuthenticateServiceImpl;
 import kr.or.ddit.member.service.IAuthenticateService;
@@ -17,6 +20,8 @@ import kr.or.ddit.vo.MemberVO;
 
 @WebServlet("/login/loginCheck.do")
 public class LoginCheckServlet2_mvc2 extends HttpServlet {
+	private static final Logger logger = LoggerFactory.getLogger(LoginCheckServlet.class);
+		//	LoggerFactory.getLogger("kr.or.ddit.member");
 	private IAuthenticateService service = new AuthenticateServiceImpl();
 	
 	@Override
@@ -41,9 +46,13 @@ public class LoginCheckServlet2_mvc2 extends HttpServlet {
 		if(valid) {
 			//	인증(id == password)
 			MemberVO member = new MemberVO(mem_id, mem_pass);
+			if(logger.isDebugEnabled()) 
+					logger.debug("인증전 MemberVO : {} ", member);
 			ServiceResult result = service.authenticate(member);
 			switch (result) {
 			case OK :
+				if(logger.isInfoEnabled()) 
+						logger.info("인증후 MemberVO : {} ", member);
 				// 인증 성공시 index.jsp 로 이동(현재 요청 정보 삭제). //redirect
 				redirect = true;
 				view = "/";

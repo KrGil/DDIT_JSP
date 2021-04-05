@@ -1,0 +1,121 @@
+<%@page import="kr.or.ddit.vo.ProdVO"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		ProdVO prod = (ProdVO) request.getAttribute("prod");
+	%>
+	<table>
+		<tr>
+			<th>상품코드</th>
+			<th><%=prod.getProd_id()%></th>
+		</tr>
+		<tr>
+			<th>거래처 정보</th>
+			<td>
+				<table>
+					<thead>
+						<tr>
+							<th>거래처명</th>
+							<td><%=prod.getBuyer().getBuyer_name()%></td>
+							<th>담당자명</th>
+							<td><%=prod.getBuyer().getBuyer_bankname() %></td>
+							<th>연락처</th>
+							<td><%=prod.getBuyer().getBuyer_bankno()%></td>
+							<th>주소1</th>
+							<td><%=prod.getBuyer().getBuyer_add1() %></td>
+						</tr>
+					</thead>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<th>구매가</th>
+			<td><%=prod.getProd_id()%></td>
+		</tr>
+		
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_name()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_lgu()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_buyer()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_cost()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_price()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_sale()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_outline()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_detail()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_img()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_totalstock()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_insdate()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_properstock()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_size()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_color()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_delivery()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_unit()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_qtyin()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_qtysale()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_mileage()%></td>
+		</tr>
+	</table>
+</body>
+</html>

@@ -1,9 +1,23 @@
 package kr.or.ddit.vo;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Set;
 
 /**
  *	회원 관리를 위한 Domain Layer(Java Bean 규약)
+ *	Data Mapper(SQL Mapper)를 이용한 다중 테이블 조인 방법
+ *	ex) 한명의 회원과 그동안 구매한 상품 목록을 함께 조회.
+ *	1. 메인 데이터를 가진 메인 테이블을 식별(Member)
+ *	2. 조인의 대상이 되는 테이블로부터 조회된 데이터를 바인딩할 VO 설계.
+ *		(MemberVO, ProdVO)
+ *	3. 테이블 사이의 관계를 VO 사이의 관계로 구조화.
+ *		1:N	- has many (MemberVO has many ProdVO)
+ *		1:1 - has a (ProdVO has a BuyerVO)
+ *	4. resultType을 대신하여 resultMap 으로 수동 바인딩 설정
+ *		1:N - collection 엘리먼트
+ *		1:1 - association 엘리먼트
+ *		(Member.xml -> memberMap)
  *
  */
 // 데이터를 받는것 뿐만 아니라 vo를 들고 보내는것까지 해야하기 때문에
@@ -44,7 +58,14 @@ public class MemberVO implements Serializable{
 	private String mem_memorialday;
 	private Integer mem_mileage;
 	private String mem_delete;
+	private Set<ProdVO> prodList; // has many(1:N) 관계
 	
+	public Set<ProdVO> getProdList() {
+		return prodList;
+	}
+	public void setProdList(Set<ProdVO> prodList) {
+		this.prodList = prodList;
+	}
 	@Override
 	public String toString() {
 		return "MemberVO [mem_id=" + mem_id + ", mem_name=" + mem_name + ", mem_bir=" + mem_bir + ", mem_zip=" + mem_zip

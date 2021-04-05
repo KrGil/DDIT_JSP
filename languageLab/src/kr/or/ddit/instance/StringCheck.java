@@ -52,8 +52,7 @@ public class StringCheck {
          final int prime = 31;
          int result = 1;
          result = prime * result + ((inner == null) ? 0 : inner.hashCode());
-         return result;
-      }
+         return result;      }
 
       @Override
       public boolean equals(Object obj) {

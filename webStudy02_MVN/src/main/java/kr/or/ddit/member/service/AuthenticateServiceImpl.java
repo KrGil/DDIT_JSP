@@ -10,7 +10,7 @@ import kr.or.ddit.member.dao.MemberDAOImpl;
 import kr.or.ddit.vo.MemberVO;
 
 public class AuthenticateServiceImpl implements IAuthenticateService{
-	private IMemberDAO dao = new MemberDAOImpl();
+	private IMemberDAO dao = MemberDAOImpl.getInstance();
 	
 	// 한번 검증 거치기.
 	@Override
