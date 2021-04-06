@@ -91,3 +91,22 @@ SELECT '<tr><th>' || COMMENTS ||
     '() %></td></tr>'
 FROM USER_COL_COMMENTS
 WHERE TABLE_NAME = 'PROD';
+
+desc database_properties;
+SELECT PROPERTY_NAME as "propertyName", 
+		PROPERTY_VALUE as "propertyValue", DESCRIPTION
+		FROM DATABASE_PROPERTIES;
+
+
+-- screenSize : 10, currentpage : 1
+SELECT ROWNUM, MEM_ID, MEM_NAME
+FROM MEMBER
+WHERE ROWNUM >= 1 AND ROWNUM <= 10;
+
+-- screenSize : 10, currentpage : 2
+SELECT A.*
+FROM (
+        SELECT ROWNUM RNUM, MEM_ID, MEM_NAME
+        FROM MEMBER
+    ) A
+WHERE ROWNUM >= 11 AND ROWNUM <= 20;

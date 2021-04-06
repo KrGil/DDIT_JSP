@@ -1,4 +1,3 @@
-<%@page import="kr.or.ddit.vo.BuyerVO"%>
 <%@page import="kr.or.ddit.vo.ProdVO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
@@ -15,15 +14,7 @@
 	<table>
 		<tr>
 			<th>상품코드</th>
-			<td><%=prod.getProd_id()%></td>
-		</tr>
-		<tr>
-			<th>상품명</th>
-			<td><%=prod.getProd_name()%></td>
-		</tr>
-		<tr>
-			<th>분류명</th>
-			<td><%=prod.getLprod_nm()%></td>
+			<th><%=prod.getProd_id()%></th>
 		</tr>
 		<tr>
 			<th>거래처 정보</th>
@@ -32,113 +23,104 @@
 					<thead>
 						<tr>
 							<th>거래처명</th>
+							<td><%=prod.getBuyer().getBuyer_name()%></td>
 							<th>담당자명</th>
+							<td><%=prod.getBuyer().getBuyer_bankname() %></td>
 							<th>연락처</th>
+							<td><%=prod.getBuyer().getBuyer_bankno()%></td>
 							<th>주소1</th>
+							<td><%=prod.getBuyer().getBuyer_add1() %></td>
 						</tr>
 					</thead>
-					<tbody>
-						<tr>
-							<%
-								BuyerVO buyer = prod.getBuyer();
-							%>
-							<td><%=buyer.getBuyer_name() %></td>
-							<td><%=buyer.getBuyer_charger() %></td>
-							<td><%=buyer.getBuyer_comtel() %></td>
-							<td><%=buyer.getBuyer_add1() %></td>
-						</tr>
-					</tbody>
 				</table>
 			</td>
 		</tr>
 		<tr>
 			<th>구매가</th>
+			<td><%=prod.getProd_id()%></td>
+		</tr>
+		
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_name()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_lgu()%></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><%=prod.getProd_buyer()%></td>
+		</tr>
+		<tr>
+			<th></th>
 			<td><%=prod.getProd_cost()%></td>
 		</tr>
 		<tr>
-			<th>판매가</th>
+			<th></th>
 			<td><%=prod.getProd_price()%></td>
 		</tr>
 		<tr>
-			<th>세일가</th>
+			<th></th>
 			<td><%=prod.getProd_sale()%></td>
 		</tr>
 		<tr>
-			<th>상품정보</th>
+			<th></th>
 			<td><%=prod.getProd_outline()%></td>
 		</tr>
 		<tr>
-			<th>상세정보</th>
+			<th></th>
 			<td><%=prod.getProd_detail()%></td>
 		</tr>
 		<tr>
-			<th>이미지</th>
+			<th></th>
 			<td><%=prod.getProd_img()%></td>
 		</tr>
 		<tr>
-			<th>재고</th>
+			<th></th>
 			<td><%=prod.getProd_totalstock()%></td>
 		</tr>
 		<tr>
-			<th>입고일</th>
+			<th></th>
 			<td><%=prod.getProd_insdate()%></td>
 		</tr>
 		<tr>
-			<th>적정재고</th>
+			<th></th>
 			<td><%=prod.getProd_properstock()%></td>
 		</tr>
 		<tr>
-			<th>크기</th>
+			<th></th>
 			<td><%=prod.getProd_size()%></td>
 		</tr>
 		<tr>
-			<th>색상</th>
+			<th></th>
 			<td><%=prod.getProd_color()%></td>
 		</tr>
 		<tr>
-			<th>배송방법</th>
+			<th></th>
 			<td><%=prod.getProd_delivery()%></td>
 		</tr>
 		<tr>
-			<th>단위</th>
+			<th></th>
 			<td><%=prod.getProd_unit()%></td>
 		</tr>
 		<tr>
-			<th>입고량</th>
+			<th></th>
 			<td><%=prod.getProd_qtyin()%></td>
 		</tr>
 		<tr>
-			<th>판매량</th>
+			<th></th>
 			<td><%=prod.getProd_qtysale()%></td>
 		</tr>
 		<tr>
-			<th>마일리지</th>
+			<th></th>
 			<td><%=prod.getProd_mileage()%></td>
 		</tr>
 		<tr>
 			<td colspan="2">
-				<button id = "toListBtn" type="button">상품목록으로</button>
+				<button type="button">상품목록으로</button>
 			</td>
 		</tr>
 	</table>
-	<jsp:include page ="/includee/preScript.jsp"/>
-	<script type="text/javascript">
-		$(function(){
-			$("#toListBtn").on("click", function(){
-				location.href="<%=request.getContextPath()%>/prod/prodList.do";
-			})
-		})
-	</script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-

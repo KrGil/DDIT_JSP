@@ -83,5 +83,47 @@
 	            #{mem_memorial},  TO_DATE(#{mem_memorialday}, 'YYYY-MM-DD'), 3000  
 	     )                                          
 	</insert>
+	<sql id="searchFrag">
+		<where>
+			<if test="simpleSearch!=null and @org.apache.commons.lang3.StringUtils@isNotBlank(simpleSearch.searchWord)">
+				<choose>
+					<when test="simpleSearch.searchType eq 'name'">
+						INSTR(MEM_NAME, #{simpleSearch.searchWord}) > 0
+					</when>
+					<when test="simpleSearch.searchType eq 'address'">
+						INSTR(MEM_ADD1, #{simpleSearch.searchWord}) > 0
+					</when>
+					<otherwise>
+						INSTR(MEM_NAME, #{simpleSearch.searchWord}) > 0
+						OR
+						INSTR(MEM_ADD1, #{simpleSearch.searchWord}) > 0
+					</otherwise>
+				</choose>
+			</if>
+		</where>
+	</sql>
+	<select id="selectMemberList" resultType="memberVO" parameterType="PagingVO" >
+		SELECT B.*
+		FROM(
+			SELECT A.*, ROWNUM RNUM
+			FROM(
+				SELECT ROWID RID, mem_id, mem_pass, mem_name, mem_mail 
+				, MEM_ADD1
+				FROM member
+				<include refid="searchFrag" />
+				ORDER BY RID DESC
+			) A
+		) B
+		<![CDATA[
+			WHERE RNUM >= #{startRow} AND RNUM <= #{endRow}
+		]]>
+	</select>
+	
+	<select id="selectTotalRecord" resultType = "int" parameterType ="PagingVO">
+		SELECT COUNT(*)
+		FROM MEMBER
+		<include refid="searchFrag" />
+	</select>
+	
 
 </mapper>

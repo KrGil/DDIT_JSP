@@ -1,20 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.prod.dao.IProdDAO">
-
-	<resultMap type="ProdVO" id="prodMap" autoMapping="true">
+	<resultMap type="ProdVO" id="prodMap" 
+			autoMapping="true">
 		<id property="prod_id" column="PROD_ID"/>
-		<association property = "buyer" javaType = "BuyerVO" autoMapping="true">
+		<association property="buyer" javaType="BuyerVO" 
+			autoMapping="true">
+			<id property="buyer_id" column="BUYER_ID"/>
+		</association>
+	</resultMap>
+	<select id="selectProd" parameterType="string"
+		resultMap="prodMap">
+		SELECT
+		    PROD_ID, PROD_NAME, PROD_LGU
+		    , PROD_BUYER, PROD_COST, PROD_PRICE
+		    , PROD_SALE, PROD_OUTLINE, PROD_DETAIL
+		    , PROD_IMG, PROD_TOTALSTOCK, PROD_INSDATE
+		    , PROD_PROPERSTOCK, PROD_SIZE, PROD_COLOR
+		    , PROD_DELIVERY, PROD_UNIT, PROD_QTYIN
+		    , PROD_QTYSALE, PROD_MILEAGE
+		    , LPROD_NM
+		    , BUYER_ID, BUYER_NAME, BUYER_ADD1
+		    , BUYER_COMTEL, BUYER_CHARGER
+		FROM PROD INNER JOIN LPROD ON (PROD_LGU = LPROD_GU)
+		          INNER JOIN BUYER ON (PROD_BUYER = BUYER_ID)
+	    WHERE PROD_ID = #{prod_id}      	
+	</select>
+	
+	<resultMap type="ProdVO" id="prodMapList" autoMapping="true">
+		<id property="prod_id" column="PROD_ID"/>
+		<association property="buyer" javaType="BuyerVO" 
+			autoMapping="true">
+			<id property="buyer_id" column="BUYER_ID"/>
 		</association>
 	</resultMap>
 	
-	<select id="selectProd" parameterType="string" resultMap="prodMap">
-		SELECT PROD.*, BUYER_ID, BUYER_NAME, BUYER_BANKNAME, BUYER_BANKNO, 
-        BUYER_ADD1 
-		FROM PROD LEFT OUTER JOIN BUYER
-   			 ON (BUYER_ID = PROD_BUYER)
-		WHERE PROD_ID=#{prod_id}
+	<select id="selectProdList" resultMap="prodMapList" parameterType="PagingVO" >
+		SELECT A.*, ROWNUM RNUM
+		FROM (
+		    SELECT
+		        ROWNUM RNUM, PROD_ID, PROD_NAME, PROD_LGU
+		        , PROD_BUYER, PROD_COST, PROD_PRICE
+		        , PROD_SALE, PROD_OUTLINE, PROD_DETAIL
+		        , PROD_IMG, PROD_TOTALSTOCK, PROD_INSDATE
+		        , PROD_PROPERSTOCK, PROD_SIZE, PROD_COLOR
+		        , PROD_DELIVERY, PROD_UNIT, PROD_QTYIN
+		        , PROD_QTYSALE, PROD_MILEAGE
+		        , LPROD_NM
+		        , BUYER_ID, BUYER_NAME, BUYER_ADD1
+		        , BUYER_COMTEL, BUYER_CHARGER
+		    FROM PROD INNER JOIN LPROD ON (PROD_LGU = LPROD_GU)
+		              INNER JOIN BUYER ON (PROD_BUYER = BUYER_ID)
+		    
+		    ) A
+		<![CDATA[
+			WHERE RNUM >= #{startRow} AND RNUM <= #{endRow}
+		]]>
 	</select>
-	
+	<select id="selectTotalRecord" resultType = "int">
+		SELECT COUNT(*)
+		FROM MEMBER
+	</select>
 	
 </mapper>

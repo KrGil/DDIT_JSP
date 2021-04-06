@@ -7,6 +7,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import kr.or.ddit.db.mybatis.CustomSqlSessionFactoryBuilder;
 import kr.or.ddit.vo.MemberVO;
+import kr.or.ddit.vo.PagingVO;
 
 public class MemberDAOImpl implements IMemberDAO {
 	// 싱글톤 만들기
@@ -70,14 +71,34 @@ public class MemberDAOImpl implements IMemberDAO {
 
 	@Override
 	public int deleteMember(String mem_id) {
-		// TODO Auto-generated method stub
-		return 0;
+		try(
+				SqlSession session = sessionFactory.openSession();	
+			){
+				IMemberDAO mapper =
+						session.getMapper(IMemberDAO.class);
+				int cnt = mapper.deleteMember(mem_id);
+				session.commit();
+				return cnt;
+			}
 	}
 
 	@Override
-	public List<MemberVO> selectMeberList() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<MemberVO> selectMemberList(PagingVO pagingVO) {
+		try(
+				SqlSession session = sessionFactory.openSession();
+			){
+				IMemberDAO mapper = session.getMapper(IMemberDAO.class);
+				return mapper.selectMemberList(pagingVO);
+			}
+	}
+	@Override
+	public int selectTotalRecord(PagingVO pagingVO) {
+		try(
+				SqlSession session = sessionFactory.openSession();
+			){
+				IMemberDAO mapper = session.getMapper(IMemberDAO.class);
+				return mapper.selectTotalRecord(pagingVO);
+			}
 	}
 
 }

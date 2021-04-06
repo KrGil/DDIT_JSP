@@ -5,6 +5,7 @@ import java.util.List;
 
 import kr.or.ddit.enumpkg.ServiceResult;
 import kr.or.ddit.vo.MemberVO;
+import kr.or.ddit.vo.PagingVO;
 
 /**
  * 
@@ -45,9 +46,17 @@ public interface IMemberService {
 	
 	/**
 	 * 회원 목록 조회
+	 * @param pagingVO TODO
 	 * @return 조건에 맞는 회원이 없으면, size()==0
 	 */
-	public List<MemberVO> retrieveMemberList();
+	public List<MemberVO> retrieveMemberList(PagingVO pagingVO);
+	
+	/**
+	 *  페이징 처리를 위한 회원수 조회
+	 * @param pagingVO TODO
+	 * @return
+	 */
+	public int retrieveMemberCount(PagingVO<MemberVO> pagingVO);
 }
 
 
