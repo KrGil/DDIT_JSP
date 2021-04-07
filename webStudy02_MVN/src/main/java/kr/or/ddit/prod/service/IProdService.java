@@ -47,7 +47,8 @@ public interface IProdService {
 	
 	/**
 	 *  페이징 처리를 위한 회원수 조회
+	 * @param pagingVO TODO
 	 * @return
 	 */
-	public int retrieveProdCount();
+	public int retrieveProdCount(PagingVO<ProdVO> pagingVO);
 }

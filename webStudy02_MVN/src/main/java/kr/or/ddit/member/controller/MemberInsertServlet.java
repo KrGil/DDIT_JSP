@@ -83,9 +83,9 @@ public class MemberInsertServlet extends HttpServlet {
 		boolean redirect = view.startsWith("redirect:");
 		if (redirect) {
 			view = view.substring("redirect:".length());
-			resp.sendRedirect(view);
+			resp.sendRedirect(req.getContextPath() + view);
 		} else {
-
+			req.getRequestDispatcher(view).forward(req, resp);
 		}
 
 	}

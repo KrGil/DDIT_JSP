@@ -17,8 +17,8 @@ $.fn.formToAjax=function(param){
 		let url = this.action;
 		let method = this.method;
 		let inputs = $(this).find(":input");
-	
 		let data = {}
+		
 		$(inputs).each(function(index, input){
 			let name = $(this).attr("name");
 			let value= $(this).val();

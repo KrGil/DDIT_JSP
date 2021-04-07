@@ -3,8 +3,11 @@ package kr.or.ddit.vo;
 import java.io.Serializable;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
@@ -14,7 +17,12 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(of="prod_id")
 @ToString(of= {"prod_id", "prod_name", "prod_lgu"})
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+
 public class ProdVO implements Serializable {
+	private int rnum;
 	private String prod_id;
 	private String prod_name;
 	private String prod_lgu;

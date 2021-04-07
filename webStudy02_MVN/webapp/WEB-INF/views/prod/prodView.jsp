@@ -117,18 +117,11 @@
 		</tr>
 		<tr>
 			<td colspan="2">
-				<button id = "toListBtn" type="button">상품목록으로</button>
+				<button type="button">상품목록으로</button>
 			</td>
 		</tr>
 	</table>
-	<jsp:include page ="/includee/preScript.jsp"/>
-	<script type="text/javascript">
-		$(function(){
-			$("#toListBtn").on("click", function(){
-				location.href="<%=request.getContextPath()%>/prod/prodList.do";
-			})
-		})
-	</script>
+	
 </body>
 </html>
 

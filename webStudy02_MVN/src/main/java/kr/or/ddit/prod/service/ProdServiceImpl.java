@@ -6,14 +6,16 @@ import kr.or.ddit.enumpkg.ServiceResult;
 import kr.or.ddit.exception.CustomException;
 import kr.or.ddit.member.UserNotFoundException;
 import kr.or.ddit.member.dao.IMemberDAO;
+import kr.or.ddit.member.service.AuthenticateServiceImpl;
+import kr.or.ddit.member.service.IAuthenticateService;
 import kr.or.ddit.prod.dao.IProdDAO;
 import kr.or.ddit.prod.dao.ProdDAOImpl;
+import kr.or.ddit.vo.MemberVO;
 import kr.or.ddit.vo.PagingVO;
 import kr.or.ddit.vo.ProdVO;
 
 public class ProdServiceImpl implements IProdService{
 	private IProdDAO dao = ProdDAOImpl.getInstance();
-	
 	// singletone
 	private static ProdServiceImpl self;
 	private ProdServiceImpl() {};
@@ -40,8 +42,14 @@ public class ProdServiceImpl implements IProdService{
 	}
 	@Override
 	public ServiceResult createProd(ProdVO prod) {
-		// TODO Auto-generated method stub
-		return null;
+		int rowcnt = dao.insertProd(prod);
+		ServiceResult result = null;
+		if (rowcnt > 0) {
+			result = ServiceResult.OK;
+		} else {
+			result = ServiceResult.FAIL;
+		}
+		return result;
 	}
 	@Override
 	public ServiceResult modifyProd(ProdVO prod) {
@@ -53,8 +61,8 @@ public class ProdServiceImpl implements IProdService{
 		return dao.selectProdList(pagingVO);
 	}
 	@Override
-	public int retrieveProdCount() {
-		return dao.selectTotalRecord();
+	public int retrieveProdCount(PagingVO<ProdVO> pagingVO) {
+		return dao.selectTotalRecord(pagingVO);
 	}
 
 }

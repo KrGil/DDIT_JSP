@@ -13,7 +13,7 @@ import kr.or.ddit.vo.ProdVO;
 public interface IProdDAO {
 	public ProdVO selectProd(String prod_id);
 	public List<ProdVO> selectProdList();
-	public int insert(ProdVO prod); // row cnt가 return
+	public int insertProd(ProdVO prod); // row cnt가 return
 	public int updateProd(ProdVO prod);
 	/**
 	 * 회원 목록 조회
@@ -22,5 +22,5 @@ public interface IProdDAO {
 	 */
 	public List<ProdVO> selectProdList(PagingVO pagingVO);
 	
-	public int selectTotalRecord();
+	public int selectTotalRecord(PagingVO<ProdVO> pagingVO);
 }
