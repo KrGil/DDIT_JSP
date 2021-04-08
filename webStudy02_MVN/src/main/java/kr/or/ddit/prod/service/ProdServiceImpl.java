@@ -53,8 +53,14 @@ public class ProdServiceImpl implements IProdService{
 	}
 	@Override
 	public ServiceResult modifyProd(ProdVO prod) {
-		// TODO Auto-generated method stub
-		return null;
+		int rowcnt = dao.updateProd(prod);
+		ServiceResult result = null;
+		if (rowcnt > 0) {
+			result = ServiceResult.OK;
+		} else {
+			result = ServiceResult.FAIL;
+		}
+		return result;
 	}
 	@Override
 	public List<ProdVO> retrieveProdList(PagingVO pagingVO) {

@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import kr.or.ddit.member.controller.RequestMapping;
+import kr.or.ddit.mvc.annotation.Controller;
 import kr.or.ddit.prod.dao.IOthersDAO;
 import kr.or.ddit.prod.dao.OthersDAOImpl;
 import kr.or.ddit.prod.service.IProdService;
@@ -25,8 +27,8 @@ import kr.or.ddit.vo.MemberVO;
 import kr.or.ddit.vo.PagingVO;
 import kr.or.ddit.vo.ProdVO;
 
-@WebServlet("/prod/prodList.do")
-public class ProdListServlet extends HttpServlet{
+@Controller
+public class ProdReadController{
 	private IProdService service = ProdServiceImpl.getInstance();
 	private IOthersDAO othersDAO = OthersDAOImpl.getInstance();
 	
@@ -38,8 +40,8 @@ public class ProdListServlet extends HttpServlet{
 		req.setAttribute("buyerList", buyerList);
 	}
 	
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	@RequestMapping("/prod/prodList.do")
+	public String list(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		addAttribute(req);
 		
 		String prod_lgu =  req.getParameter("prod_lgu");
@@ -55,8 +57,6 @@ public class ProdListServlet extends HttpServlet{
 				.prod_name(prod_name)
 				.build();
 
-		
-		
 		String pageParam = req.getParameter("page");
 		int currentPage = 1;
 		if(pageParam!=null && pageParam.matches("\\d+")) {
@@ -76,6 +76,7 @@ public class ProdListServlet extends HttpServlet{
 		
 		String accept = req.getHeader("Accept");
 		// 비동기처리 - json
+		String view = null;
 		if(StringUtils.containsIgnoreCase(accept, "json")) {
 			resp.setContentType("application/json;charset=utf-8");
 			// 마샬링과 직렬화
@@ -89,8 +90,22 @@ public class ProdListServlet extends HttpServlet{
 			// 동기처리 - html
 			req.setAttribute("pagingVO", pagingVO);
 			
-			String view = "/WEB-INF/views/prod/prodList.jsp";
-			req.getRequestDispatcher(view).forward(req, resp);
+			view = "prod/prodList";
 		}
+		return view;
+	}
+	// 하나의 객체 안에 유사한 일을 하는 녀석에가 모아둘 수 잇따.
+	@RequestMapping("/prod/prodView.do")
+	public String view(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String prod_id = req.getParameter("what");
+		if(StringUtils.isBlank(prod_id)) {
+			resp.sendError(400);
+			return null;
+		}
+		
+		ProdVO prod =  service.retrieveProd(prod_id);
+		req.setAttribute("prod", prod);
+		String view = "prod/prodView";
+		return view;
 	}
 }

@@ -56,8 +56,7 @@
 			<id property="buyer_id" column="BUYER_ID"/>
 		</association>
 	</resultMap>
-	<select id="selectProd" parameterType="string"
-		resultMap="prodMap">
+	<select id="selectProd" parameterType="string" resultMap="prodMap">
 		SELECT
 		    PROD_ID, PROD_NAME, PROD_LGU
 		    , PROD_BUYER, PROD_COST, PROD_PRICE
@@ -103,6 +102,22 @@
 		    #{prod_qtysale,jdbcType=NUMERIC},    #{prod_mileage,jdbcType=NUMERIC}	
 		)
 	</insert>
+	
+	<update id="updateProd" parameterType="ProdVO">
+		UPDATE PROD
+		SET 
+			PROD_NAME = #{prod_name,jdbcType=VARCHAR},
+		    PROD_LGU = #{prod_lgu,jdbcType=VARCHAR},    PROD_BUYER= #{prod_buyer,jdbcType=VARCHAR},
+		    PROD_COST=#{prod_cost,jdbcType=NUMERIC},    PROD_PRICE=#{prod_price,jdbcType=NUMERIC},
+		    PROD_SALE=#{prod_sale,jdbcType=NUMERIC},    PROD_OUTLINE= #{prod_outline,jdbcType=VARCHAR},
+		    PROD_DETAIL=#{prod_detail,jdbcType=VARCHAR},    PROD_IMG=#{prod_img,jdbcType=VARCHAR},
+		    PROD_TOTALSTOCK=#{prod_totalstock,jdbcType=NUMERIC},    PROD_INSDATE= SYSDATE,
+		    PROD_PROPERSTOCK=#{prod_properstock,jdbcType=NUMERIC},    PROD_SIZE=#{prod_size,jdbcType=VARCHAR},
+		    PROD_COLOR= #{prod_color,jdbcType=VARCHAR},    PROD_DELIVERY=#{prod_delivery,jdbcType=VARCHAR},
+		    PROD_UNIT= #{prod_unit,jdbcType=VARCHAR},    PROD_QTYIN= #{prod_qtyin,jdbcType=NUMERIC},
+		    PROD_QTYSALE=#{prod_qtysale,jdbcType=NUMERIC},    PROD_MILEAGE=#{prod_mileage,jdbcType=NUMERIC}
+		WHERE PROD_ID = #{prod_id,jdbcType=VARCHAR}
+	</update>
 </mapper>
 
 

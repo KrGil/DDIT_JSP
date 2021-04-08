@@ -7,16 +7,16 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
-
-import com.fasterxml.jackson.databind.util.BeanUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.member.controller.HandlerMapping;
 import kr.or.ddit.member.controller.RequestMapping;
 import kr.or.ddit.mvc.annotation.Controller;
 import kr.or.ddit.mvc.annotation.RequestMethod;
@@ -25,12 +25,12 @@ import kr.or.ddit.prod.dao.OthersDAOImpl;
 import kr.or.ddit.prod.service.IProdService;
 import kr.or.ddit.prod.service.ProdServiceImpl;
 import kr.or.ddit.vo.BuyerVO;
-import kr.or.ddit.vo.MemberVO;
 import kr.or.ddit.vo.ProdVO;
 
-//@WebServlet("/prod/prodInsert.do")
+// /prod/prodUpdate.do
 @Controller
-public class ProdInsertServlet{
+public class ProdUpdateController {
+	private static final Logger logger = LoggerFactory.getLogger(HandlerMapping.class);
 	IProdService service = ProdServiceImpl.getInstance();
 	private IOthersDAO othersDAO = OthersDAOImpl.getInstance();
 	
@@ -41,20 +41,30 @@ public class ProdInsertServlet{
 		req.setAttribute("lprodList", lprodList);
 		req.setAttribute("buyerList", buyerList);
 	}
-
-	@RequestMapping("/prod/prodInsert.do")
-	public String doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		addAttribute(req);
-		
-		return "prod/prodForm";
+	private void addCommandAttribute(HttpServletRequest req) {
+		req.setAttribute("command", "update");
 	}
-	@RequestMapping(value="/prod/prodInsert.do", method=RequestMethod.POST)
-	public String doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	@RequestMapping("/prod/prodUpdate.do")
+	public String updateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		addAttribute(req);
+		addCommandAttribute(req);
+		String prod_id = req.getParameter("what");
+		if(StringUtils.isBlank(prod_id)) {
+			resp.sendError(400);
+			return null;
+		}
+		
+		ProdVO prod =  service.retrieveProd(prod_id);
+		req.setAttribute("prod", prod);
+		String view = "prod/prodForm";
+		return view;
+	}
+	@RequestMapping(value="/prod/prodUpdate.do", method=RequestMethod.POST)
+	public String updateProcess(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 //		ProdVO prod;
 //		createProd(prod)
 //		prod.getProd_id();
 //		등록 성공시: /prodView.do로 이동.
-		
 		ProdVO prod = new ProdVO();
 		req.setAttribute("prod", prod);
 		
@@ -64,6 +74,7 @@ public class ProdInsertServlet{
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
+		logger.info("{}", prod);
 		
 		// 2. 검증( 데이터의 목적, 경로에 따라 방법이 달라져야 한다.)
 		// 누가 통과 못했는지, 검증결과 메시지
@@ -76,7 +87,7 @@ public class ProdInsertServlet{
 		// 검증 통과 후
 		if (valid) {
 			// sql문 실행
-			ServiceResult result = service.createProd(prod);
+			ServiceResult result = service.modifyProd(prod);
 			switch (result) {
 				case OK:
 					view = "redirect:/prod/prodView.do?what="+prod.getProd_id();

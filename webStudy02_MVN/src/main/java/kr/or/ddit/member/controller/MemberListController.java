@@ -12,21 +12,22 @@ import javax.servlet.http.HttpSession;
 
 import kr.or.ddit.member.service.IMemberService;
 import kr.or.ddit.member.service.MemberServiceImpl;
+import kr.or.ddit.mvc.annotation.Controller;
 import kr.or.ddit.vo.MemberVO;
 import kr.or.ddit.vo.PagingVO;
 import kr.or.ddit.vo.SearchVO;
 
-@WebServlet("/member/memberList.do")
-public class MemberListServlet extends HttpServlet {
+//@WebServlet("/member/memberList.do")
+@Controller
+public class MemberListController {
 	IMemberService service = new MemberServiceImpl();
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		req.setCharacterEncoding("utf-8");
+	
+	@RequestMapping("/member/memberList.do")
+	public String MemberList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String searchType = req.getParameter("searchType");
 		String searchWord = req.getParameter("searchWord");
 		
 		SearchVO searchVO = new SearchVO(searchType, searchWord);
-		
 		
 		String pageParam = req.getParameter("page");
 		int currentPage = 1;
@@ -46,7 +47,7 @@ public class MemberListServlet extends HttpServlet {
 		
 		req.setAttribute("pagingVO", pagingVO);
 		
-		String view = "/WEB-INF/views/member/memberList.jsp";
-		req.getRequestDispatcher(view).forward(req, resp);
+		String view = "member/memberList";
+		return view;
 	}
 }

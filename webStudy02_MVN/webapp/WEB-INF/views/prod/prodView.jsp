@@ -7,16 +7,21 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+
 </head>
 <body>
 	<%
 		ProdVO prod = (ProdVO) request.getAttribute("prod");
 	%>
+	<form  action="<%=request.getContextPath() %>/prod/prodUpdate.do" >
+			<input type="hidden" name="prod_id"value ="<%=prod.getProd_id()%>"/>
+	</form>
 	<table>
 		<tr>
 			<th>상품코드</th>
 			<td><%=prod.getProd_id()%></td>
 		</tr>
+		
 		<tr>
 			<th>상품명</th>
 			<td><%=prod.getProd_name()%></td>
@@ -118,10 +123,24 @@
 		<tr>
 			<td colspan="2">
 				<button type="button">상품목록으로</button>
+				<input type="button" value="수정" class="controlBtn" id="updateBtn">
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				
 			</td>
 		</tr>
 	</table>
-	
+	<jsp:include page="/includee/preScript.jsp" />
+	<script type="text/javascript">
+		$(".controlBtn").on("click", function(){
+			let btnId = $(this).prop("id");
+			if(btnId=="updateBtn"){
+				location.href="<%=request.getContextPath()%>/prod/prodUpdate.do?what=<%=prod.getProd_id()%>";
+			}
+		});
+	</script>
 </body>
 </html>
 

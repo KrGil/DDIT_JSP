@@ -26,7 +26,18 @@
 <jsp:useBean id="errors" class="java.util.LinkedHashMap" scope="request" />
 <form method="post">	
 	<table>
-		
+		<% 
+			String command = (String) request.getAttribute("command");
+			if("update".equals(command)){
+			%>
+		<tr>
+			<td>
+				<input type="hidden" name = "prod_id" value =<%=prod.getProd_id() %>>
+			</td>
+		</tr>
+			<%
+			}
+		%>
 		<tr>
 			<th>상품명</th>
 			<td><input type="text" name="prod_name" required
@@ -44,7 +55,7 @@
 							= (List)request.getAttribute("lprodList");
 						for(Map<String,Object> lprod : lprodList){
 							%>
-							<option value="<%=lprod.get("lprod_gu")%>">
+							<option value="<%=lprod.get("lprod_gu")%>" <%=prod.getProd_lgu().equals(lprod.get("lprod_gu"))?"selected":""%>>
 								<%=lprod.get("lprod_nm") %>
 							</option>
 							<%
@@ -63,7 +74,7 @@
 						=(List) request.getAttribute("buyerList");
 					for(BuyerVO buyer : buyerList){
 						%>
-						<option value="<%=buyer.getBuyer_id() %>" class="<%=buyer.getBuyer_lgu() %>">
+						<option value="<%=buyer.getBuyer_id() %>" class="<%=buyer.getBuyer_lgu() %>" <%=prod.getProd_buyer().equals(buyer.getBuyer_id())?"selected":""%>>
 							<%=buyer.getBuyer_name() %>
 						</option>
 						<%

@@ -14,29 +14,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.member.controller.RequestMapping;
 import kr.or.ddit.member.service.AuthenticateServiceImpl;
 import kr.or.ddit.member.service.IAuthenticateService;
+import kr.or.ddit.mvc.annotation.Controller;
+import kr.or.ddit.mvc.annotation.RequestMethod;
 import kr.or.ddit.vo.MemberVO;
 
-@WebServlet("/login/loginCheck.do")
-public class LoginCheckServlet2_mvc2 extends HttpServlet {
+//@WebServlet("/login/loginCheck.do")
+@Controller
+public class LoginCheckController {
 	private static final Logger logger = LoggerFactory.getLogger(LoginCheckServlet.class);
 		//	LoggerFactory.getLogger("kr.or.ddit.member");
 	private IAuthenticateService service = new AuthenticateServiceImpl();
 	
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	@RequestMapping(value="/login/loginCheck.do", method=RequestMethod.POST)
+	public String login(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession session = req.getSession();
 		// 로그인 한적도 없는 놈이 여기 접근하려고 한다.
 		if(session.isNew()) {
 			resp.sendError(400);
-			return;
+			return null;
 		}
 		// 요청 분석
 		String mem_id = req.getParameter("mem_id");
 		String mem_pass = req.getParameter("mem_pass");
 		String view = null;
-		boolean redirect = false;
+//		boolean redirect = false;
 		String message = null;
 		boolean valid = validate(mem_id, mem_pass);
 		String saveId = req.getParameter("saveId");
@@ -54,8 +58,7 @@ public class LoginCheckServlet2_mvc2 extends HttpServlet {
 				if(logger.isInfoEnabled()) 
 						logger.info("인증후 MemberVO : {} ", member);
 				// 인증 성공시 index.jsp 로 이동(현재 요청 정보 삭제). //redirect
-				redirect = true;
-				view = "/";
+				view = "redirect:/";
 				session.setAttribute("authMember", member);
 				Cookie idCookie = new Cookie("idCookie", mem_id);
 				idCookie.setPath(req.getContextPath());
@@ -67,16 +70,16 @@ public class LoginCheckServlet2_mvc2 extends HttpServlet {
 				resp.addCookie(idCookie);
 				break;
 			case NOTEXIST  :
-				redirect = true;
+//				redirect = true;
 				//	인증 실패시 loginForm.jsp로 이동
-				view = "/login/loginForm.jsp";
+				view = "redirect:login/loginForm";
 				//  2) 인증 실패(아이디 상태 유지)
 				message = "아이디 오류";
 				break;
 			case INVALIDPASSWORD:
-				redirect = true;
+//				redirect = true;
 				//	인증 실패시 loginForm.jsp로 이동
-				view = "/login/loginForm.jsp";
+				view = "redirect:login/loginForm";
 				//  2) 인증 실패(아이디 상태 유지)
 				message = "비번 오류";
 				session.setAttribute("failedId", mem_id);
@@ -84,20 +87,22 @@ public class LoginCheckServlet2_mvc2 extends HttpServlet {
 			}
 		}else {
 			//	1) 검증
-			redirect = true;
-			view = "/login/loginForm.jsp";
+//			redirect = true;
+			view = "redirect:login/loginForm";
 			message = "아이디나 비번 누락";
 		}
-		
-//		view로 이동
-		if(redirect) { // redirect는 request를 날려버림 html의 statless의 특성
-			// 그래서 session과 cookies를 사용
 			req.getSession().setAttribute("message", message);
-			resp.sendRedirect(req.getContextPath() + view);
-		}else {
-			req.setAttribute("message", message);
-			req.getRequestDispatcher(view).forward(req, resp);
-		}
+		
+////		view로 이동
+//		if(redirect) { // redirect는 request를 날려버림 html의 statless의 특성
+//			// 그래서 session과 cookies를 사용
+//			resp.sendRedirect(req.getContextPath() + view);
+//		}else {
+//			req.setAttribute("message", message);
+//			req.getRequestDispatcher(view).forward(req, resp);
+//		}
+		
+		return view;
 	}
 	
 	// 검증 제대로 값이 넘어왔는가
