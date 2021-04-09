@@ -18,7 +18,9 @@ import kr.or.ddit.enumpkg.ServiceResult;
 import kr.or.ddit.member.service.IMemberService;
 import kr.or.ddit.member.service.MemberServiceImpl;
 import kr.or.ddit.mvc.annotation.Controller;
+import kr.or.ddit.mvc.annotation.RequestMapping;
 import kr.or.ddit.mvc.annotation.RequestMethod;
+import kr.or.ddit.mvc.annotation.resolvers.ModelAttribute;
 import kr.or.ddit.vo.MemberVO;
 
 //@WebServlet("/member/memberUpdate.do")
@@ -29,15 +31,17 @@ public class MemberUpdateController {
 		req.setAttribute("command", "update");
 	}
 	@RequestMapping("/member/memberUpdate.do")
-	public String doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	public String doGet(
+				@ModelAttribute("member") MemberVO member,
+				HttpSession session,
+				HttpServletRequest req, HttpServletResponse resp){
 		addCommandAttribute(req);
-		HttpSession session = req.getSession();
 		
 		// logincheckServlet  에서....
 		MemberVO authMember = (MemberVO) session.getAttribute("authMember");
 		
 		String authId = authMember.getMem_id();
-		MemberVO member = service.retrieveMember(authId);
+		member = service.retrieveMember(authId);
 		
 		String view = "member/memberForm02_ajax";
 		// 자기자신의 정보가 필요하다
@@ -49,14 +53,15 @@ public class MemberUpdateController {
 	}
 	
 	@RequestMapping(value="/member/memberUpdate.do", method=RequestMethod.POST)
-	public String doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	public String doPost(
+				@ModelAttribute("member") MemberVO member,
+				HttpSession session,
+				HttpServletRequest req, HttpServletResponse resp) {
 		addCommandAttribute(req);
 		
 //		req.setCharacterEncoding("utf-8");
 //		1. 요청 접수
-		MemberVO member = new MemberVO();
 		req.setAttribute("member", member); //문제 생길까바 미리 집어넣음.
-		HttpSession session = req.getSession();
 		
 		// logincheckServlet  에서....
 		MemberVO authMember = (MemberVO) session.getAttribute("authMember");

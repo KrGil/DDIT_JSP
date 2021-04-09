@@ -29,7 +29,7 @@
 	<h4>가입양식</h4>
 	<!--  -->
 	<jsp:useBean id="member" class="kr.or.ddit.vo.MemberVO" scope="request"></jsp:useBean>
-	<jsp:useBean id="errors" class="java.util.LinkedHashMap"scope="request"></jsp:useBean>
+	<jsp:useBean id="errors" class="java.util.LinkedHashMap" scope="request"></jsp:useBean>
 	<%
 		// <jsp:useBean이 밑의 두 줄을 의미한다.
 		// 	MemberVO member = (MemberVO) request.getAttribute("member");

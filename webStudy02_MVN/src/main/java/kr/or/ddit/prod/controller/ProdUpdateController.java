@@ -16,10 +16,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import kr.or.ddit.enumpkg.ServiceResult;
-import kr.or.ddit.member.controller.HandlerMapping;
-import kr.or.ddit.member.controller.RequestMapping;
 import kr.or.ddit.mvc.annotation.Controller;
+import kr.or.ddit.mvc.annotation.HandlerMapping;
+import kr.or.ddit.mvc.annotation.RequestMapping;
 import kr.or.ddit.mvc.annotation.RequestMethod;
+import kr.or.ddit.mvc.annotation.resolvers.ModelAttribute;
+import kr.or.ddit.mvc.annotation.resolvers.RequestParam;
 import kr.or.ddit.prod.dao.IOthersDAO;
 import kr.or.ddit.prod.dao.OthersDAOImpl;
 import kr.or.ddit.prod.service.IProdService;
@@ -45,14 +47,11 @@ public class ProdUpdateController {
 		req.setAttribute("command", "update");
 	}
 	@RequestMapping("/prod/prodUpdate.do")
-	public String updateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	public String updateForm(
+			@RequestParam("what") String prod_id,
+			HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		addAttribute(req);
 		addCommandAttribute(req);
-		String prod_id = req.getParameter("what");
-		if(StringUtils.isBlank(prod_id)) {
-			resp.sendError(400);
-			return null;
-		}
 		
 		ProdVO prod =  service.retrieveProd(prod_id);
 		req.setAttribute("prod", prod);
@@ -60,20 +59,16 @@ public class ProdUpdateController {
 		return view;
 	}
 	@RequestMapping(value="/prod/prodUpdate.do", method=RequestMethod.POST)
-	public String updateProcess(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	public String updateProcess(
+			@ModelAttribute("prod") ProdVO prod,
+			HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 //		ProdVO prod;
 //		createProd(prod)
 //		prod.getProd_id();
 //		등록 성공시: /prodView.do로 이동.
-		ProdVO prod = new ProdVO();
 		req.setAttribute("prod", prod);
 		
 		// 값 가져오기(vo에 담기 !단, name과 vo변수명이 같을 시)
-		try {
-			BeanUtils.populate(prod, req.getParameterMap());
-		} catch (IllegalAccessException | InvocationTargetException e) {
-			throw new RuntimeException(e);
-		}
 		logger.info("{}", prod);
 		
 		// 2. 검증( 데이터의 목적, 경로에 따라 방법이 달라져야 한다.)

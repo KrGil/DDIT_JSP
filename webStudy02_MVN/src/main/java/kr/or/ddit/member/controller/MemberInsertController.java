@@ -17,7 +17,9 @@ import kr.or.ddit.enumpkg.ServiceResult;
 import kr.or.ddit.member.service.IMemberService;
 import kr.or.ddit.member.service.MemberServiceImpl;
 import kr.or.ddit.mvc.annotation.Controller;
+import kr.or.ddit.mvc.annotation.RequestMapping;
 import kr.or.ddit.mvc.annotation.RequestMethod;
+import kr.or.ddit.mvc.annotation.resolvers.ModelAttribute;
 import kr.or.ddit.vo.MemberVO;
 
 @Controller
@@ -25,25 +27,19 @@ public class MemberInsertController {
 	private IMemberService service = new MemberServiceImpl();
 	
 	@RequestMapping("/member/memberInsert.do")
-	public String form(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	public String form()  {
 		String view = "member/memberForm";
 		return view;
 	}
 
 	@RequestMapping(value = "/member/memberInsert.do", method =RequestMethod.POST)
-	public String process(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	public String process(
+			@ModelAttribute("member") MemberVO member, 
+			HttpServletRequest req, 
+			HttpServletResponse resp) throws ServletException, IOException {
 		
 //		1. 요청 접수
-		MemberVO member = new MemberVO();
-		req.setAttribute("member", member); //문제 생길까바 미리 집어넣음.
-		
-		// 규칙성 Mem_id와 변수명 mem_id가 같다. 그럼 reflection을 쓸 수 있다.
-//		member.setMem_id(req.getParameter("mem_id"));
-		try {
-			BeanUtils.populate(member, req.getParameterMap());
-		} catch (IllegalAccessException | InvocationTargetException e) {
-			throw new RuntimeException(e);
-		}
+		//ModelAttributeArgumentResolver에서 처리하게끔
 		
 //		2. 검증( 데이터의 목적, 경로에 따라 방법이 달라져야 한다.)
 		Map<String, String> errors = new LinkedHashMap<String, String>();
@@ -57,20 +53,20 @@ public class MemberInsertController {
 			ServiceResult result = service.createMember(member);
 			switch (result) {
 			case PKDUPLICATED:
-				view = "/WEB-INF/views/member/memberForm02_ajax.jsp";
+				view = "member/memberForm02_ajax";
 				message = "아이디 중복";
 				break;
 			case OK:
-				view = "redirect:/login/loginForm.jsp";
+				view = "redirect:login/loginForm";
 				break;
 			default:
 				message = "서버 오류, 잠시 후 다시 시도해주세요.";
-				view = "/WEB-INF/views/member/memberForm02_ajax.jsp";
+				view = "member/memberForm02_ajax";
 				break;
 			}
 		} else {
 			// 검증 불통
-			view = "/WEB-INF/views/member/memberForm02_ajax.jsp";
+			view = "views/member/memberForm02_ajax";
 		}
 
 		req.setAttribute("message", message);

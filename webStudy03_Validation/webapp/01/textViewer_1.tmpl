@@ -1,0 +1,20 @@
+<html>
+	<body>
+		<h4>Text file viewer</h4>
+		<select id="textFile">
+			%options%
+		</select>
+		<!-- src 속성의 주소값 : ex) textView.do?textFile=filename(path?) -->
+		<iframe id="viewer" src="textView.do?textFile=localhost_access_log.2021-03-09.txt"></iframe>
+	</body>
+	<script type="text/javascript">
+	var select = document.querySelector("#textFile");
+	select.onchange = function(event) {
+		var a = select.value;
+		console.log(a);
+		var iframe = document.querySelector("#viewer");
+		iframe.setAttribute("src", "textView.do?textFile="+a)
+		
+	}	
+	</script>
+</html>

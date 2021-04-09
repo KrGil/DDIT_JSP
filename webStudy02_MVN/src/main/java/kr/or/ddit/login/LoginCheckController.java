@@ -14,11 +14,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import kr.or.ddit.enumpkg.ServiceResult;
-import kr.or.ddit.member.controller.RequestMapping;
 import kr.or.ddit.member.service.AuthenticateServiceImpl;
 import kr.or.ddit.member.service.IAuthenticateService;
 import kr.or.ddit.mvc.annotation.Controller;
+import kr.or.ddit.mvc.annotation.RequestMapping;
 import kr.or.ddit.mvc.annotation.RequestMethod;
+import kr.or.ddit.mvc.annotation.resolvers.ModelAttribute;
+import kr.or.ddit.mvc.annotation.resolvers.RequestParam;
 import kr.or.ddit.vo.MemberVO;
 
 //@WebServlet("/login/loginCheck.do")
@@ -29,18 +31,17 @@ public class LoginCheckController {
 	private IAuthenticateService service = new AuthenticateServiceImpl();
 	
 	@RequestMapping(value="/login/loginCheck.do", method=RequestMethod.POST)
-	public String login(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		HttpSession session = req.getSession();
+	public String login(
+			@RequestParam("mem_pass") String mem_pass,
+			@RequestParam("mem_id") String mem_id,
+			HttpServletRequest req, HttpServletResponse resp, HttpSession session) throws ServletException, IOException {
 		// 로그인 한적도 없는 놈이 여기 접근하려고 한다.
 		if(session.isNew()) {
 			resp.sendError(400);
 			return null;
 		}
 		// 요청 분석
-		String mem_id = req.getParameter("mem_id");
-		String mem_pass = req.getParameter("mem_pass");
 		String view = null;
-//		boolean redirect = false;
 		String message = null;
 		boolean valid = validate(mem_id, mem_pass);
 		String saveId = req.getParameter("saveId");

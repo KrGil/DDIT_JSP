@@ -1,0 +1,49 @@
+<html>
+<head>
+	<script type= "text/javascript" src = "https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script type = "text/javascript">
+		$(function(){ //이 입력된 후에 script 작성해야함. == $(document).on("ready")...
+			const SRCPTRN = "%A?%N=%V";
+			const action = $("form")[0].action //id가 아니라 태그 명을 가지고 왔다. 그래서 몇개인지 모르기에 배열로 return
+// 			console.log($("#image"));
+			$("#image").on("change", function(event){
+				$("#imageArea").empty();
+// 				console.log(this.value);
+// 				console.log($(this).val());
+// 				this.form.submit();
+				// 1. img 태그 생성
+// 				var action = $("form")[0].attr("action") // $("form")[0] 후에 jquery가 풀려버림. 그래서 html 자체 메소드로 가져옴.
+				var name = this.name; // 넘어갈 param값
+// 				var value = this.value;		// 다중선택시 마지막 하나만 돌아온다.
+				var values = $(this).val(); // 다중 선택시 배열로 돌아온다.
+				var imgs = []
+				$(values).each(function(idx, value){
+					var src =  SRCPTRN.replace("%A", action)
+										.replace("%N", name)
+										.replace("%V", value)
+					img = $("<img>").attr("src", src);
+					imgs.push(img);
+				})
+				// 2. imageArea 에 img 태그를 innerHTML로 삽입
+				$("#imageArea").html(imgs);
+			})
+		})
+	</script>
+</head>
+<body>
+<h4>%today%</h4>
+<form action="image.do">
+	<select name = "image" id = "image" multiple>
+		%options%
+	</select>
+	<input type = "submit" value = "전송" style = "background-color : red;"/>
+</form>
+<div id="imageArea"></div>
+<script type="text/javascript">
+// 	var select = document.querySelector("#image");
+// 	select.onchange = function(event){
+// 		event.target.form.submit();
+// 	}
+</script>
+</body>
+</html>
