@@ -6,7 +6,7 @@ import javax.servlet.annotation.WebServlet;
 import java.io.*;
 
 @WebServlet("/01/textView_1.do")
-public class textServlet extends HttpServlet{
+public class textServlet_1 extends HttpServlet{
 	protected void doGet(HttpServletRequest req,
                      HttpServletResponse resp)
               throws ServletException,
@@ -18,7 +18,7 @@ public class textServlet extends HttpServlet{
 			return;
 		}
 		
-		String folder = textFormServlet.class.getClassLoader().getResource("datas").toString();
+		String folder = textFormServlet_1.class.getClassLoader().getResource("datas").toString();
 		folder = folder.substring(folder.indexOf("D"));
 		File textFile = new File(folder, textFilename);
 		if(!textFile.exists()) {

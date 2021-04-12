@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.catalina.startup.SetContextPropertiesRule;
 // 템플릿 클래스
 public abstract class AbstractUseTmplServlet extends HttpServlet{
 	protected ServletContext application;

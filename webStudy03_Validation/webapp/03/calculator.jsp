@@ -1,5 +1,5 @@
-<%@page import="kr.or.krgil.enumpkg.MimeType"%>
-<%@page import="kr.or.krgil.enumpkg.OperatorType"%>
+<%@page import="kr.or.ddit.enumpkg.MimeType"%>
+<%@page import="kr.or.ddit.enumpkg.OperatorType"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>

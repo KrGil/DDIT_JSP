@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/01/textViewer_1.tmpl")
-public class textFormServlet extends AbstractUseTmplServlet {
+public class textFormServlet_1 extends AbstractUseTmplServlet {
 	@Override
 	protected void setContentType(HttpServletResponse resp) {
 		resp.setContentType("text/html;charset=UTF-8");
@@ -28,7 +28,7 @@ public class textFormServlet extends AbstractUseTmplServlet {
 	protected void makeData(HttpServletRequest req) {
 		System.out.println("서블릿이 요청 받았음.");
 		
-		String folder = textFormServlet.class.getClassLoader().getResource("datas").toString();
+		String folder = textFormServlet_1.class.getClassLoader().getResource("datas").toString();
 		File contents = new File(folder.substring(folder.indexOf("D")));
 		String[] children = contents.list(new FilenameFilter() {
 			
