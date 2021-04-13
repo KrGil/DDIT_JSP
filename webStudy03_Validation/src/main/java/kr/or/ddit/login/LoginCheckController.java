@@ -72,15 +72,15 @@ public class LoginCheckController {
 				break;
 			case NOTEXIST  :
 //				redirect = true;
-				//	인증 실패시 loginForm.jsp로 이동
-				view = "redirect:login/loginForm";
+				//	인증 실패시 loginForm.jsp로 이동  
+				view = "redirect:/login/loginForm.jsp";
 				//  2) 인증 실패(아이디 상태 유지)
 				message = "아이디 오류";
 				break;
 			case INVALIDPASSWORD:
 //				redirect = true;
 				//	인증 실패시 loginForm.jsp로 이동
-				view = "redirect:login/loginForm";
+				view = "redirect:/login/loginForm.jsp";
 				//  2) 인증 실패(아이디 상태 유지)
 				message = "비번 오류";
 				session.setAttribute("failedId", mem_id);
@@ -89,7 +89,7 @@ public class LoginCheckController {
 		}else {
 			//	1) 검증
 //			redirect = true;
-			view = "redirect:login/loginForm";
+			view = "redirect:/login/loginForm.jsp";
 			message = "아이디나 비번 누락";
 		}
 			req.getSession().setAttribute("message", message);

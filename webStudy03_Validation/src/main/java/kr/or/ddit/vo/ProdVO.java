@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 
 import com.sun.istack.internal.NotNull;
 
+import kr.or.ddit.validator.InsertGroup;
 import kr.or.ddit.validator.UpdateGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,7 +49,7 @@ public class ProdVO implements Serializable {
 	private Integer prod_sale;
 	private String prod_outline;
 	private String prod_detail;
-	@NotBlank
+	@NotBlank(groups=InsertGroup.class)
 	private String prod_img;
 	private Integer prod_totalstock;
 	private String prod_insdate;

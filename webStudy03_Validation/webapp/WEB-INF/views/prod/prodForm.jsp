@@ -24,20 +24,9 @@
 <body>
 <jsp:useBean id="prod" class="kr.or.ddit.vo.ProdVO" scope="request" />
 <jsp:useBean id="errors" class="java.util.LinkedHashMap" scope="request" />
-<form method="post">	
+<form method="post" encType ="multipart/form-data">
+	<input type="hidden" name="prod_id" value="<%=prod.getProd_id() %>" />	
 	<table>
-		<% 
-			String command = (String) request.getAttribute("command");
-			if("update".equals(command)){
-			%>
-		<tr>
-			<td>
-				<input type="hidden" name = "prod_id" value =<%=prod.getProd_id() %>>
-			</td>
-		</tr>
-			<%
-			}
-		%>
 		<tr>
 			<th>상품명</th>
 			<td><input type="text" name="prod_name" required
@@ -55,7 +44,7 @@
 							= (List)request.getAttribute("lprodList");
 						for(Map<String,Object> lprod : lprodList){
 							%>
-							<option value="<%=lprod.get("lprod_gu")%>" <%=prod.getProd_lgu().equals(lprod.get("lprod_gu"))?"selected":""%>>
+							<option value="<%=lprod.get("lprod_gu")%>">
 								<%=lprod.get("lprod_nm") %>
 							</option>
 							<%
@@ -74,7 +63,7 @@
 						=(List) request.getAttribute("buyerList");
 					for(BuyerVO buyer : buyerList){
 						%>
-						<option value="<%=buyer.getBuyer_id() %>" class="<%=buyer.getBuyer_lgu() %>" <%=prod.getProd_buyer().equals(buyer.getBuyer_id())?"selected":""%>>
+						<option value="<%=buyer.getBuyer_id() %>" class="<%=buyer.getBuyer_lgu() %>">
 							<%=buyer.getBuyer_name() %>
 						</option>
 						<%
@@ -116,21 +105,15 @@
 		</tr>
 		<tr>
 			<th>이미지</th>
-			<td><input type="text" name="prod_img" required
-				value="<%=prod.getProd_img()%>" />
-				<span class="error"><%=errors.get("prod_img")%></span></td>
+			<td> <input type="file" name="prod_image" accept="image/*"/>
+				<span class="error"><%=errors.get("prod_img")%></span>
+			</td>
 		</tr>
 		<tr>
 			<th>재고</th>
 			<td><input type="number" name="prod_totalstock" required
 				value="<%=prod.getProd_totalstock()%>" />
 				<span class="error"><%=errors.get("prod_totalstock")%></span></td>
-		</tr>
-		<tr>
-			<th>입고일</th>
-			<td><input type="date" name="prod_insdate"
-				value="<%=prod.getProd_insdate()%>" />
-				<span class="error"><%=errors.get("prod_insdate")%></span></td>
 		</tr>
 		<tr>
 			<th>적정재고</th>
@@ -189,7 +172,7 @@
 	</table>
 </form>	
 	<script type="text/javascript">
-		let prod_buyerTag =	$("[name='prod_buyer']");
+		let prod_buyerTag =	$("[name='prod_buyer']").val("<%=prod.getProd_buyer() %>");
 		$("[name='prod_lgu']").on("change", function(){
 			let selectedLgu = $(this).val();
 			if(selectedLgu){
@@ -199,10 +182,18 @@
 				prod_buyerTag.find("option").show();
 			}
 			prod_buyerTag.find("option:first").show();
-		});
+		}).val("<%=prod.getProd_lgu() %>");
 	</script>
 </body>
 </html>
+
+
+
+
+
+
+
+
 
 
 

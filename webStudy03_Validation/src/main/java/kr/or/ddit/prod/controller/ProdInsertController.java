@@ -1,5 +1,6 @@
 package kr.or.ddit.prod.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
@@ -21,6 +22,8 @@ import kr.or.ddit.mvc.annotation.Controller;
 import kr.or.ddit.mvc.annotation.RequestMapping;
 import kr.or.ddit.mvc.annotation.RequestMethod;
 import kr.or.ddit.mvc.annotation.resolvers.ModelAttribute;
+import kr.or.ddit.mvc.annotation.resolvers.RequestPart;
+import kr.or.ddit.mvc.filter.wrapper.MultipartFile;
 import kr.or.ddit.prod.dao.IOthersDAO;
 import kr.or.ddit.prod.dao.OthersDAOImpl;
 import kr.or.ddit.prod.service.IProdService;
@@ -51,18 +54,25 @@ public class ProdInsertController{
 		return "prod/prodForm";
 	}
 	@RequestMapping(value="/prod/prodInsert.do", method=RequestMethod.POST)
-	public String doPost(
+	public String process(
 			@ModelAttribute("prod") ProdVO prod,
-			HttpServletRequest req) {
+			@RequestPart("prod_image") MultipartFile prod_image,
+			HttpServletRequest req) throws IOException {
+		addAttribute(req);
+		Map<String, List<String>> errors = new LinkedHashMap<>();
+		req.setAttribute("errors", errors);
+		String saveFolderUrl = "/prodImages";
 		
-		req.setAttribute("prod", prod);
-		
+		File saveFolder = new File(
+				req.getServletContext().getRealPath(saveFolderUrl));
+		if(!prod_image.isEmpty()) {
+			prod_image.saveTo(saveFolder);
+			prod.setProd_img(prod_image.getUniqueSaveName());
+		}
 		// 값 가져오기(vo에 담기 !단, name과 vo변수명이 같을 시)
 		
 		// 2. 검증( 데이터의 목적, 경로에 따라 방법이 달라져야 한다.)
 		// 누가 통과 못했는지, 검증결과 메시지
-		Map<String, List<String>> errors = new LinkedHashMap<>();
-		req.setAttribute("errors", errors);
 		
 		// 검증
 		boolean valid = new CommonValidator<ProdVO>()

@@ -78,7 +78,9 @@
 		</tr>
 		<tr>
 			<th>이미지</th>
-			<td><%=prod.getProd_img()%></td>
+			<td>
+				<img src="<%=request.getContextPath() %>/prodImages/<%= prod.getProd_img()%>"/>
+			</td>
 		</tr>
 		<tr>
 			<th>재고</th>

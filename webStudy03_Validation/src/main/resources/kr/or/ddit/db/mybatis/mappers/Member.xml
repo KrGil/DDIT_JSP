@@ -4,9 +4,8 @@
 
 	<select id="selectMemberForAuth" parameterType="string"
 		resultType="MemberVO">
-		SELECT mem_id, mem_pass, mem_name, mem_mail, mem_role
-		FROM
-		member
+		SELECT mem_id, mem_pass, mem_name, mem_mail, mem_role, mem_img
+		FROM member
 		WHERE mem_id = #{mem_id} AND MEM_DELETE IS NULL
 	</select>
 
@@ -33,7 +32,7 @@
 		FROM PROD INNER JOIN LPROD ON(PROD_LGU=LPROD_GU)
 		INNER JOIN BUYER ON(PROD_BUYER = BUYER_ID)
 		)
-		SELECT
+		SELECT 
 		MEM_ID, MEM_PASS, MEM_NAME,
 		MEM_REGNO1, MEM_REGNO2, TO_CHAR(MEM_BIR, 'YYYY-MM-DD') MEM_BIR,
 		MEM_ZIP, MEM_ADD1, MEM_ADD2, MEM_HOMETEL,
@@ -41,6 +40,7 @@
 		MEM_LIKE, MEM_MEMORIAL, TO_CHAR(MEM_MEMORIALDAY, 'YYYY-MM-DD') MEM_MEMORIALDAY,
 		MEM_MILEAGE, MEM_DELETE
 		, MEM_ROLE
+		, MEM_IMG
 		, PROD_ID, PROD_NAME
 		, PROD_COST, PROD_PRICE, PROD_MILEAGE
 		, LPROD_NM
@@ -66,6 +66,10 @@
 		MEM_LIKE = #{mem_like, jdbcType=VARCHAR},
 		MEM_MEMORIAL = #{mem_memorial,jdbcType=VARCHAR},
 		MEM_MEMORIALDAY = TO_DATE(#{mem_memorialday,jdbcType=DATE}, 'YYYY-MM-DD')
+		<if test = "mem_img!=null">
+		, MEM_IMG = #{mem_img,jdbcType=BLOB}
+		</if>
+		
 		WHERE MEM_ID = #{mem_id}
 	</update>
 
@@ -79,13 +83,16 @@
 		MEM_MEMORIAL, MEM_MEMORIALDAY,
 		MEM_MILEAGE
 		, MEM_ROLE
+		, MEM_IMG
 		) VALUES (
 		#{mem_id}, #{mem_pass}, #{mem_name},
 		#{mem_regno1}, #{mem_regno2}, TO_DATE(#{mem_bir}, 'YYYY-MM-DD'),
 		#{mem_zip}, #{mem_add1}, #{mem_add2},
 		#{mem_hometel}, #{mem_comtel}, #{mem_hp},
 		#{mem_mail}, #{mem_job}, #{mem_like},
-		#{mem_memorial}, TO_DATE(#{mem_memorialday}, 'YYYY-MM-DD'), 3000, 'ROLE_USER'
+		#{mem_memorial}, TO_DATE(#{mem_memorialday}, 'YYYY-MM-DD'), 3000
+		, 'ROLE_USER'
+		, #{mem_img,jdbcType=BLOB}
 		)
 	</insert>
 	<sql id="searchFrag">

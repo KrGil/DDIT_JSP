@@ -36,7 +36,7 @@
 		// 	MemberVO member = (MemberVO) request.getAttribute("member");
 		// 	if(member==null) member = new MemberVO();
 	%>
-	<form method="post" id="memberForm" >
+	<form method="post" id="memberForm" enctype="multipart/form-data">
 		<table>
 			<%
 				String command = (String) request.getAttribute("command");
@@ -55,10 +55,15 @@
 			%>
 			<tr>
 				<th>비밀번호</th>
-				<td><input type="text" name="mem_pass" 
-					 />
+				<td><input type="text" name="mem_pass"/>
 				<span class="error"><%=errors.get("mem_pass")%></span></td>
 			</tr>
+			<tr>
+				<th>프로필</th>
+				<td>
+					<input type="file" name="mem_image" accept="image/*">
+				</td>
+			<tr>
 			<tr>
 				<th>이름</th>
 				<td><input type="text" name="mem_name" 

@@ -21,7 +21,10 @@ import kr.or.ddit.member.service.MemberServiceImpl;
 import kr.or.ddit.mvc.annotation.Controller;
 import kr.or.ddit.mvc.annotation.RequestMapping;
 import kr.or.ddit.mvc.annotation.RequestMethod;
+import kr.or.ddit.mvc.annotation.resolvers.BadRequestException;
 import kr.or.ddit.mvc.annotation.resolvers.ModelAttribute;
+import kr.or.ddit.mvc.annotation.resolvers.RequestPart;
+import kr.or.ddit.mvc.filter.wrapper.MultipartFile;
 import kr.or.ddit.validator.CommonValidator;
 import kr.or.ddit.validator.UpdateGroup;
 import kr.or.ddit.vo.MemberVO;
@@ -36,6 +39,7 @@ public class MemberUpdateController {
 	@RequestMapping("/member/memberUpdate.do")
 	public String doGet(
 				@ModelAttribute("member") MemberVO member,
+				
 				HttpSession session,
 				HttpServletRequest req, HttpServletResponse resp){
 		addCommandAttribute(req);
@@ -58,8 +62,9 @@ public class MemberUpdateController {
 	@RequestMapping(value="/member/memberUpdate.do", method=RequestMethod.POST)
 	public String doPost(
 				@ModelAttribute("member") MemberVO member,
+				@RequestPart(value="mem_image", required=false) MultipartFile mem_image,
 				HttpSession session,
-				HttpServletRequest req, HttpServletResponse resp) {
+				HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		addCommandAttribute(req);
 		
 //		req.setCharacterEncoding("utf-8");
@@ -71,7 +76,15 @@ public class MemberUpdateController {
 		// setid ?????
 		String authId = authMember.getMem_id();
 		member.setMem_id(authId);
-		
+
+		if(mem_image!=null && !mem_image.isEmpty()) {
+			String mime = mem_image.getContentType();
+			if(!mime.startsWith("image/")) {
+				throw new BadRequestException("이미지 이외의 프로필은 처리 불가.");
+			}
+			byte[] mem_img = mem_image.getBytes();
+			member.setMem_img(mem_img);
+		}
 		// 규칙성 Mem_id와 변수명 mem_id가 같다. 그럼 reflection을 쓸 수 있다.
 //		member.setMem_id(req.getParameter("mem_id"));
 		

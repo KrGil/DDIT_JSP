@@ -110,12 +110,15 @@
 		    PROD_LGU = #{prod_lgu,jdbcType=VARCHAR},    PROD_BUYER= #{prod_buyer,jdbcType=VARCHAR},
 		    PROD_COST=#{prod_cost,jdbcType=NUMERIC},    PROD_PRICE=#{prod_price,jdbcType=NUMERIC},
 		    PROD_SALE=#{prod_sale,jdbcType=NUMERIC},    PROD_OUTLINE= #{prod_outline,jdbcType=VARCHAR},
-		    PROD_DETAIL=#{prod_detail,jdbcType=VARCHAR},    PROD_IMG=#{prod_img,jdbcType=VARCHAR},
+		    PROD_DETAIL=#{prod_detail,jdbcType=VARCHAR},    
 		    PROD_TOTALSTOCK=#{prod_totalstock,jdbcType=NUMERIC},    PROD_INSDATE= SYSDATE,
 		    PROD_PROPERSTOCK=#{prod_properstock,jdbcType=NUMERIC},    PROD_SIZE=#{prod_size,jdbcType=VARCHAR},
 		    PROD_COLOR= #{prod_color,jdbcType=VARCHAR},    PROD_DELIVERY=#{prod_delivery,jdbcType=VARCHAR},
 		    PROD_UNIT= #{prod_unit,jdbcType=VARCHAR},    PROD_QTYIN= #{prod_qtyin,jdbcType=NUMERIC},
 		    PROD_QTYSALE=#{prod_qtysale,jdbcType=NUMERIC},    PROD_MILEAGE=#{prod_mileage,jdbcType=NUMERIC}
+		    <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(prod_img)">
+		    	, PROD_IMG 	= 	#{prod_img,jdbcType=VARCHAR}
+		    </if>
 		WHERE PROD_ID = #{prod_id,jdbcType=VARCHAR}
 	</update>
 </mapper>
