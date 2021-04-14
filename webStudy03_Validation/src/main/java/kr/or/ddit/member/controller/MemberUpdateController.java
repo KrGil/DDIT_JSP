@@ -50,7 +50,7 @@ public class MemberUpdateController {
 		String authId = authMember.getMem_id();
 		member = service.retrieveMember(authId);
 		
-		String view = "member/memberForm02_ajax";
+		String view = "member/memberForm";
 		// 자기자신의 정보가 필요하다
 		req.setAttribute("member", member);
 		
@@ -101,7 +101,7 @@ public class MemberUpdateController {
 			ServiceResult result = service.modifyMember(member);
 			switch (result) {
 			case INVALIDPASSWORD:
-				view = "member/memberForm02_ajax";
+				view = "member/memberForm";
 				message = "비번 오류";
 				break;
 			case OK:
@@ -110,12 +110,12 @@ public class MemberUpdateController {
 				break;
 			default:
 				message = "서버 오류, 잠시 후 다시 시도해주세요.";
-				view = "member/memberForm02_ajax";
+				view = "member/memberForm";
 				break;
 			}
 		} else {
 			// 검증 불통
-			view = "member/memberForm02_ajax";
+			view = "member/memberForm";
 		}
 
 		req.setAttribute("message", message);

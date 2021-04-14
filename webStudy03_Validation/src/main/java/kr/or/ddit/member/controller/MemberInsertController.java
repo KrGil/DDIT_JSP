@@ -80,7 +80,7 @@ public class MemberInsertController {
 			ServiceResult result = service.createMember(member);
 			switch (result) {
 			case PKDUPLICATED:
-				view = "member/memberForm02_ajax";
+				view = "member/memberForm";
 				message = "아이디 중복";
 				break;
 			case OK:
@@ -88,12 +88,12 @@ public class MemberInsertController {
 				break;
 			default:
 				message = "서버 오류, 잠시 후 다시 시도해주세요.";
-				view = "member/memberForm02_ajax";
+				view = "member/memberForm";
 				break;
 			}
 		} else {
 			// 검증 불통
-			view = "member/memberForm02_ajax";
+			view = "member/memberForm";
 		}
 
 		req.setAttribute("message", message);

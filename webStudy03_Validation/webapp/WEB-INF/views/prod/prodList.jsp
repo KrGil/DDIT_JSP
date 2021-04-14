@@ -1,10 +1,6 @@
-<%@page import="kr.or.ddit.vo.BuyerVO"%>
-<%@page import="java.util.Map"%>
-<%@page import="kr.or.ddit.vo.PagingVO"%>
-<%@page import="kr.or.ddit.vo.ProdVO"%>
-<%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core"  prefix="c"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,32 +12,21 @@
 <form id="searchForm">
 	<select name="prod_lgu">
 		<option value>상품분류</option>
-		<% 
-			List<Map<String,Object>> lprodList 
-				= (List)request.getAttribute("lprodList");
-			for(Map<String,Object> lprod : lprodList){
-				%>
-				<option value="<%=lprod.get("lprod_gu")%>">
-					<%=lprod.get("lprod_nm") %>
-				</option>
-				<%
-			}
-		%>
+		
+		<c:forEach items="${lprodList}" var="lprod" >
+			<option value="${lprod.lprod_gu}">
+				${lprod.lprod_nm}
+			</option>
+		</c:forEach>
 		
 	</select>
 	<select name="prod_buyer">
 		<option value>거래처선택</option>
-		<%
-			List<BuyerVO> buyerList 
-				=(List) request.getAttribute("buyerList");
-			for(BuyerVO buyer : buyerList){
-				%>
-				<option value="<%=buyer.getBuyer_id() %>" class="<%=buyer.getBuyer_lgu() %>">
-					<%=buyer.getBuyer_name() %>
-				</option>
-				<%
-			}
-		%>
+		<c:forEach items="${buyerList }" var="buyer">
+			<option value="${buyer.buyer_id}" class="${buyer.buyer_lgu}">
+					${buyer.buyer_name }
+			</option>
+		</c:forEach>
 	</select>
 	<input type="text" name="prod_name" />
 	<input type="text" name="page" />
@@ -72,7 +57,7 @@
 	</tr>
 </tfoot>
 </table>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/prod/prodList.js"></script>
+<script type="text/javascript" src="${cPath }/js/prod/prodList.js"></script>
 
 </body>
 </html>

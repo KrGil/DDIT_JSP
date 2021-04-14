@@ -1,42 +1,34 @@
 package kr.or.ddit.servlet01;
 
 import javax.servlet.http.*;
+
+import kr.or.ddit.mvc.annotation.Controller;
+import kr.or.ddit.mvc.annotation.RequestMapping;
+import kr.or.ddit.mvc.annotation.resolvers.RequestParam;
+
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 
 import java.io.*;
 import java.net.URLEncoder;
 
-@WebServlet("/01/image.do")
-public class ImageServlet2 extends HttpServlet{
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-		resp.setContentType("text/html;charset=utf-8");
-		req.setCharacterEncoding("utf-8");
-		System.out.println("in /01/image.do");
-		String imageFilename = req.getParameter("image");
-//		
-//		String mimeType = getServletContext().getMimeType(imageFilename);
-//		Cookie cookies = new Cookie(imageFilename, mimeType);
-//		cookies.setMaxAge(60*60);
-//		cookies.setPath(req.getContextPath());
-//		resp.addCookie(cookies);
-//		
-//		System.out.print(cookies);
-		if(imageFilename == null || imageFilename.isEmpty()) { // 만약 null일때 400
-			resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
-			return;
-		}
-		String folder = "d:/contents";
+//@WebServlet("/01/image.do")
+@Controller
+public class ImageServlet2{
+	@RequestMapping("/01/image.do")
+	public String doGet(
+			@RequestParam("image") String imageFilename,
+			HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+		String folder = req.getServletContext().getInitParameter("contentFolder");
 		File imageFile = new File(folder, imageFilename); // 만약 imageFilename 폴더가 없을 때 404
 		if(!imageFile.exists()) {
 			resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return null;
 		}
-		
-		String mime = getServletContext().getMimeType(imageFilename); // tomcat에 명령을 내리는 메서드
+		String mime = req.getServletContext().getMimeType(imageFilename); // tomcat에 명령을 내리는 메서드
 		if(mime == null || !mime.startsWith("image/")) {
 			resp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
-			return;
+			return null;
 		}
 		
 		resp.setContentType(mime);
@@ -51,6 +43,6 @@ public class ImageServlet2 extends HttpServlet{
 				os.write(buffer, 0, pointer); // 새로운 버퍼가 시작될 때 항상 0(첫 시작)부터 pointer까지 읽어라
 			}
 		}
-		//javac ImageServlet.java -d ..\classes -encoding UTF-8
+		return null;
 	}
 }

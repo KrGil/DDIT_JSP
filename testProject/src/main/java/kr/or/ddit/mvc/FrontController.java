@@ -8,12 +8,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import kr.or.krgil.mvc.annotation.HandlerAdapter;
-import kr.or.krgil.mvc.annotation.HandlerMapping;
-import kr.or.krgil.mvc.annotation.IHandlerAdapter;
-import kr.or.krgil.mvc.annotation.IHandlerMapping;
-import kr.or.krgil.mvc.annotation.RequestMapping;
-import kr.or.krgil.mvc.annotation.RequestMappingInfo;
+import kr.or.ddit.mvc.annotation.HandlerAdapter;
+import kr.or.ddit.mvc.annotation.HandlerMapping;
+import kr.or.ddit.mvc.annotation.IHandlerAdapter;
+import kr.or.ddit.mvc.annotation.IHandlerMapping;
+import kr.or.ddit.mvc.annotation.RequestMappingInfo;
 
 public class FrontController extends HttpServlet {
 	private IHandlerMapping handlerMapping;

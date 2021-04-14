@@ -77,6 +77,7 @@ public class ProdUpdateController {
 		// 누가 통과 못했는지, 검증결과 메시지
 		Map<String, List<String>> errors = new LinkedHashMap<>();
 		req.setAttribute("errors", errors);
+		
 		String saveFolderUrl = "/prodImages";
 		File saveFolder = new File(
 				req.getServletContext().getRealPath(saveFolderUrl));

@@ -1,6 +1,9 @@
+<%@page import="java.util.Map.Entry"%>
+<%@page import="java.util.Map"%>
+<%@page import="kr.or.ddit.Constants"%>
 <%@page import="kr.or.ddit.vo.MemberVO"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix = "c"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,6 +12,14 @@
 </head>
 <body>
 <h4>Welcome Page~</h4>
+<pre>
+	누적 방문자수 : <%=application.getAttribute(Constants.SESSIONCOUNTATTRNAME) %>
+</pre>
+<ul>
+	<c:forEach items="${userList }" var="user">
+		<li>${user.mem_name }</li>
+	</c:forEach>
+</ul>
 <%	// 인증 시 무조건post방식으로 
 	MemberVO authMember = (MemberVO)session.getAttribute("authMember");
 	if(authMember != null){

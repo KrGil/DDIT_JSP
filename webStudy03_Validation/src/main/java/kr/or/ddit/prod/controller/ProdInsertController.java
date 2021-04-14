@@ -61,10 +61,14 @@ public class ProdInsertController{
 		addAttribute(req);
 		Map<String, List<String>> errors = new LinkedHashMap<>();
 		req.setAttribute("errors", errors);
+
+//		EDD/TDD
 		String saveFolderUrl = "/prodImages";
-		
 		File saveFolder = new File(
 				req.getServletContext().getRealPath(saveFolderUrl));
+		if(!saveFolder.exists()) {
+			saveFolder.mkdirs();
+		}
 		if(!prod_image.isEmpty()) {
 			prod_image.saveTo(saveFolder);
 			prod.setProd_img(prod_image.getUniqueSaveName());

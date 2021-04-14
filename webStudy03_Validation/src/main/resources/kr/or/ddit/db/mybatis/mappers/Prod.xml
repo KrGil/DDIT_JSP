@@ -55,9 +55,19 @@
 			autoMapping="true">
 			<id property="buyer_id" column="BUYER_ID"/>
 		</association>
+		<collection property="userList" javaType="java.util.Set" ofType="MemberVO"
+			autoMapping="true">
+			<id property="mem_id" column="MEM_ID"/>
+		</collection>
 	</resultMap>
 	<select id="selectProd" parameterType="string" resultMap="prodMap">
-		SELECT
+		WITH CARTMEMBER AS 
+		(
+		    SELECT DISTINCT MEM_ID, MEM_NAME, MEM_HP, MEM_MAIL, CART_PROD
+		    FROM CART INNER JOIN MEMBER ON(CART_MEMBER = MEM_ID)
+		)
+		
+		SELECT 
 		    PROD_ID, PROD_NAME, PROD_LGU
 		    , PROD_BUYER, PROD_COST, PROD_PRICE
 		    , PROD_SALE, PROD_OUTLINE, PROD_DETAIL
@@ -68,9 +78,11 @@
 		    , LPROD_NM
 		    , BUYER_ID, BUYER_NAME, BUYER_ADD1
 		    , BUYER_COMTEL, BUYER_CHARGER
+		    , CARTMEMBER.*
 		FROM PROD INNER JOIN LPROD ON (PROD_LGU = LPROD_GU)
 		          INNER JOIN BUYER ON (PROD_BUYER = BUYER_ID)
-	    WHERE PROD_ID = #{prod_id}      	
+		          LEFT OUTER JOIN CARTMEMBER ON (PROD_ID = CART_PROD)
+		WHERE PROD_ID = #{prod_id}      	
 	</select>
 	<insert id="insertProd" parameterType="ProdVO">
 		<selectKey resultType="string" order="BEFORE" keyProperty="prod_id">

@@ -1,7 +1,5 @@
 package kr.or.ddit.vo;
 
-import static org.junit.Assume.assumeNoException;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Set;

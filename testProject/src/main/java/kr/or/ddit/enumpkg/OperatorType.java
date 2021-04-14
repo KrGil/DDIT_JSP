@@ -1,6 +1,6 @@
 package kr.or.ddit.enumpkg;
 
-import kr.or.krgil.vo.CalculateVO;
+import kr.or.ddit.vo.CalculateVO;
 
 public enum OperatorType {
 	PLUS('+', new RealOperator() { // 인터페이스 구현체

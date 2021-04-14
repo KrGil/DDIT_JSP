@@ -2,6 +2,7 @@
 <%@page import="kr.or.ddit.vo.ProdVO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,25 +11,22 @@
 
 </head>
 <body>
-	<%
-		ProdVO prod = (ProdVO) request.getAttribute("prod");
-	%>
-	<form  action="<%=request.getContextPath() %>/prod/prodUpdate.do" >
-			<input type="hidden" name="prod_id"value ="<%=prod.getProd_id()%>"/>
+	<form  action="${cPath }/prod/prodUpdate.do" >
+		<input type="hidden" name="prod_id"value ="${prod.prod_id}"/>
 	</form>
 	<table>
 		<tr>
 			<th>상품코드</th>
-			<td><%=prod.getProd_id()%></td>
+			<td>${prod.prod_id}</td>
 		</tr>
 		
 		<tr>
 			<th>상품명</th>
-			<td><%=prod.getProd_name()%></td>
+			<td>${prod.prod_name}</td>
 		</tr>
 		<tr>
 			<th>분류명</th>
-			<td><%=prod.getLprod_nm()%></td>
+			<td>${prod.lprod_nm}</td>
 		</tr>
 		<tr>
 			<th>거래처 정보</th>
@@ -44,13 +42,10 @@
 					</thead>
 					<tbody>
 						<tr>
-							<%
-								BuyerVO buyer = prod.getBuyer();
-							%>
-							<td><%=buyer.getBuyer_name() %></td>
-							<td><%=buyer.getBuyer_charger() %></td>
-							<td><%=buyer.getBuyer_comtel() %></td>
-							<td><%=buyer.getBuyer_add1() %></td>
+							<td>${buyer.buyer_name}</td>
+							<td>${buyer.buyer_charger}</td>
+							<td>${buyer.buyer_comtel}</td>
+							<td>${buyer.buyer_add1}</td>
 						</tr>
 					</tbody>
 				</table>
@@ -58,69 +53,69 @@
 		</tr>
 		<tr>
 			<th>구매가</th>
-			<td><%=prod.getProd_cost()%></td>
+			<td>${prod.prod_cost}</td>
 		</tr>
 		<tr>
 			<th>판매가</th>
-			<td><%=prod.getProd_price()%></td>
+			<td>${prod.prod_price}</td>
 		</tr>
 		<tr>
 			<th>세일가</th>
-			<td><%=prod.getProd_sale()%></td>
+			<td>${prod.prod_sale}</td>
 		</tr>
 		<tr>
 			<th>상품정보</th>
-			<td><%=prod.getProd_outline()%></td>
+			<td>${prod.prod_outline}</td>
 		</tr>
 		<tr>
 			<th>상세정보</th>
-			<td><%=prod.getProd_detail()%></td>
+			<td>${prod.prod_detail}</td>
 		</tr>
 		<tr>
 			<th>이미지</th>
 			<td>
-				<img src="<%=request.getContextPath() %>/prodImages/<%= prod.getProd_img()%>"/>
+				<img src="${cPath }/prodImages/${prod.prod_img}"/>
 			</td>
 		</tr>
 		<tr>
 			<th>재고</th>
-			<td><%=prod.getProd_totalstock()%></td>
+			<td>${prod.prod_totalstock}</td>
 		</tr>
 		<tr>
 			<th>입고일</th>
-			<td><%=prod.getProd_insdate()%></td>
+			<td>${prod.prod_insdate}</td>
 		</tr>
 		<tr>
 			<th>적정재고</th>
-			<td><%=prod.getProd_properstock()%></td>
+			<td>${prod.prod_properstock}</td>
 		</tr>
 		<tr>
 			<th>크기</th>
-			<td><%=prod.getProd_size()%></td>
+			<td>${prod.prod_size}</td>
 		</tr>
 		<tr>
 			<th>색상</th>
-			<td><%=prod.getProd_color()%></td>
+			<td>${prod.prod_color}</td>
 		</tr>
 		<tr>
 			<th>배송방법</th>
-			<td><%=prod.getProd_delivery()%></td>
+			<td>${prod.prod_delivery}</td>
 		</tr>
 		<tr>
 			<th>단위</th>
-			<td><%=prod.getProd_unit()%></td>
+			<td>${prod.prod_unit}</td>
 		</tr>
 		<tr>
 			<th>입고량</th>
-			<td><%=prod.getProd_qtyin()%></td>
+			<td>${prod.prod_qtyin}</td>
 		</tr>
 		<tr>
 			<th>판매량</th>
-			<td><%=prod.getProd_qtysale()%></td>
+			<td>${prod.prod_qtysale}</td>
 		</tr>
 		<tr>
 			<th>마일리지</th>
-			<td><%=prod.getProd_mileage()%></td>
+			<td>${prod.prod_mileage}</td>
 		</tr>
 		<tr>
 			<td colspan="2">
@@ -139,7 +134,7 @@
 		$(".controlBtn").on("click", function(){
 			let btnId = $(this).prop("id");
 			if(btnId=="updateBtn"){
-				location.href="<%=request.getContextPath()%>/prod/prodUpdate.do?what=<%=prod.getProd_id()%>";
+				location.href="${cPath}/prod/prodUpdate.do?what=${prod.prod_id}";
 			}
 		});
 	</script>
