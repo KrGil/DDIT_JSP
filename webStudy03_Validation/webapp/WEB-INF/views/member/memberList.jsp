@@ -33,7 +33,12 @@
 				<tr>
 					<td>${member.rnum} </td>
 					<td>${member.mem_id}</td>
-					<td>${member.mem_name}</td>
+					<td>
+					<c:url value="/member/memberView.do" var="viewURL">
+						<c:param name="who" value="${member.mem_id }"></c:param>
+					</c:url>
+						<a href="${viewURL}">${member.mem_name}</a>
+					</td>
 					<td>${member.mem_mail}</td>
 					<td>${member.mem_hp}</td>
 					<td>${member.mem_mileage}</td>
@@ -58,14 +63,13 @@
 		<tr>
 			<td colspan="6">
 					<form id = "searchForm">
-					
 						<input type = "text" name = "searchType" value="${pagingVO.simpleSearch.searchType }"/>
 						<input type = "text" name = "searchWord" value="${pagingVO.simpleSearch.searchWord }"/>
 						<input type = "text" name = "page" />
 					</form>
 					<div id = "searchUI">
 						<select name = "searchType">
-							<option value>전체</option>
+							<option >전체</option>
 							<option value="name">이름</option>
 							<option value="address">지역</option>
 						</select>

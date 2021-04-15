@@ -20,7 +20,7 @@
 <h4>EL(Expression Language : 표현언어)</h4>
 <pre>
 	: (속성)데이터를 표현(출력) 할 목적으로 정의된 스크립트 언어
-	
+	***스크립트언어의 특성 - 연산을 기준으로 계산.
 	1. 네개의 영역의 속성들을 표현할 때 사용(*****).
 	2. 연산자 지원
 		산술연산자 : +-*/%   --->   ${2/3 }, ${"2"+"3" }, ${"2"+3 }, \${ "a"+3 }
@@ -43,7 +43,7 @@
 			2) null 여부
 			3) type check
 				String : length > 0
-				array : length >0
+				array : length > 0
 				collection : size >0
 				이 외의 것이면 비교하지 않고 2번에서 끝낸다.		
 		++, --를 지원하지 않는다.
@@ -95,7 +95,7 @@
 		1. scope : pageScope, requestScope, sessionScope, applicationScope
 		2. parameter : param (Map&gt;String, String&lt;), 
 					paramValues (Map&gt;String, String[]&lt;)
-		<a href="?param1=value1&param1=value2">파라미터전달</a>
+			<a href="?param1=value1&param1=value2">파라미터전달</a>
 			<%=request.getParameter("param1") %>, 
 			${param.param1 }, ${param["param1"] }
 			<%=request.getParameterValues("param1") %>
@@ -106,16 +106,16 @@
 			<%=request.getHeader("user-agent") %>
 			${header.user-agent }->0이 나온다, ${headerValues["user-agent"][0] }
 		4. cookie : cookie (Map&gt;String, Cookie&lt;)
-		<%=new CookieUtils(request).getCookie("JSESSIONID").getValue() %>
-		${cookie.JSESSIONID.value }, 
-		${cookie["JSESSIONID"]["value"] }
-		${pageContext.session.id }
+			<%=new CookieUtils(request).getCookie("JSESSIONID").getValue() %>
+			${cookie.JSESSIONID.value }, 
+			${cookie["JSESSIONID"]["value"] }
+			${pageContext.session.id }
 		5. context parameter(초기화 파라미터) : initParam (Map&gt;String,String&lt;)
-		<%=application.getInitParameter("contentFolder") %>
-		${initParam.contentFolder }
-		${initParam["contentFolder"] }
-		6. pageContext
-		${pageContext.request.contextPath }
+			<%=application.getInitParameter("contentFolder") %>
+			${initParam.contentFolder }
+			${initParam["contentFolder"] }
+		6. pageContext(나머지는 모두 맵형식이지만  pageContext자체를 가지고 있음.)
+			${pageContext.request.contextPath }
 		
 </pre>	
 </body>

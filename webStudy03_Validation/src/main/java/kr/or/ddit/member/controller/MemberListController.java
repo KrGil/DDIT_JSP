@@ -25,6 +25,16 @@ import kr.or.ddit.vo.SearchVO;
 public class MemberListController {
 	IMemberService service = new MemberServiceImpl();
 	
+	@RequestMapping(value="/member/memberView.do")
+	public String view(
+						@RequestParam(value="who") String who,
+						HttpServletRequest req) {
+		String view = null;
+		MemberVO member = service.retrieveMember(who);
+		req.setAttribute("member", member);
+		return "member/mypage";
+	}
+	
 	@RequestMapping("/member/memberList.do")
 	public String MemberList(
 			@ModelAttribute(value="search") SearchVO searchVO,

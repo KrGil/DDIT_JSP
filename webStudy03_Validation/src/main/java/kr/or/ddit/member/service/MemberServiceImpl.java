@@ -15,7 +15,15 @@ import kr.or.ddit.vo.PagingVO;
 public class MemberServiceImpl implements IMemberService {
 	private IMemberDAO dao = MemberDAOImpl.getInstance();
 	private IAuthenticateService authService = new AuthenticateServiceImpl();
-
+	
+//	private static MemberServiceImpl self;
+//	private MemberServiceImpl() {}
+//	public static MemberServiceImpl getInstance() {
+//		if(self==null) self = new MemberServiceImpl();
+//		return self;
+//	}
+	
+	
 	@Override
 	public MemberVO retrieveMember(String mem_id) {
 		MemberVO savedMember = dao.selectMemberDetail(mem_id);

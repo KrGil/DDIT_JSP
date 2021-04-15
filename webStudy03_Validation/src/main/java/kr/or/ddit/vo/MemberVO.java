@@ -107,7 +107,7 @@ public class MemberVO implements Serializable, HttpSessionBindingListener{
 	
 	public String getBase64Image() {
 		String encoded = null;
-		if(mem_id!=null) 
+		if(mem_img!=null) 
 			encoded = Base64.getEncoder().encodeToString(mem_img);
 		return encoded;
 	}

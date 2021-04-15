@@ -58,7 +58,6 @@
 </tfoot>
 </table>
 <script type="text/javascript" src="${cPath }/js/prod/prodList.js"></script>
-
 </body>
 </html>
 
