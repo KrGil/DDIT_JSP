@@ -56,7 +56,7 @@
 	%>
 		${member.getMem_id() } -> el이 3.0 이상이기 때문에 불러져온다.
 		${member.mem_id } -> toString이 호출이 되었다.
-		${member["mem_id"]} -> 연상
+		${member["mem_id"]} -> 연상객체 접근법
 		자바빈 규약을 역순으로 접근한다.
 		${member.getTest() } -> el이 3.0 이상이기 때문에 불러져온다.
 		${member.test }

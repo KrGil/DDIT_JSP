@@ -77,7 +77,7 @@
 						<input id = "searchBtn" type = "button" value = "검색" />
 					</div>
 				<div id = "pagingArea">
-					%{pagingVO.pagingHTML}
+					${pagingVO.pagingHTML}
 				</div>
 			</td>
 		</tr>

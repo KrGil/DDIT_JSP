@@ -2,6 +2,7 @@ package kr.or.ddit.vo;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import lombok.Getter;
@@ -34,6 +35,8 @@ public class PagingVO<T> implements Serializable{
 	private SearchVO simpleSearch;
 
 	private T detailSearch;
+	
+	private Map<String, Object> searchMap;
 	
 	public void setTotalRecord(int totalRecord) {
 		this.totalRecord = totalRecord;
@@ -80,4 +83,60 @@ public class PagingVO<T> implements Serializable{
 		return html.toString();
 	}
 	
+	
+	private static String pageItem = "<li class='page-item %s' %s>"
+			+"<a class='page-link' href='#' data-page='%d'>%s</a>"
+			+ "</li>";
+
+	public String getPagingHTMLBS() {
+		StringBuffer html = new StringBuffer();
+		html.append("<nav aria-label='...' class='mt-3'>");
+		html.append("<ul class='pagination'>");
+		String first = null;
+		String second = null;
+		int third = -1;
+		String fourth = "이전";
+		if(startPage > 1) {
+			first = "";
+			second = "";
+			third = startPage - 1;
+		}else {
+			first ="disabled";
+			second = "tabindex='-1' aria-disabled='true'";
+			third = -1;
+		}
+		html.append(
+			String.format(pageItem, first, second, third, fourth)	
+		);
+		endPage = endPage < totalPage ? endPage : totalPage;
+		for(int page=startPage; page<=endPage; page++) {
+			second = "";
+			third = page;
+			fourth = page + "";
+			if(page==currentPage) {
+				first = "active";
+			}else {
+				first = "";
+			}
+			html.append(
+				String.format(pageItem, first, second, third, fourth)	
+			);
+		}
+		fourth = "다음";
+		if(endPage < totalPage) {
+			first = "";
+			second = "";
+			third = endPage + 1;
+		}else {
+			first ="disabled";
+			second = "tabindex='-1' aria-disabled='true'";
+			third = -1;
+		}
+		html.append(
+			String.format(pageItem, first, second, third, fourth)	
+		);
+		html.append("</ul>");
+		html.append("</nav>");
+		return html.toString();
+	}
 }

@@ -19,7 +19,6 @@ public class CustomSqlSessionFactoryBuilder {
 		} catch (IOException e) {
 			throw new RuntimeException(e); 
 			// 에러 발생되면 종료되니까. 톰캣에게 넘긴다. 
-			// 
 		}
 	}
 	
