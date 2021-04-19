@@ -24,8 +24,6 @@ import org.slf4j.LoggerFactory;
  *		** 주의! : FilterChain 내에 필터링 되는 순서는 필터 등록 순서를 따름.
  *				요청에 대한 필터링과 응답에 대한 필터링은 역순으로 처리됨.
  *	3. 필터링 요청 매핑 설정
- *		
- *
  */
 public class FilterDesc implements Filter{
 	private static final Logger logger = 
@@ -41,7 +39,6 @@ public class FilterDesc implements Filter{
 			ServletResponse response, 
 			FilterChain chain)
 			throws IOException, ServletException {
-		// TODO Auto-generated method stub
 		// request filtering
 		HttpServletRequest req= (HttpServletRequest) request;
 		String uri = req.getRequestURI();

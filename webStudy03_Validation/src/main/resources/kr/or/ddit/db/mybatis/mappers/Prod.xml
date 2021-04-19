@@ -48,11 +48,9 @@
 		)B	
 		WHERE RNUM BETWEEN #{startRow} AND #{endRow} 
 	</select>
-	<resultMap type="ProdVO" id="prodMap" 
-			autoMapping="true">
+	<resultMap type="ProdVO" id="prodMap" autoMapping="true">
 		<id property="prod_id" column="PROD_ID"/>
-		<association property="buyer" javaType="BuyerVO" 
-			autoMapping="true">
+		<association property="buyer" javaType="BuyerVO" autoMapping="true">
 			<id property="buyer_id" column="BUYER_ID"/>
 		</association>
 		<collection property="userList" javaType="java.util.Set" ofType="MemberVO"

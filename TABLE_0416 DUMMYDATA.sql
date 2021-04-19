@@ -125,13 +125,29 @@ select *
 from boardview
 where INSTR(BO_TITLE, 'asd') > 0 ;
 
+select *
+from boardview
+where bo_no = 1796;
 
 
 
+SELECT '<tr><th>' || COMMENTS ||
+    '</th><td><%=' ||
+    LOWER(TABLE_NAME) ||
+    '.get'|| SUBSTR(COLUMN_NAME, 1, 1)||
+    LOWER(SUBSTR(COLUMN_NAME, 2)) ||
+    '() %></td></tr>'
+FROM USER_COL_COMMENTS
+WHERE TABLE_NAME = 'BOARDVIEW';
 
+SELECT *
+		FROM BOARDVIEW
+		WHERE BO_NO = 598; 
 
+desc boardview;
 
-
-
-
-
+SELECT 'private '||
+    DECODE(DATA_TYPE, 'NUMBER', 'Integer ', 'String ')||
+    LOWER(COLUMN_NAME)||';'
+FROM cols
+WHERE table_name = 'MEMBER';

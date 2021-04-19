@@ -7,6 +7,12 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <jsp:include page = "/includee/preScript.jsp" />
+<c:if test="${not empty message }">
+	<script type="text/javascript">
+		alert("${message}");
+	</script>
+	<c:remove var="message" scope="session"/>
+</c:if>
 
 </head>
 <body>
@@ -35,9 +41,18 @@
 						<c:url value="/board/boardView.do" var="viewURL">
 							<c:param name="what" value="${board.bo_no }"></c:param>
 						</c:url>
-						<a class = 'poptitle' href="${viewURL }" data-toggle="popover" >
-						${board.bo_title}
-						</a>
+						<c:choose>
+							<c:when test="${board.bo_sec eq 'Y' }">
+								<a class="secret" href="${viewURL }" >
+									${board.bo_title}
+								</a>
+							</c:when>
+							<c:otherwise>
+								<a class = 'nonsecret' href="${viewURL }" title = ${board.bo_title} data-toggle="popover" >
+									${board.bo_title}
+								</a>
+							</c:otherwise>
+						</c:choose>
 					</td>
 					<td>${board.bo_writer}</td>
 					<td>${board.bo_date}</td>
@@ -81,6 +96,9 @@
 					<input class="form-control mr-2" type="date" name="minDate" value="${pagingVO.searchMap.minDate }" />
 					<input class="form-control mr-2" type="date" name="maxDate" value="${pagingVO.searchMap.maxDate }"/>
 					<input class="btn btn-primary" id="searchBtn" type="button" value="검색" />
+					<button	class="btn btn-light" type="button" value="새글작성" >
+						<a href="${cPath }/board/boardInsert.do">새글작성</a>
+					</button>
 				</div>
 				<div id="pagingArea" class="d-flex justify-content-center">
 					${pagingVO.pagingHTMLBS }
@@ -114,31 +132,34 @@
 	});
 	var titleValue = "a";
 	$(function () {
-		$("#listBody a").hover(function(){
-// 			초기화 후 토글
-			let url = this.href;
-			let retValue = null;
-			$.ajax({
-				url : url,
-				dataType: "json",
-				success:function(board){
-					titleValue = board.bo_title;
-					console.log($(this));
-					retValue = board.bo_content;
-				},
-				// 비동기 요청은 순서가 없어서 
-				// 동기요청으로 바꾸겠다. 이 밑으로 응답 데이터가 나오기 전에 보내지 않겠다. 
-				async : false,
-				cache : true,
-				error:function(xhr, error, msg){
-					console.log(xhr);
-					console.log(error);
-					console.log(msg);
-				}
-			});
+		$("#listBody a.nonsecret").hover(function(){
 			$(this).popover({
-				html:true, content:retValue, title:titleValue
-			}).popover('toggle').popover({});
+				html:true, 
+				content:function(){
+//		 			초기화 후 토글
+					let url = this.href;
+					let retValue = null;
+					$.ajax({
+						url : url,
+						dataType: "text",
+						success:function(resp){
+							console.log($(this));
+							retValue = resp;
+						},
+						// 비동기 요청은 순서가 없어서 
+						// 동기요청으로 바꾸겠다. 이 밑으로 응답 데이터가 나오기 전에 보내지 않겠다. 
+						async : false,
+						cache : true,
+						error:function(xhr, error, msg){
+							console.log(xhr);
+							console.log(error);
+							console.log(msg);
+						}
+					});
+					console.log(2);
+					return retValue;
+				}
+			}).popover('toggle');	
 		});
 	})
 </script>

@@ -8,7 +8,7 @@ import kr.or.ddit.vo.BoardVO;
 import kr.or.ddit.vo.PagingVO;
 
 public interface IBoardService {
-	public ServiceResult createBoard(BoardVO baord);
+	public ServiceResult createBoard(BoardVO board);
 	public int retrieveBoardCount(PagingVO<BoardVO> pagingVO);
 	public List<BoardVO> retrieveBoardList(PagingVO<BoardVO> pagingVO);
 	/**
@@ -35,5 +35,10 @@ public interface IBoardService {
 	 * @return AttatchVO
 	 */
 	public AttatchVO download(int att_no);
-	
+	/**
+	 *  인증 여부 확인
+	 * @param BoardVO
+	 * @return boolean
+	 */
+	public boolean boardAuthenticate(BoardVO search);
 }

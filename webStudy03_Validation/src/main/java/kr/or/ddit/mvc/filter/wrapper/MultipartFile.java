@@ -11,6 +11,10 @@ import javax.servlet.http.Part;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * 파트별 데이터 받기
+ */
+
 public class MultipartFile {
 	private Part adaptee;
 	private String originalFilename;
@@ -29,6 +33,7 @@ public class MultipartFile {
 		empty = StringUtils.isBlank(originalFilename);
 		this.uniqueSaveName = UUID.randomUUID().toString();
 	}
+
 	private String getOriginalFilename(Part part) {
 			// 	Content-Disposition: form-data; name="uploadFile1"; filename="test.jpg"
 		String disposition = part.getHeader("Content-Disposition");
@@ -52,6 +57,11 @@ public class MultipartFile {
 		return adaptee.getSize();
 	}
 
+	/**
+	 * 원본 파일명 받아오기
+	 * @param part
+	 * @return String
+	 */
 	// 기존의 part가 가지고 있지 않은 메서드 추가하기
 	public String getOriginalFilename() {
 		return originalFilename;

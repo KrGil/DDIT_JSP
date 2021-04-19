@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import kr.or.ddit.board.service.BoardServiceImpl;
 import kr.or.ddit.board.service.IBoardService;
 import kr.or.ddit.mvc.annotation.Controller;
 import kr.or.ddit.mvc.annotation.RequestMapping;
+import kr.or.ddit.mvc.annotation.RequestMethod;
 import kr.or.ddit.mvc.annotation.resolvers.ModelAttribute;
 import kr.or.ddit.mvc.annotation.resolvers.RequestParam;
 import kr.or.ddit.vo.BoardVO;
@@ -27,47 +29,74 @@ import kr.or.ddit.vo.SearchVO;
 
 @Controller
 public class BoardReadController {
+	public static final String BOARDAUTH = "board.authenticated";
 	private static final Logger logger = LoggerFactory.getLogger(BoardReadController.class);
 	IBoardService service = BoardServiceImpl.getInstance();
 	
-	@RequestMapping("/board/boardView.do")
-	public String viewForAjax(
-			@RequestParam("what") int what,
-			HttpServletRequest req,
-			HttpServletResponse resp
-			) throws IOException {
+	@RequestMapping(value="/board/authenticate.do", method=RequestMethod.POST)
+	public String boardAuth(
+			@RequestParam("bo_no") int bo_no,
+			@RequestParam("bo_pass") String bo_pass,
+			HttpSession session
+			) {
 		BoardVO search = new BoardVO();
-		search.setBo_no(what);
-		BoardVO board = service.retrieveBoard(search);
-		
-		String accept = req.getHeader("Accept");
-		if(StringUtils.containsIgnoreCase(accept, "json")) {
-			// text로 보내기
-//			resp.setContentType("text/plain;charset=utf-8");
-//			try(
-//				PrintWriter out = resp.getWriter();
-//				){
-//				out.println(board.getBo_content());
-//				return null;
-//			}
-			// json으로 받아오기
-			resp.setContentType("application/json;charset=utf-8");
-			// 마샬링과 직렬화
-			ObjectMapper mapper = new ObjectMapper();
-			try(
-				PrintWriter out =resp.getWriter();
-			){
-				mapper.writeValue(out, board);
-				return null;
-			}
+		search.setBo_no(bo_no);
+		search.setBo_pass(bo_pass);
+		String view = null;
+		if(service.boardAuthenticate(search)) {
+			session.setAttribute(BOARDAUTH, search);
+			view = "redirect:/board/boardView.do?what="+bo_no;
 		}else {
-			resp.setContentType("text/plain;charset=utf-8");
-			req.setAttribute("board", board);
-			return "board/boardView";
+			session.setAttribute("message", "비밀번호 오류");
+			view = "redirect:/board/boardList.do";
 		}
+		return view;
 	}
 	
-	
+	@RequestMapping("/board/boardView.do")
+	public String viewForAjax(
+			@RequestParam("what") int bo_no,
+			HttpServletRequest req,
+			HttpServletResponse resp,
+			HttpSession session
+			) throws IOException {
+		String accept = req.getHeader("Accept");
+
+		BoardVO search = new BoardVO();
+		req.setAttribute("search", search);
+		search.setBo_no(bo_no);
+		BoardVO board = service.retrieveBoard(search);
+		
+		boolean valid = true;
+		if("Y".equals(board.getBo_sec())) {
+			BoardVO authenticated = (BoardVO) session.getAttribute(BOARDAUTH);
+			if(authenticated==null || authenticated.getBo_no() != bo_no) {
+				valid = false;
+			}
+		}
+		
+		String view = null;
+		if(valid) {
+			if(accept.contains("plain")) {
+				// text로 보내기
+				resp.setContentType("text/plain;charset=utf-8");
+				try(
+						PrintWriter out = resp.getWriter();
+						){
+					out.println(board.getBo_content());
+				}
+			}else {
+				req.setAttribute("board", board);
+				view = "board/boardView";
+			}
+		// 비밀글인데 인증을 안거친것.
+		}else {
+			view = "board/passwordForm";
+		} // if(valid) end
+		// 지워야 다음 접속 시 다시 점검.
+		session.removeAttribute(BOARDAUTH);
+		return view;
+	}
 	@RequestMapping("/board/boardList.do")
 	public String list(
 			@RequestParam(value="page", required=false, defaultValue="1") int currentPage,

@@ -43,7 +43,7 @@ public class ModelAttributeArgumentResolver implements IHandlerMethodArgumentRes
 			String attributeName = annotation.value();
 			req.setAttribute(attributeName, parameterValue); //문제 생길까바 미리 집어넣음.
 		
-			//		규칙성 Mem_id와 변수명 mem_id가 같다. 그럼 reflection을 쓸 수 있다.
+			//규칙성 Mem_id와 변수명 mem_id가 같다. 그럼 reflection을 쓸 수 있다.
 			BeanUtils.populate(parameterValue, req.getParameterMap());
 			return parameterValue;
 		} catch (Exception e) {
