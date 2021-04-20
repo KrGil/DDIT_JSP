@@ -1,5 +1,7 @@
 package kr.or.ddit.board.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -18,15 +20,8 @@ public class AttatchDAOImpl implements IAttatchDAO{
 	private SqlSessionFactory sessionFactory = CustomSqlSessionFactoryBuilder.getSessionFactory();
 	
 	@Override
-	public int insertAttatches(BoardVO board) {
-		try(
-			SqlSession session =sessionFactory.openSession();
-		){
-			IAttatchDAO mapper = session.getMapper(IAttatchDAO.class);
-			int cnt = mapper.insertAttatches(board);
-			session.commit();
-			return cnt;
-		}
+	public int insertAttatches(BoardVO board, SqlSession session) {
+		return session.insert("kr.or.ddit.board.dao.IAttatchDAO.insertAttatches", board);
 	}
 
 	@Override
@@ -42,9 +37,16 @@ public class AttatchDAOImpl implements IAttatchDAO{
 	}
 
 	@Override
-	public int deleteAttatches(BoardVO board) {
-		// TODO Auto-generated method stub
-		return 0;
+	public List<String> selectSaveNamesForDelete(BoardVO board) {
+		try(
+			SqlSession session = sessionFactory.openSession();
+			){
+			IAttatchDAO mapper = session.getMapper(IAttatchDAO.class);
+			return mapper.selectSaveNamesForDelete(board);
+		}
 	}
-
+	@Override
+	public int deleteAttatches(BoardVO board, SqlSession session) {
+		return session.delete("kr.or.ddit.board.dao.IAttatchDAO.deleteAttatches", board);
+	}
 }

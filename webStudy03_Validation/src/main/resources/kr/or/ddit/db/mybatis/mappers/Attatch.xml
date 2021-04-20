@@ -22,8 +22,31 @@
 			, #{attatch.att_size,jdbcType=NUMERIC}
 			, #{attatch.att_contenttype,jdbcType=VARCHAR}
 		)
-		</foreach>
+	</foreach>
 	SELECT * FROM DUAL
 	</insert>
-
+	
+<!-- 	<select id="selectAttatch" parameterType="int" resultType="AttatchVO"> -->
+<!-- 		SELECT -->
+<!-- 		BO_NO -->
+<!-- 		FROM ATTATCH -->
+<!-- 		WHERE ATT_NO = #{ } -->
+<!-- 	</select> -->
+	<delete id="deleteAttatches" parameterType="BoardVO">
+		DELETE FROM ATTATCH
+		<where>
+			<foreach collection="delAttNos" item="att_no" open="" close="" separator="OR">
+				 att_no =#{att_no} 
+			</foreach>
+		</where>
+	</delete>
+	
+	<select id="selectSaveNamesForDelete" parameterType="BoardVO" resultType="string">
+		SELECT ATT_SAVENAME
+		FROM ATTATCH
+		WHERE ATT_NO IN 
+		<foreach collection="delAttNos" item="attNo" open="(" close=")" separator=",">
+			#{attNo}
+		</foreach>
+	</select>
 </mapper>

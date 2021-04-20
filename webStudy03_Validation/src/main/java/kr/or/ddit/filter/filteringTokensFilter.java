@@ -46,7 +46,6 @@ public class filteringTokensFilter implements Filter {
 						matcher.appendReplacement(result, replace);
 					}
 					matcher.appendTail(result);
-					resp.set
 				}
 				
 				

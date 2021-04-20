@@ -97,6 +97,21 @@ public class BoardReadController {
 		session.removeAttribute(BOARDAUTH);
 		return view;
 	}
+	
+	@RequestMapping("/board/noticeList.do")
+	public String noticeList(
+			@RequestParam(value="searchType", required=false) String searchType
+			, @RequestParam(value="searchWord", required=false) String searchWord
+			, @RequestParam(value="page", required=false, defaultValue="1") int currentPage
+			, @RequestParam(value="minDate", required=false) String minDate
+			, @RequestParam(value="maxDate", required=false) String maxDate
+			, HttpServletRequest req
+			) {
+		searchType = "type";
+		searchWord = "NOTICE";
+		return list(currentPage, searchType, searchWord, minDate, maxDate, req);
+	}
+	
 	@RequestMapping("/board/boardList.do")
 	public String list(
 			@RequestParam(value="page", required=false, defaultValue="1") int currentPage,

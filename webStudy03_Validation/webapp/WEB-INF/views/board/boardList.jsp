@@ -48,7 +48,7 @@
 								</a>
 							</c:when>
 							<c:otherwise>
-								<a class = 'nonsecret' href="${viewURL }" title = ${board.bo_title} data-toggle="popover" >
+								<a class = 'nonsecret' href="${viewURL }" title = "${board.bo_title}" data-toggle="popover" >
 									${board.bo_title}
 								</a>
 							</c:otherwise>
@@ -99,6 +99,7 @@
 					<button	class="btn btn-light" type="button" value="새글작성" >
 						<a href="${cPath }/board/boardInsert.do">새글작성</a>
 					</button>
+					<input type="button" value="공지글쓰기" onclick="location.href='${cPath}/board/noticeInsert.do';"/>
 				</div>
 				<div id="pagingArea" class="d-flex justify-content-center">
 					${pagingVO.pagingHTMLBS }
@@ -130,13 +131,12 @@
 		}
 		return false;
 	});
-	var titleValue = "a";
 	$(function () {
 		$("#listBody a.nonsecret").hover(function(){
 			$(this).popover({
 				html:true, 
 				content:function(){
-//		 			초기화 후 토글
+				//	초기화 후 토글
 					let url = this.href;
 					let retValue = null;
 					$.ajax({
