@@ -28,7 +28,7 @@ import kr.or.ddit.vo.BoardVO;
 
 @Controller
 public class BoardUpdateController {
-	IBoardService service = BoardServiceImpl.getInstance();
+	IBoardService service = new BoardServiceImpl();
 	private String[] filteringTokens = new String[] {"말미잘", "해삼"};
 	private static final Logger logger = LoggerFactory.getLogger(BoardUpdateController.class);
 	
@@ -36,9 +36,7 @@ public class BoardUpdateController {
 	public String form(
 			@RequestParam("what") int bo_no
 			, HttpServletRequest req) {
-		BoardVO board = service.retrieveBoard(BoardVO.builder()
-														.bo_no(bo_no)
-														.build());
+		BoardVO board = service.retrieveBoard(BoardVO.builder().bo_no(bo_no).build());
 		req.setAttribute("board", board);
 		return "board/boardForm";
 	}

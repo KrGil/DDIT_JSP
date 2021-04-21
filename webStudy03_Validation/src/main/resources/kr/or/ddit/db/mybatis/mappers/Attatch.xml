@@ -26,12 +26,6 @@
 	SELECT * FROM DUAL
 	</insert>
 	
-<!-- 	<select id="selectAttatch" parameterType="int" resultType="AttatchVO"> -->
-<!-- 		SELECT -->
-<!-- 		BO_NO -->
-<!-- 		FROM ATTATCH -->
-<!-- 		WHERE ATT_NO = #{ } -->
-<!-- 	</select> -->
 	<delete id="deleteAttatches" parameterType="BoardVO">
 		DELETE FROM ATTATCH
 		<where>
@@ -48,5 +42,10 @@
 		<foreach collection="delAttNos" item="attNo" open="(" close=")" separator=",">
 			#{attNo}
 		</foreach>
+	</select>
+	<select id="selectAttatch" parameterType="int" resultType="AttatchVO">
+		SELECT *
+		FROM ATTATCH
+		WHERE att_no = #{att_no}
 	</select>
 </mapper>

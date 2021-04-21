@@ -15,7 +15,7 @@ public class IBoardDAOTest {
 		BoardVO board = dao.selectBoard(search);
 		assertEquals(3, board.getAttatchList().size());
 		
-		search.setBo_no(bo_no);
+		search.setBo_no(123);
 		board=dao.selectBoard(search);
 		assertEquals(0, board.getAttatchList().size());
 	}

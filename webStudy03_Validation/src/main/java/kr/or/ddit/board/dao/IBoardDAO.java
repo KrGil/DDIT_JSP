@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 
+import kr.or.ddit.vo.AttatchVO;
 import kr.or.ddit.vo.BoardVO;
 import kr.or.ddit.vo.PagingVO;
 
@@ -32,6 +33,6 @@ public interface IBoardDAO {
 	 * @param search( BoardVO의 속성 중 하나 )
 	 * @return int
 	 */
-	public int deleteBoard(BoardVO search);
+	public int deleteBoard(BoardVO search, SqlSession session);
 	
 }

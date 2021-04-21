@@ -63,6 +63,7 @@
 		            , BO_HIT, BO_REC
 		            , TO_CHAR(BO_DATE, 'YYYY-MM-DD HH:MI') BO_DATE
 		            , BO_SEC
+		            , BO_CONTENT
 		        FROM BOARDVIEW
 		        <include refid="searchFrag" />
 		        START WITH BO_PARENT IS NULL
@@ -156,15 +157,34 @@
 			AND BO_PASS=#{bo_pass,jdbcType=VARCHAR}
 	</update>
 	
-<!-- 	<select id="selectAttatch" parameterType="int" resultType="AttatchVO"> -->
-<!-- 		SELECT -->
-<!-- 		BO_NO -->
-<!-- 		FROM ATTATCH -->
-<!-- 		WHERE ATT_NO = #{ } -->
-<!-- 	</select> -->
-<!-- 	<delete id="deleteBoard" parameterType="BoardVO"> -->
-<!-- 		DELTET   -->
-<!-- 	</delete> -->
+	
+	<select id="selectDeleteList" parameterType="BoardVO" resultType="AttatchVO">
+		SELECT BO_NO, BO_PARENT
+		FROM BOARDVIEW
+		START WITH BO_PARENT = #{bo_no}
+		CONNECT BY PRIOR BO_NO = BO_PARENT
+		ORDER SIBLINGS BY BO_SORT ASC, BO_NO DESC
+	</select>
+	
+	<delete id="deleteBoard" parameterType="BoardVO">
+		MERGE INTO BOARD C
+		USING (
+		    SELECT BO_NO, (
+		        SELECT COUNT(*) -1
+		        FROM BOARD B
+		        START WITH BO_NO = A.BO_NO
+		        CONNECT BY PRIOR BO_NO = BO_PARENT
+		    ) CNT
+		    FROM BOARD A
+		) D
+		ON (C.BO_NO = ${bo_no} AND C.BO_NO = D.BO_NO)
+		WHEN MATCHED THEN
+		    UPDATE SET
+		    BO_TITLE = '삭제된 글의 제목'
+		    , BO_CONTENT = '삭제된 글의 내용'
+		    , BO_DELETE='Y'
+		    DELETE WHERE D.CNT = 0
+	</delete>
 </mapper>
 
 	

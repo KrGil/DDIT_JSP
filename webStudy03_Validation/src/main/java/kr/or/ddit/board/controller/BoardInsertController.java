@@ -35,7 +35,7 @@ public class BoardInsertController {
 	private static final Logger logger = LoggerFactory.getLogger(BoardInsertController.class);
 	private String[] filteringTokens = new String[] {"말미잘", "해삼"};
 	
-	private IBoardService service = BoardServiceImpl.getInstance();
+	private IBoardService service = new BoardServiceImpl();
 	
 	@RequestMapping("/board/noticeInsert.do")
 	public String noticeForm(@ModelAttribute("board") BoardVO board) {

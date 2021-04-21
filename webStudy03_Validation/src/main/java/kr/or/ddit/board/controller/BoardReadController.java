@@ -11,6 +11,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +35,7 @@ import kr.or.ddit.vo.SearchVO;
 public class BoardReadController {
 	public static final String BOARDAUTH = "board.authenticated";
 	private static final Logger logger = LoggerFactory.getLogger(BoardReadController.class);
-	IBoardService service = BoardServiceImpl.getInstance();
+	IBoardService service = new BoardServiceImpl();
 	
 	@RequestMapping(value="/board/authenticate.do", method=RequestMethod.POST)
 	public String boardAuth(
@@ -136,6 +140,26 @@ public class BoardReadController {
 		pagingVO.setTotalRecord(totalRecord);
 		
 		List<BoardVO> boardList = service.retrieveBoardList(pagingVO);
+		// 썸네일 보여주기.
+		for(BoardVO tmp : boardList) {
+			String thumbnail = null;
+			thumbnail = req.getContextPath()+"/images/1.jfif";
+			String source = tmp.getBo_content();
+			if(source == null) {
+				tmp.setThumbnail(thumbnail);
+				continue;
+			}
+			// dom 트리구조가 만들어진다.
+			Document dom = Jsoup.parse(source);
+			Elements imgs = dom.getElementsByTag("img");
+			if(!imgs.isEmpty()) {
+				// 존재한다면 첫번째를 썸네일로 하자
+				Element img = imgs.get(0);
+				thumbnail = img.attr("src");
+			}
+			tmp.setThumbnail(thumbnail);
+		}
+		
 		pagingVO.setDataList(boardList);
 		
 		req.setAttribute("pagingVO", pagingVO);

@@ -38,7 +38,6 @@ public class AttatchVO implements Serializable{
 	public void saveTo(File saveFolder) throws IOException {
 		file.transferTo(new File(saveFolder, att_savename));
 	}
-
 }
 
 

@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import kr.or.ddit.validator.BoardInsertGroup;
+import kr.or.ddit.validator.DeleteGroup;
 import kr.or.ddit.validator.UpdateGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,14 +33,18 @@ public class BoardVO implements Serializable{
 	@NotBlank
 	private String bo_type;
 	
-	@NotNull(groups=UpdateGroup.class)
-	@Min(value=1, groups=UpdateGroup.class)
+	@NotNull(groups= {UpdateGroup.class, DeleteGroup.class})
+	@Min(value=1, groups= {UpdateGroup.class, DeleteGroup.class})
 	private Integer bo_no;
 	@NotBlank
 	private String bo_title;
-	@NotBlank(groups=BoardInsertGroup.class)
+	@NotBlank(groups= {BoardInsertGroup.class, UpdateGroup.class})
 	private String bo_writer;
-	@NotBlank(groups=BoardInsertGroup.class)
+	@NotBlank(groups= {
+						BoardInsertGroup.class
+					   , UpdateGroup.class
+					   , DeleteGroup.class
+					  })
 	private String bo_pass;
 	private String bo_content;
 	private String bo_date;
@@ -49,12 +54,12 @@ public class BoardVO implements Serializable{
 	private String bo_sec;
 	private Integer bo_parent;
 	
-	private int[] delAttNos;
-	
 	private int startAttNo;
-	// 관계 설정
 	private List<AttatchVO> attatchList;
 	private List<Reply2VO> replyList;
+	
+	private int[] delAttNos;
+	private String thumbnail;
 }
 
 

@@ -7,21 +7,13 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import kr.or.ddit.db.mybatis.CustomSqlSessionFactoryBuilder;
 import kr.or.ddit.member.dao.MemberDAOImpl;
+import kr.or.ddit.vo.AttatchVO;
 import kr.or.ddit.vo.BoardVO;
 import kr.or.ddit.vo.PagingVO;
 
 public class BoardDAOImpl implements IBoardDAO {
-	// 싱글톤
-	private static BoardDAOImpl self;
-	BoardDAOImpl() {}
-	public static BoardDAOImpl getInstance() {
-		if(self==null) self = new BoardDAOImpl();
-		return self;
-	}
-	
-	private SqlSessionFactory sessionFactory = 
-				CustomSqlSessionFactoryBuilder.getSessionFactory();
-	
+	private SqlSessionFactory sessionFactory =
+			CustomSqlSessionFactoryBuilder.getSessionFactory();
 
 	@Override
 	public int insertBoard(BoardVO board, SqlSession session) {
@@ -31,7 +23,7 @@ public class BoardDAOImpl implements IBoardDAO {
 	@Override
 	public int selectBoardCount(PagingVO<BoardVO> pagingVO) {
 		try(
-			SqlSession session = sessionFactory.openSession();
+			SqlSession session = sessionFactory.openSession();	
 		){
 			IBoardDAO mapper = session.getMapper(IBoardDAO.class);
 			return mapper.selectBoardCount(pagingVO);
@@ -41,7 +33,7 @@ public class BoardDAOImpl implements IBoardDAO {
 	@Override
 	public List<BoardVO> selectBoardList(PagingVO<BoardVO> pagingVO) {
 		try(
-			SqlSession session =  sessionFactory.openSession();
+			SqlSession session = sessionFactory.openSession();	
 		){
 			IBoardDAO mapper = session.getMapper(IBoardDAO.class);
 			return mapper.selectBoardList(pagingVO);
@@ -51,7 +43,7 @@ public class BoardDAOImpl implements IBoardDAO {
 	@Override
 	public BoardVO selectBoard(BoardVO search) {
 		try(
-			SqlSession session = sessionFactory.openSession();
+			SqlSession session = sessionFactory.openSession();	
 		){
 			IBoardDAO mapper = session.getMapper(IBoardDAO.class);
 			return mapper.selectBoard(search);
@@ -64,9 +56,8 @@ public class BoardDAOImpl implements IBoardDAO {
 	}
 
 	@Override
-	public int deleteBoard(BoardVO search) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int deleteBoard(BoardVO search, SqlSession session) {
+		return session.delete("kr.or.ddit.board.dao.IBoardDAO.deleteBoard", search);
 	}
 
 }

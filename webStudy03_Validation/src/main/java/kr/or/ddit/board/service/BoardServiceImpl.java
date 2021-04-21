@@ -8,7 +8,10 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import kr.or.ddit.board.controller.BoardDeleteController;
 import kr.or.ddit.board.dao.AttatchDAOImpl;
 import kr.or.ddit.board.dao.BoardDAOImpl;
 import kr.or.ddit.board.dao.IAttatchDAO;
@@ -22,25 +25,19 @@ import kr.or.ddit.vo.BoardVO;
 import kr.or.ddit.vo.PagingVO;
 
 public class BoardServiceImpl implements IBoardService {
+	private static final Logger logger = LoggerFactory.getLogger(BoardServiceImpl.class);
 	
-    IBoardDAO boardDAO = BoardDAOImpl.getInstance();
-	IAttatchDAO attatchDAO = AttatchDAOImpl.getInstance();
+    IBoardDAO boardDAO = new BoardDAOImpl();
+	IAttatchDAO attatchDAO = new AttatchDAOImpl();
 	private File saveFolder = new File("D:/attatches");
-	private SqlSessionFactory sessionFactory = CustomSqlSessionFactoryBuilder.getSessionFactory();
 	
-	//singleton
-	private static BoardServiceImpl self;
-	private BoardServiceImpl() {}
-	public static BoardServiceImpl getInstance() {
-		if(self==null) self = new BoardServiceImpl();
-		return self;
-	}
-	
+	private SqlSessionFactory sessionFactory =
+			CustomSqlSessionFactoryBuilder.getSessionFactory();
+
+
 	private void encodePassword(BoardVO board) {
 		String bo_pass = board.getBo_pass();
-		// 공지글 작성 시 비번 암호화는 필요가 없다.
 		if(StringUtils.isBlank(bo_pass)) return;
-		
 		try {
 			String encodedPass = CryptoUtil.sha512(bo_pass);
 			board.setBo_pass(encodedPass);
@@ -54,10 +51,11 @@ public class BoardServiceImpl implements IBoardService {
 		List<AttatchVO> attatchList = board.getAttatchList();
 		if(attatchList!=null && attatchList.size()>0) {
 			cnt += attatchDAO.insertAttatches(board, session);
+			
 			try {
 				for(AttatchVO attatch : attatchList) {
 //					if(1==1)
-//						throw new RuntimeException("강제 발생 예외");
+//						throw new RuntimeException("강제 발생 예외"); 
 					attatch.saveTo(saveFolder);
 				}
 			} catch (IOException e) {
@@ -66,6 +64,7 @@ public class BoardServiceImpl implements IBoardService {
 		}
 		return cnt;
 	}
+	
 	private int deleteFileProcesses(BoardVO board, SqlSession session) {
 		int[] delAttNos = board.getDelAttNos();
 		int cnt = 0;
@@ -82,14 +81,16 @@ public class BoardServiceImpl implements IBoardService {
 		}
 		return cnt;
 	}
+	
 	@Override
 	public ServiceResult createBoard(BoardVO board) {
 		ServiceResult result = ServiceResult.FAIL;
 		//==========비밀번호 암호화==========
 		encodePassword(board);
 		//===============================
+		
 		try(
-			SqlSession session = sessionFactory.openSession(false);
+			SqlSession session = sessionFactory.openSession(false);	
 		){
 			int cnt = boardDAO.insertBoard(board, session);
 			if(cnt > 0) {
@@ -99,9 +100,9 @@ public class BoardServiceImpl implements IBoardService {
 				if(cnt > 0) {
 					result = ServiceResult.OK;
 					session.commit();
-				}
+				}	
 			}
-		}// try end 
+		} // try end
 		return result;
 	}
 
@@ -127,7 +128,7 @@ public class BoardServiceImpl implements IBoardService {
 	public ServiceResult modifyBoard(BoardVO board) {
 		try(
 			SqlSession session = sessionFactory.openSession(false);
-			){
+		){
 			// 게시글 존재 여부 확인
 			// 비번 인증
 			// 인증 성공시
@@ -151,16 +152,53 @@ public class BoardServiceImpl implements IBoardService {
 
 	@Override
 	public ServiceResult removeBoard(BoardVO search) {
-		// TODO Auto-generated method stub
-		return null;
+		try(
+			SqlSession session = sessionFactory.openSession();	
+		){
+			ServiceResult result = ServiceResult.FAIL;
+			BoardVO savedBoard = boardDAO.selectBoard(search);
+			encodePassword(search);
+			
+			String savedPass = savedBoard.getBo_pass();
+			String inputPass = search.getBo_pass();
+			
+			// 인증
+			if(savedPass.equals(inputPass)) {
+				// 첨부파일 삭제
+				List<AttatchVO> attatchList 
+					= savedBoard.getAttatchList();
+				if(attatchList.size()>0) {
+					int[] delAttNos = new int[attatchList.size()];
+					search.setDelAttNos(delAttNos);
+					for(int i = 0; i < delAttNos.length; i++) {
+						delAttNos[i] = 
+								attatchList.get(i).getAtt_no();
+					}	
+					deleteFileProcesses(search, session);
+				}// if(attatchList.size) end
+				
+				// 게시글 삭제
+				int cnt = boardDAO.deleteBoard(search, session);
+				if(cnt>0) {
+					result = ServiceResult.OK;
+					session.commit();
+				}
+			}else {
+				result = ServiceResult.INVALIDPASSWORD;
+			}
+			return result;
+		}
 	}
 
 	@Override
 	public AttatchVO download(int att_no) {
-		// TODO Auto-generated method stub
-		return null;
+		AttatchVO attatch = attatchDAO.selectAttatch(att_no);
+		if(attatch==null)
+			throw new CustomException( att_no+" 에 해당하는 파일이 없음.");
+		return attatch;
 	}
 
+	
 	@Override
 	public boolean boardAuthenticate(BoardVO search) {
 		BoardVO saved = boardDAO.selectBoard(search);
@@ -170,27 +208,5 @@ public class BoardServiceImpl implements IBoardService {
 		return savedPass.equals(inputPass);
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
