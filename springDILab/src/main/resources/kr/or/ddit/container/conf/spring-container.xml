@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+		default-lazy-init="false"
+		default-init-method="init"
+		default-destroy-method="destroy"
+	>
+	
+<!-- 스키마 정보 : beans, c, p -->
+	<bean  depends-on="daoOracle" id="daoMySql" class="kr.or.ddit.example.dao.ExampleDAO_MySql"/>	
+	
+	<bean  id="daoOracle" class="kr.or.ddit.example.dao.ExampleDAO_Oracle"/>
+		<!--  c:생성자 주입이 먼저다. p:setter주입 -->
+	<bean id="service1" 
+		class="kr.or.ddit.example.service.ExampleServiceImpl" 
+		c:dao-ref="daoMySql"	
+		p:dao-ref="daoOracle" 
+	>
+			<!--  생성자 주입 -->
+<!-- 		<constructor-arg name="dao" ref="daoMySql"/> -->
+			<!--  setter 주입 -->
+			<!--  기본생성자가 필요. -->
+<!-- 			<property name="dao" ref="daoMySql"></property> -->
+	</bean>
+	
+	<bean id="service2" class="kr.or.ddit.example.service.ExampleServiceImpl"
+	scope="prototype"
+	/>
+</beans>

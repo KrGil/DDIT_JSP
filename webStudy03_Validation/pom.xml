@@ -160,6 +160,8 @@
 			<artifactId>log4jdbc-remix</artifactId>
 			<version>0.2.7</version>
 		</dependency>
+		
+		
 		<!-- Domain Layer용 -->
 		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 		<dependency>
