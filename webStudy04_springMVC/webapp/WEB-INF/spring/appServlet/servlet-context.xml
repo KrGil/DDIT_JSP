@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans 
+	xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
+	<!-- 한방에 모든것들을 등록하기 -->
+	<annotation-driven/>
+	<!-- resources 안트패스매핑방식 -->
+	<resources location="/resources/" mapping="/resources/**" cache-period="0"/>
+	<!-- 내가 할 수 없는것 다시 가져가. -->
+	<default-servlet-handler/>
+	
+	<!-- 기본으로 등록된 것이 마음에 들지 않으면 다시 등록하면된다. -->
+<!-- 	viewResolver에 prefix와 suffix가 없으니까 -->
+	<beans:bean id="IRVR" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+		p:prefix="/WEB-INF/views/"
+		p:suffix=".jsp"
+	/>
+	
+	<context:component-scan base-package="kr.or.ddit" use-default-filters="false" >
+		<context:include-filter type="annotation" 
+			expression="org.springframework.stereotype.Controller"/>
+		<context:include-filter type="annotation" 
+			expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+	</context:component-scan>
+	
+	
+</beans:beans>

@@ -1,10 +1,19 @@
 package kr.or.ddit.example.service;
 
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
 import kr.or.ddit.example.dao.ExampleDAOFactory;
 import kr.or.ddit.example.dao.ExampleDAO_MySql;
 import kr.or.ddit.example.dao.ExampleDAO_Oracle;
 import kr.or.ddit.example.dao.IExampleDAO;
 
+@Service
+@Scope("prototype")
 public class ExampleServiceImpl implements IExampleService{
 	// 1. new 키워드로 인스턴스 직접 생성
 	//	private IExampleDAO dao = new ExampleDAO_Oracle();
@@ -13,6 +22,7 @@ public class ExampleServiceImpl implements IExampleService{
 	//	private IExampleDAO dao = ExampleDAOFactory.getExampleDAO();
 	// 3. strategy pattern (Dependency Injection)
 	// : 생성자 주입, setter 주입, 전략의 주입자가 필요함.
+	
 	private IExampleDAO dao;
 	
 	public ExampleServiceImpl() {
@@ -24,6 +34,10 @@ public class ExampleServiceImpl implements IExampleService{
 		this.dao = dao;
 		System.out.println(getClass().getSimpleName()+"객체 생성-아규먼트 있는 생성자");
 	}
+	
+//	@Resource(name="mySql")
+	@Inject
+	@Named("mySql")
 	public void setDao(IExampleDAO dao) {
 		this.dao = dao;
 		System.out.println(getClass().getSimpleName()+"에서 setter injection 받음.");

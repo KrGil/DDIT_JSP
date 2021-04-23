@@ -1,5 +1,8 @@
 package kr.or.ddit.example.dao;
 
+import org.springframework.stereotype.Repository;
+
+@Repository
 public class ExampleDAO_Oracle implements IExampleDAO{
 	public ExampleDAO_Oracle() {
 		super();

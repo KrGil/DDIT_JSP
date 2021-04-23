@@ -14,7 +14,7 @@ public class ExampleSpringView {
 //				(IExampleService) container.getBean("examplesServiceImpl");
 		// 식별자 이름과 class 를 가져오기
 		IExampleService service = 
-				container.getBean("exampleServiceImpl", IExampleService.class);
+				container.getBean(IExampleService.class);
 		String info = service.readData("a001");
 		System.out.println(info);
 	}
