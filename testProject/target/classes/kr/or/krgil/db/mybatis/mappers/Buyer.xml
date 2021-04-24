@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.buyerber.dao.IbuyerberDAO">
+	
+	<resultMap type="BuyerVO" id="buyerberMap" autoMapping = "true">
+		<id property="buyer_id" column="buyer_ID"/>
+		
+		<collection property="prodList" ofType = "ProdVO" 
+					javaType="java.util.Set" autoMapping="true">
+			<id property="prod_id" column = "PROD_ID"/>
+			<association property="buyer" javaType="BuyerVO" autoMapping="true">
+			</association>
+		</collection>
+	</resultMap>
+	
+	<select id="selectBuyerDetail" parameterType = "string" 
+		resultMap="buyerberMap">
+		WITH CARTPROD AS(
+		    SELECT DISTINCT CART_buyerBER, CART_PROD FROM CART
+		), PRODALL AS(
+		    SELECT PROD.*
+		    	, LPROD_NM
+		        , BUYER.*
+		    FROM PROD INNER JOIN LPROD ON(PROD_LGU=LPROD_GU)
+		            INNER JOIN BUYER ON(PROD_BUYER = BUYER_ID)
+		)
+		SELECT                                                                          
+			buyer_ID, buyer_PASS, buyer_NAME,                                                     
+			buyer_REGNO1, buyer_REGNO2, TO_CHAR(buyer_BIR, 'YYYY-MM-DD') buyer_BIR,                 
+			buyer_ZIP, buyer_ADD1, buyer_ADD2, buyer_HOMETEL,                                       
+			buyer_COMTEL, buyer_HP, buyer_MAIL, buyer_JOB,                                          
+			buyer_LIKE, buyer_buyerORIAL, TO_CHAR(buyer_buyerORIALDAY, 'YYYY-MM-DD') buyer_buyerORIALDAY, 
+			buyer_MILEAGE, buyer_DELETE
+			, PROD_ID, PROD_NAME
+			, PROD_COST, PROD_PRICE, PROD_MILEAGE
+			, LPROD_NM
+			, BUYER_NAME, BUYER_ADD1                                                         
+		FROM buyerBER  LEFT OUTER JOIN CARTPROD ON(buyer_ID = CART_buyerBER)
+					LEFT OUTER JOIN PRODALL ON(CART_PROD = PROD_ID)                                                              
+		WHERE buyer_ID = #{buyer_id}
+	</select>
+	
+	<update id="updateBuyer" parameterType = "BuyerVO">
+		 UPDATE buyerBER 
+		 SET
+		     buyer_NAME		=	#{buyer_name,jdbcType=VARCHAR},    
+		     buyer_BIR		=	TO_DATE(#{buyer_bir,jdbcType=VARCHAR}, 'YYYY-MM-DD'),     
+		     buyer_ZIP		=	#{buyer_zip,jdbcType=VARCHAR},     
+		     buyer_ADD1		=	#{buyer_add1,jdbcType=VARCHAR},    
+		     buyer_ADD2		=	#{buyer_add2,jdbcType=VARCHAR},    
+	     	 buyer_HOMETEL	=	#{buyer_hometel,jdbcType=VARCHAR}, 
+		     buyer_COMTEL		=	#{buyer_comtel,jdbcType=VARCHAR},  
+		     buyer_HP			=	#{buyer_hp,jdbcType=VARCHAR},      
+		     buyer_MAIL		=	#{buyer_mail,jdbcType=VARCHAR},    
+		     buyer_JOB		=	#{buyer_job,jdbcType=VARCHAR},     
+		     buyer_LIKE		=	#{buyer_like, jdbcType=VARCHAR},    
+	     	 buyer_buyerORIAL		=	#{buyer_buyerorial,jdbcType=VARCHAR},  
+	     	 buyer_buyerORIALDAY	=	TO_DATE(#{buyer_buyerorialday,jdbcType=DATE}, 'YYYY-MM-DD')
+	     WHERE buyer_ID	=	#{buyer_id} 
+	</update>
+	
+	<insert id="insertBuyer" parameterType = "BuyerVO">
+		INSERT INTO buyerBER (                        
+	            buyer_ID,   buyer_PASS,   buyer_NAME,     
+	            buyer_REGNO1,  buyer_REGNO2,   buyer_BIR, 
+	            buyer_ZIP,  buyer_ADD1,   buyer_ADD2,     
+	            buyer_HOMETEL, buyer_COMTEL,  buyer_HP,   
+	            buyer_MAIL,  buyer_JOB,  buyer_LIKE,      
+	            buyer_buyerORIAL,  buyer_buyerORIALDAY,     
+	            buyer_MILEAGE                         
+	     ) VALUES (                                 
+	            #{buyer_id},   #{buyer_pass},   #{buyer_name},                        
+	            #{buyer_regno1},	#{buyer_regno2},   TO_DATE(#{buyer_bir}, 'YYYY-MM-DD'),  
+	            #{buyer_zip},  #{buyer_add1},   #{buyer_add2},                         
+	            #{buyer_hometel}, #{buyer_comtel},  #{buyer_hp},                           
+	            #{buyer_mail},  #{buyer_job},  #{buyer_like},                          
+	            #{buyer_buyerorial},  TO_DATE(#{buyer_buyerorialday}, 'YYYY-MM-DD'), 3000  
+	     )                                          
+	</insert>
+	<sql id="searchFrag">
+		<where>
+			<if test="simpleSearch!=null and @org.apache.commons.lang3.StringUtils@isNotBlank(simpleSearch.searchWord)">
+				<choose>
+					<when test="simpleSearch.searchType eq 'name'">
+						INSTR(buyer_NAME, #{simpleSearch.searchWord}) > 0
+					</when>
+					<when test="simpleSearch.searchType eq 'address'">
+						INSTR(buyer_ADD1, #{simpleSearch.searchWord}) > 0
+					</when>
+					<otherwise>
+						INSTR(buyer_NAME, #{simpleSearch.searchWord}) > 0
+						OR
+						INSTR(buyer_ADD1, #{simpleSearch.searchWord}) > 0
+					</otherwise>
+				</choose>
+			</if>
+		</where>
+	</sql>
+	<select id="selectbuyerberList" resultType="BuyerVO" parameterType="PagingVO" >
+		SELECT B.*
+		FROM(
+			SELECT A.*, ROWNUM RNUM
+			FROM(
+				SELECT ROWID RID, buyer_id, buyer_pass, buyer_name, buyer_mail 
+				, buyer_ADD1
+				FROM buyerber
+				<include refid="searchFrag" />
+				ORDER BY RID DESC
+			) A
+		) B
+		<![CDATA[
+			WHERE RNUM >= #{startRow} AND RNUM <= #{endRow}
+		]]>
+	</select>
+	
+	<select id="selectTotalRecord" resultType = "int" parameterType ="PagingVO">
+		SELECT COUNT(*)
+		FROM buyer
+		<include refid="searchFrag" />
+	</select>
+	
+
+</mapper>
