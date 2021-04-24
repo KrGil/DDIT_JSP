@@ -17,7 +17,6 @@ FROM BOARDVIEW
 WHERE BO_TYPE = 'BOARD'
 START WITH BO_PARENT IS NULL
 CONNECT BY PRIOR BO_NO = BO_PARENT
-
 ORDER SIBLINGS BY BO_SORT ASC, BO_NO DESC; 
 
 DELETE FROM ATTATCH
@@ -26,8 +25,15 @@ SELECT * FROM BOARD
 WHERE BO_NO = 1867;
 UPDATE BOARD
     SET
-        BO_TITLE 	= "파일 없는 글"
-        ,BO_WRITER 	= "글쓴이"
-        ,BO_CONTENT 	= "할로"
+        BO_TITLE 	= '파일 없는 글'
+        ,BO_WRITER 	= '글쓴이'
+        ,BO_CONTENT 	= '할로'
         ,BO_SEC 		= 'N'
     WHERE BO_NO = 1867;
+commit;
+UPDATE BOARD  
+SET    BO_TITLE  = '파일 없는 글1'    
+,BO_WRITER  = '글쓴이1'   
+,BO_CONTENT  = '<p>할로</p>'          
+WHERE BO_NO = '1867';
+commit;
