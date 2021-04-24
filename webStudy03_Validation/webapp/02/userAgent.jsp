@@ -1,5 +1,5 @@
-<%@page import="kr.or.krgil.enumpkg.OSType"%>
-<%@page import="kr.or.krgil.enumpkg.BrowserType"%>
+<%@page import="kr.or.ddit.enumpkg.OSType"%>
+<%@page import="kr.or.ddit.enumpkg.BrowserType"%>
 <%@page import="java.util.Map.Entry"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.LinkedHashMap"%>

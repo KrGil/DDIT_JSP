@@ -3,7 +3,7 @@
 <configuration>
 	<properties resource="kr/or/ddit/db/dbInfo.properties"/>
 	<typeAliases>
-		<package name="kr.or.krgil.vo"/>
+		<package name="kr.or.ddit.vo"/>
 	</typeAliases>
 	<environments default="dev">
 		<environment id="dev">
@@ -17,7 +17,7 @@
 		</environment>
 	</environments>
 	<mappers>
-		<mapper resource="kr/or/krgil/db/mybatis/mappers/Buyer.xml"/>
+		<mapper resource="kr/or/ddit/db/mybatis/mappers/Buyer.xml"/>
 	</mappers>
 </configuration>
 

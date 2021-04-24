@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -16,6 +17,7 @@ import kr.or.ddit.mvc.annotation.resolvers.BadRequestException;
 import kr.or.ddit.mvc.annotation.resolvers.IHandlerMethodArgumentResolver;
 import kr.or.ddit.mvc.annotation.resolvers.ModelAttributeArgumentResolver;
 import kr.or.ddit.mvc.annotation.resolvers.RequestParamArgumentResolver;
+import kr.or.ddit.mvc.annotation.resolvers.RequestPartArgumentResolver;
 import kr.or.ddit.mvc.annotation.resolvers.ServletSpecArgumentResolver;
 
 public class HandlerAdapter implements IHandlerAdapter{
@@ -25,7 +27,12 @@ public class HandlerAdapter implements IHandlerAdapter{
 		argumentResolvers.add(new ServletSpecArgumentResolver());
 		argumentResolvers.add(new ModelAttributeArgumentResolver());
 		argumentResolvers.add(new RequestParamArgumentResolver());
+		argumentResolvers.add(new RequestPartArgumentResolver());
 		
+	}
+	
+	public void addHandlerMethodArgumentResolver(IHandlerMethodArgumentResolver...resolvers) {
+		argumentResolvers.addAll(Arrays.asList(resolvers));
 	}
 	private IHandlerMethodArgumentResolver findArgumentResolver(Parameter parameter) {
 		IHandlerMethodArgumentResolver finded = null;

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.alba.dao.ILicenseDAO">
+	<insert id="insertLicenses" parameterType="AlbaVO">
+		INSERT ALL
+		<foreach collection="licenseList" item="license">
+			INTO LIC_ALBA(AL_ID, LIC_CODE, LIC_DATE, LIC_IMG) VALUES(#{alId}, #{license.licCode}, #{license.licDate}, #{license.licImg})
+		</foreach>
+		SELECT * FROM DUAL
+	</insert>
+	<delete id="deleteLicenses" parameterType="AlbaVO">
+		DELETE FROM LIC_ALBA
+		WHERE AL_ID = #{alId}
+		<if test="deleteLicCodes!=null and deleteLicCodes.length gt 0">
+			AND LIC_CODE IN 
+			<foreach collection="deleteLicCodes" item="delCode"
+				open="(" close=")" separator=","
+			>
+				#{delCode}
+			</foreach>
+		</if>
+	</delete>
+	<select id="selectLicense" parameterType="LicenseVO" resultType="LicenseVO">
+		SELECT AL_ID, LIC_CODE, LIC_DATE, LIC_IMG
+		FROM LIC_ALBA
+		WHERE AL_ID = #{alId} AND LIC_CODE = #{licCode}
+	</select>
+</mapper>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+
+<!--  스키마 종류 : beans, c, p, util, context -->
+		
+		<util:list id="list" list-class="java.util.LinkedList">
+			<value>value1</value>
+			<value>value2</value>
+		</util:list>
+		<util:set id="set">
+			<value>value1</value>
+			<bean class="kr.or.ddit.container.various.VariousDIVO"></bean>
+		</util:set>
+		<util:map id="map">
+			<entry key="key1" value="123" value-type="java.lang.Integer"/> 
+			<entry key="today" value-ref="today"/>
+		</util:map>
+<!-- 		properties - 비 휘발성 데이터 관리를 위해서 존재(map이 존재함으로도) -->
+		<util:properties id="props" >
+			<prop key="propName">
+					propValue
+			</prop>
+		</util:properties>
+<!-- 		생성자가 없는 객체(array)를 bean 으로 등록할 때, -->
+<!-- 		FactoryBean 을 이용함. -->
+<!-- 		FactoryBean 을 bean 으로 등록하면, -->
+<!-- 		factory 가 객체로 등록되지 않고, -->
+<!-- 		factory 내의 getObject 에서 반환되는 객체가 bean 으로 등록됨 -->
+		<bean id="array" class="kr.or.ddit.container.collection.StringArrayFactoryBean"></bean>
+		<bean id="today" class="java.util.Date"/>
+		<bean id="cvo1" class="kr.or.ddit.container.collection.CollectionDIVO"
+			c:list-ref="list"
+			c:set-ref="set"
+			c:map-ref="map"
+			c:props-ref="props"
+			c:array-ref="array"
+		>
+		
+		</bean>
+		<bean id="cvo2" class="kr.or.ddit.container.collection.CollectionDIVO" 
+			p:list-ref="list"
+			p:set-ref="set"
+			p:map-ref="map"
+			p:props-ref="props"
+			p:array-ref="array"
+		/>
+		
+</beans>
