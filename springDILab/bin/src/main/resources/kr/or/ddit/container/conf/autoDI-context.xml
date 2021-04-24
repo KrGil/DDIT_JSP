@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<context:annotation-config/>
+<!-- 빈으로 등록할 어노테이션 -->
+<!-- 	@Component : 범용 빈을 등록 -->
+<!-- 	@Repository : persistence layer 빈 -->
+<!-- 	@Service : business logic layer 빈 -->
+<!-- 	@controller : controller layer  -->
+<!-- 	@RestController : controller layer -v -->
+<!-- 	@Configuration  xml -> java로 짜 놓은것-->
+<!-- 	@ControllerAdvice : controller layer -v -->
+<!--  auto wiring 어노테이션 -->
+<!-- 	@AutoWired -->
+<!-- 	@Inject : 빈의 type을 기준으로 검색하고 주입. -->
+<!-- 	@Resource : 빈검색 기준을 명시할 수 있음. -->
+<!-- 	@Required : 필수 주입 명시, setter injection -->
+	<context:component-scan base-package="kr.or.ddit.container.auto"></context:component-scan>
+	
+	
+</beans>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.alba.dao.IAlbaDAO">
+	<insert id="insertAlba" parameterType="AlbaVO">
+		<selectKey resultType="string" order="BEFORE" keyProperty="alId">
+			SELECT 'A' || LPAD(NVL(TO_NUMBER(SUBSTR(MAX(AL_ID),2)), 0)+1, 7, '0')
+			FROM ALBA
+		</selectKey>
+		INSERT INTO alba (
+		    AL_ID,    AL_NAME,    AL_AGE,
+		    AL_ZIP,    AL_ADD1,    AL_ADD2,
+		    AL_HP,    GR_CODE,    AL_GEN,
+		    AL_MAIL,    AL_SPEC,    AL_DESC,
+		    AL_IMG,    AL_CAREER
+		) VALUES (
+		    #{alId,jdbcType=VARCHAR},    #{alName,jdbcType=VARCHAR},    #{alAge,jdbcType=NUMERIC},
+		    #{alZip,jdbcType=VARCHAR},    #{alAdd1,jdbcType=VARCHAR},    #{alAdd2,jdbcType=VARCHAR},
+		    #{alHp,jdbcType=VARCHAR},    #{grCode,jdbcType=VARCHAR},    #{alGen,jdbcType=VARCHAR},
+		    #{alMail,jdbcType=VARCHAR},    #{alSpec,jdbcType=VARCHAR},    #{alDesc,jdbcType=VARCHAR},
+		    #{alImg,jdbcType=VARCHAR},    #{alCareer,jdbcType=VARCHAR}
+		)
+	</insert>
+	<sql id="withClause">
+		WITH ALBAVIEW AS(
+		    SELECT A.*, GR_NAME
+		    FROM ALBA A INNER JOIN GRADE B ON (A.GR_CODE = B.GR_CODE)
+		),
+		LICALBAVIEW AS(
+		    SELECT C.LIC_CODE, LIC_NAME, AL_ID, LIC_DATE
+		    FROM LIC_ALBA C INNER JOIN LICENSE D ON (C.LIC_CODE = D.LIC_CODE)
+		)
+	</sql>
+	<sql id="fromClause">
+		FROM ALBAVIEW A LEFT OUTER JOIN LICALBAVIEW B ON (A.AL_ID = B.AL_ID)
+	</sql>
+	<sql id="searchFrag">
+		<trim prefix=" WHERE " prefixOverrides="AND">
+			<if test="searchDetail!=null">
+				<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchDetail.grCode)">
+					AND GR_CODE = #{searchDetail.grCode}
+				</if>
+				<if test="searchDetail.licCodes!=null and searchDetail.licCodes.length gt 0 and @org.apache.commons.lang3.StringUtils@isNotBlank(searchDetail.licCodes[0])">
+					AND LIC_CODE = #{searchDetail.licCodes[0]}
+				</if>
+				<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchDetail.alGen)">
+					AND AL_GEN = #{searchDetail.alGen}
+				</if>
+				<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchDetail.alAdd1)">
+					AND INSTR(AL_ADD1, #{searchDetail.alAdd1}) > 0
+				</if>
+				<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchDetail.alName)">
+					AND INSTR(AL_NAME, #{searchDetail.alName}) > 0
+				</if>
+				<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchDetail.alCareer)">
+					AND INSTR(AL_CAREER, #{searchDetail.alCareer}) > 0
+				</if>
+			</if>
+		</trim>
+	</sql>
+	<select id="selectAlbaCount" parameterType="PagingVO" resultType="int">
+		<include refid="withClause" />
+		SELECT COUNT(DISTINCT A.AL_ID)
+		<include refid="fromClause" />
+		<include refid="searchFrag" />
+	</select>
+	<select id="selectAlbaList" parameterType="PagingVO" resultType="AlbaVO">
+		<include refid="withClause" />
+		SELECT D.*
+		FROM (
+			SELECT ROWNUM RNUM, C.*
+			FROM (
+				SELECT DISTINCT A.AL_ID, AL_NAME, AL_AGE, AL_GEN,
+								GR_NAME, AL_ADD1, AL_HP, AL_MAIL
+				<include refid="fromClause" />
+				<include refid="searchFrag" />
+				ORDER BY A.AL_ID DESC
+			) C
+		) D
+		<![CDATA[
+			WHERE RNUM >= #{startRow} AND RNUM <= #{endRow}
+		]]> 
+	</select>
+	<resultMap type="AlbaVO" id="albaMap">
+		<id property="alId" column="AL_ID"/>
+		<collection property="licenseList" ofType="LicenseVO" autoMapping="true">
+			<id property="alId" column="LICALID"/>
+			<id property="licCode" column="LIC_CODE"/>
+		</collection>
+	</resultMap>
+	<select id="selectAlba" parameterType="string" resultMap="albaMap">
+		<include refid="withClause" />
+		SELECT A.AL_ID,    AL_NAME,    AL_AGE,    AL_ZIP,
+			    AL_ADD1,    AL_ADD2,    AL_HP,    GR_CODE,
+			    AL_GEN,    AL_MAIL,    AL_SPEC,    AL_DESC,
+			    AL_IMG,    AL_CAREER
+			    , GR_NAME
+			    , B.AL_ID LICALID, LIC_CODE, LIC_NAME, LIC_DATE
+		<include refid="fromClause" />
+		WHERE A.AL_ID = #{alId}		
+	</select>
+	<update id="updateAlba" parameterType="AlbaVO">
+		UPDATE ALBA
+		SET
+		    AL_NAME		=	#{alName,jdbcType=VARCHAR},
+		    AL_AGE		=	#{alAge,jdbcType=NUMERIC},
+		    AL_ZIP		=	#{alZip,jdbcType=VARCHAR},
+		    AL_ADD1		=	#{alAdd1,jdbcType=VARCHAR},
+		    AL_ADD2		=	#{alAdd2,jdbcType=VARCHAR},
+		    AL_HP		=	#{alHp,jdbcType=VARCHAR},
+		    AL_SPEC		=	#{alSpec,jdbcType=VARCHAR},
+		    AL_DESC		=	#{alDesc,jdbcType=VARCHAR},
+		    GR_CODE	 	= 	#{grCode,jdbcType=VARCHAR},
+		    AL_CAREER	=	#{alCareer,jdbcType=VARCHAR},
+		    AL_GEN		=	#{alGen,jdbcType=CHAR},
+		    AL_MAIL		=	#{alMail,jdbcType=VARCHAR}
+		    <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(alImg)">
+		    	, AL_IMG = #{alImg,jdbcType=VARCHAR}
+		    </if>
+		WHERE  AL_ID	=	#{alId,jdbcType=VARCHAR}
+	</update>
+	<delete id="deleteAlba" parameterType="string">
+		DELETE FROM ALBA
+		WHERE AL_ID = #{alId}
+	</delete>
+</mapper>
+
