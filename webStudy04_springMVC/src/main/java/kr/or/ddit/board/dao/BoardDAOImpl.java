@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.stereotype.Repository;
 
 import kr.or.ddit.db.mybatis.CustomSqlSessionFactoryBuilder;
-import kr.or.ddit.member.dao.MemberDAOImpl;
-import kr.or.ddit.vo.AttatchVO;
 import kr.or.ddit.vo.BoardVO;
 import kr.or.ddit.vo.PagingVO;
 
+@Repository
 public class BoardDAOImpl implements IBoardDAO {
 	private SqlSessionFactory sessionFactory =
 			CustomSqlSessionFactoryBuilder.getSessionFactory();
@@ -58,6 +58,36 @@ public class BoardDAOImpl implements IBoardDAO {
 	@Override
 	public int deleteBoard(BoardVO search, SqlSession session) {
 		return session.delete("kr.or.ddit.board.dao.IBoardDAO.deleteBoard", search);
+	}
+
+	@Override
+	public int incrementHit(int bo_no) {
+		try(
+			SqlSession session = sessionFactory.openSession(true);	
+		){
+			IBoardDAO mapper = session.getMapper(IBoardDAO.class);
+			return mapper.incrementHit(bo_no); 
+		}
+	}
+
+	@Override
+	public int incrementRcmd(int bo_no) {
+		try(
+			SqlSession session = sessionFactory.openSession(true);	
+		){
+			IBoardDAO mapper = session.getMapper(IBoardDAO.class);
+			return mapper.incrementRcmd(bo_no); 
+		}
+	}
+
+	@Override
+	public int incrementRpt(int bo_no) {
+		try(
+			SqlSession session = sessionFactory.openSession(true);	
+		){
+			IBoardDAO mapper = session.getMapper(IBoardDAO.class);
+			return mapper.incrementRpt(bo_no); 
+		}
 	}
 
 }

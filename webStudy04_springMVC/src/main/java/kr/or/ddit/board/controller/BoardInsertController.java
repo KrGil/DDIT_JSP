@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -32,7 +33,8 @@ public class BoardInsertController {
 	private static final Logger logger = LoggerFactory.getLogger(BoardInsertController.class);
 	private String[] filteringTokens = new String[] {"말미잘", "해삼"};
 	
-	private IBoardService service = new BoardServiceImpl();
+	@Inject
+	private IBoardService service ;
 	
 	@RequestMapping("/board/noticeInsert.do")
 	public String noticeForm(@ModelAttribute("board") BoardVO board) {
@@ -45,7 +47,7 @@ public class BoardInsertController {
 					, HttpServletRequest req) {
 		// request에 groupinsert를 저장하고 넘기기
 		req.setAttribute("groupHint", NoticeInsertGroup.class);
-		return insert(board, null, req);
+		return insert(board, req);
 	}
 	
 	
@@ -61,21 +63,8 @@ public class BoardInsertController {
 	@RequestMapping(value="/board/boardInsert.do", method=RequestMethod.POST)
 	public String insert(
 			@ModelAttribute("board") BoardVO board
-			, @RequestPart(value="bo_files", required=false) MultipartFile[] bo_files
 			, HttpServletRequest req
 			) {
-		// 첨부파일검증
-		if(bo_files!=null) {
-			List<AttatchVO> attatchList = new ArrayList<>();
-			for(MultipartFile file : bo_files) {
-				// file.isEmpty()로 검증 파일이 없더라도 파트는 생성되기에
-				if(file.isEmpty()) continue;
-				attatchList.add(new AttatchVO(file));
-			}
-			if(attatchList.size()>0)
-				board.setAttatchList(attatchList);
-		}
-		
 		
 		Map<String, List<String>> errors = new LinkedHashMap<>();
 		req.setAttribute("errors", errors);

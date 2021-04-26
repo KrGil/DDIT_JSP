@@ -39,6 +39,7 @@
 	    <filter-name>xssEscapeServletFilter</filter-name>
 	    <url-pattern>/*</url-pattern>
 	</filter-mapping>
+	
   <filter>
     <filter-name>FileUploadRequestCheckFilter</filter-name>
     <filter-class>kr.or.ddit.mvc.filter.FileUploadRequestCheckFilter</filter-class>

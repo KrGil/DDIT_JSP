@@ -12,33 +12,28 @@ public interface IBoardService {
 	public int retrieveBoardCount(PagingVO<BoardVO> pagingVO);
 	public List<BoardVO> retrieveBoardList(PagingVO<BoardVO> pagingVO);
 	/**
-	 * 
 	 * @param search
-	 * @return 존재하지 않는 경우 custom exception
+	 * @return 존재하지 않는다면 custom exception
 	 */
 	public BoardVO retrieveBoard(BoardVO search);
-	/**
-	 * 
-	 * @param board
-	 * @return 있느냐 없느냐, 검증(암호화)
-	 */
 	public ServiceResult modifyBoard(BoardVO board);
-	/**
-	 * 
-	 * @param search
-	 * @return 존재하면 
-	 */
 	public ServiceResult removeBoard(BoardVO search);
-	/**
-	 * 
-	 * @param att_no
-	 * @return AttatchVO
-	 */
+	
 	public AttatchVO download(int att_no);
-	/**
-	 *  인증 여부 확인
-	 * @param BoardVO
-	 * @return boolean
-	 */
+	
 	public boolean boardAuthenticate(BoardVO search);
+	
+	public ServiceResult recommend(int bo_no);
+	public ServiceResult report(int bo_no);
 }
+
+
+
+
+
+
+
+
+
+
+

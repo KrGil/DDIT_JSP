@@ -11,14 +11,13 @@
 	<script type="text/javascript">
 		alert("${message}");
 	</script>
-	<c:remove var="message" scope="session"/>
 </c:if>
 </head>
 <body>
 	<table class="table table-bordered">
 		<tr>
-			<th>게시글 종류</th>
-			<td>${board.bo_type eq 'NOTICE' ? '공지' : '일반'}</td>
+			<th>게시판종류</th>
+			<td>${board.bo_type}</td>
 		</tr>
 		<tr>
 			<th>글번호</th>
@@ -42,11 +41,11 @@
 		</tr>
 		<tr>
 			<th>추천수</th>
-			<td>${board.bo_rec}</td>
+			<td id="rcmdArea">${board.bo_rec}</td>
 		</tr>
 		<tr>
 			<th>신고수</th>
-			<td>${board.bo_rep}</td>
+			<td id="rptArea">${board.bo_rep}</td>
 		</tr>
 		<tr>
 			<th>첨부파일</th>
@@ -59,6 +58,15 @@
 						<a href="${downloadURL }"><span>${attatch.att_filename }</span></a>
 					</c:forEach>
 				</c:if>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+<!-- 			/board/recommend.do 비동기 요청 발생 -->
+<!-- 			what 이름의 필수 파리미터 전달 -->
+<!-- 			Json 응답(success, recommend, message) -->
+				<input id="rcmdBtn" type="button" value="추천하기" class="btn btn-primary"/>
+				<input id="rptBtn" type="button" value="신고하기" class="btn btn-danger"/>
 			</td>
 		</tr>
 		<tr>
@@ -125,7 +133,64 @@
 			if(url)
 				location.href = url;
 		});
+		$("#rcmdBtn").on("click", function(){
+			$.ajax({
+				url : "${cPath}/board/recommend.do",
+				data : {
+					what : ${board.bo_no}
+				},
+				dataType : "json", // Accept/Content-Type
+				success : function(resp) {
+					if(resp.success){
+						$("#rcmdArea").html(resp.recommend);
+					}else{
+						alert(resp.message);
+					}
+				},
+				error : function(xhr, error, msg) {
+					console.log(xhr);
+					console.log(error);
+					console.log(msg);
+				}
+			});
+		});
+		$("#rptBtn").on("click", function(){
+			$.ajax({
+				url : "${cPath}/board/report.do",
+				data : {
+					what:${board.bo_no}
+				},
+				dataType : "json",
+				success : function(resp) {
+					if(resp.success){
+						$("#rptArea").html(resp.report);
+					}else{
+						alert(resp.message);
+					}
+				},
+				error : function(xhr, error, msg) {
+					console.log(xhr);
+					console.log(error);
+					console.log(msg);
+				}
+			});
+		});
 	</script>
 	<jsp:include page="/includee/postScript.jsp" />
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -11,17 +11,32 @@
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
 	<!-- 한방에 모든것들을 등록하기 -->
 	<annotation-driven/>
+	
+<!-- 	정적 자원에 대한 처리 -->
 	<!-- resources 안트패스매핑방식 -->
 	<resources location="/resources/" mapping="/resources/**" cache-period="0"/>
-	<!-- 내가 할 수 없는것 다시 가져가. -->
+	<!-- 정적자원에 대한 제어권을 다시 돌려주는것. -->
 	<default-servlet-handler/>
 	
 	<!-- 기본으로 등록된 것이 마음에 들지 않으면 다시 등록하면된다. -->
 <!-- 	viewResolver에 prefix와 suffix가 없으니까 -->
+<!-- 	한가지 전략에 두가지 이상이 존재한다면 반드시 우선순위를 정해주어야 한다. -->
+<!-- 	IRVR은 항상 순서가 가장 마지막. 못찾으면 404를 내보낸다. 다음 resolver에게 가지않는다 -->
+<!-- 	oder를 따로 주지 않으면 거의 항상 제일 마지막 -->
 	<beans:bean id="IRVR" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
 		p:prefix="/WEB-INF/views/"
 		p:suffix=".jsp"
 	/>
+<!-- 	등록되어있는 빈에서 view를 찾는다. -->
+	<beans:bean id="BNVR" class="org.springframework.web.servlet.view.BeanNameViewResolver"
+		p:order="1"
+	/>
+	<beans:bean id="downloadView" class="kr.or.ddit.board.view.DownloadView" />
+	
+<!-- 	파일업로드 시 파일이 정상적으로 올라가지 않다면 이 녀석을 등록해야한다. -->
+<!-- 	몇몇 bean은 id를 반드시 정해진 형식으로 해야한다. handlerAdapter가 injection을 하기 때문 -->
+<!-- 	원본요청을 필터링해서 multipartServletRequest로 wrapping -->
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"></beans:bean>
 	
 	<context:component-scan base-package="kr.or.ddit" use-default-filters="false" >
 		<context:include-filter type="annotation" 

@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -14,30 +17,40 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.WebApplicationContext;
 
-import kr.or.ddit.board.service.BoardServiceImpl;
 import kr.or.ddit.board.service.IBoardService;
+import kr.or.ddit.exception.BadRequestException;
 import kr.or.ddit.vo.BoardVO;
 import kr.or.ddit.vo.PagingVO;
 
 @Controller
 public class BoardReadController {
 	public static final String BOARDAUTH = "board.authenticated";
-	private static final Logger logger = LoggerFactory.getLogger(BoardReadController.class);
-	IBoardService service = new BoardServiceImpl();
+	@Inject
+	private IBoardService service;
+	@Inject
+	private WebApplicationContext container;
+	private ServletContext application;
+	@PostConstruct
+	public void init() {
+		application = container.getServletContext();
+	}
 	
 	@RequestMapping(value="/board/authenticate.do", method=RequestMethod.POST)
 	public String boardAuth(
-			@RequestParam("bo_no") int bo_no,
-			@RequestParam("bo_pass") String bo_pass,
-			HttpSession session
-			) {
+		@RequestParam("bo_no") int bo_no
+		, @RequestParam("bo_pass") String bo_pass
+		, HttpSession session
+	) {
 		BoardVO search = new BoardVO();
 		search.setBo_no(bo_no);
 		search.setBo_pass(bo_pass);
@@ -53,22 +66,19 @@ public class BoardReadController {
 	}
 	
 	@RequestMapping("/board/boardView.do")
-	public String viewForAjax(
-			@RequestParam("what") int bo_no,
-			HttpServletRequest req,
-			HttpServletResponse resp,
-			HttpSession session
-			) throws IOException {
-		String accept = req.getHeader("Accept");
-
-		BoardVO search = new BoardVO();
-		req.setAttribute("search", search);
+	public String view(
+		@RequestParam("what") int bo_no	
+		, @ModelAttribute("search") BoardVO search
+		, Model model
+		, HttpSession session
+	) {
 		search.setBo_no(bo_no);
 		BoardVO board = service.retrieveBoard(search);
 		
 		boolean valid = true;
 		if("Y".equals(board.getBo_sec())) {
-			BoardVO authenticated = (BoardVO) session.getAttribute(BOARDAUTH);
+			BoardVO authenticated = 
+					(BoardVO) session.getAttribute(BOARDAUTH);
 			if(authenticated==null || authenticated.getBo_no() != bo_no) {
 				valid = false;
 			}
@@ -76,29 +86,46 @@ public class BoardReadController {
 		
 		String view = null;
 		if(valid) {
-			if(accept.contains("plain")) {
-				// text로 보내기
-				resp.setContentType("text/plain;charset=utf-8");
-				try(
-						PrintWriter out = resp.getWriter();
-						){
-					out.println(board.getBo_content());
-				}
-			}else {
-				req.setAttribute("board", board);
-				view = "board/boardView";
-			}
-		// 비밀글인데 인증을 안거친것.
+			model.addAttribute("board", board);
+			view = "board/boardView";
 		}else {
 			view = "board/passwordForm";
-		} // if(valid) end
-		// 지워야 다음 접속 시 다시 점검.
-		session.removeAttribute(BOARDAUTH);
+		}
 		return view;
 	}
 	
-	@RequestMapping("/board/noticeList.do")
-	public String noticeList(
+	@RequestMapping(value="/board/boardView.do"
+			, produces = "text/plain;charset=UTF-8")
+	@ResponseBody
+	public String preview(
+			@RequestParam("what") int bo_no
+			, @ModelAttribute("search") BoardVO search
+			, HttpSession session
+		) throws IOException{
+		search.setBo_no(bo_no);
+		BoardVO board = service.retrieveBoard(search);
+		
+		boolean valid = true;
+		if("Y".equals(board.getBo_sec())) {
+			BoardVO authenticated = 
+					(BoardVO) session.getAttribute(BOARDAUTH);
+			if(authenticated==null || authenticated.getBo_no() != bo_no) {
+				valid = false;
+			}
+		}
+		
+		if(valid) {
+			session.removeAttribute(BOARDAUTH);
+			return board.getBo_content();
+		}else {
+			throw new BadRequestException("비밀글은 미리보기 불가.");
+		}
+	}
+	
+	@RequestMapping(value="/board/noticeList.do"
+			, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public PagingVO<BoardVO> noticeListForAjax(
 			@RequestParam(value="searchType", required=false) String searchType
 			, @RequestParam(value="searchWord", required=false) String searchWord
 			, @RequestParam(value="page", required=false, defaultValue="1") int currentPage
@@ -108,47 +135,78 @@ public class BoardReadController {
 			) {
 		searchType = "type";
 		searchWord = "NOTICE";
-		return list(currentPage, searchType, searchWord, minDate, maxDate, req);
+		return listForAjax(currentPage, searchType, 
+				searchWord, minDate, maxDate);
+	}
+	@RequestMapping("/board/noticeList.do")
+	public String noticeList(
+			@RequestParam(value="searchType", required=false) String searchType
+			, @RequestParam(value="searchWord", required=false) String searchWord
+			, @RequestParam(value="page", required=false, defaultValue="1") int currentPage
+			, @RequestParam(value="minDate", required=false) String minDate
+			, @RequestParam(value="maxDate", required=false) String maxDate
+			, Model model
+			) {
+		searchType = "type";
+		searchWord = "NOTICE";
+		return listForHTML(currentPage, searchType, 
+				searchWord, minDate, maxDate, model);
 	}
 	
-	@RequestMapping("/board/boardList.do")
-	public String list(
-			@RequestParam(value="page", required=false, defaultValue="1") int currentPage,
-			@RequestParam(value="searchType", required=false) String searchType,
-			@RequestParam(value="searchWord", required=false) String searchWord,
-			@RequestParam(value="minDate", required=false) String minDate,
-			@RequestParam(value="maxDate", required=false) String maxDate,
-			HttpServletRequest req	) {
+	@RequestMapping(value={"/board/boardList.do"})
+	public String listForHTML(
+			@RequestParam(value="page", required=false, defaultValue="1") int currentPage
+			, @RequestParam(value="searchType", required=false) String searchType
+			, @RequestParam(value="searchWord", required=false) String searchWord
+			, @RequestParam(value="minDate", required=false) String minDate
+			, @RequestParam(value="maxDate", required=false) String maxDate
+//			, @ModelAttribute("searchVO") SearchVO searchVO
+			, Model model
+		) {
+		PagingVO<BoardVO> pagingVO = listForAjax(currentPage, searchType, searchWord, minDate, maxDate);
 		
-		PagingVO<BoardVO> pagingVO = new PagingVO(10, 5);
+		model.addAttribute("pagingVO", pagingVO);
+		
+		return "board/boardList";
+		
+	}
+	
+	@RequestMapping(value="/board/boardList.do", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public PagingVO<BoardVO> listForAjax(
+		@RequestParam(value="page", required=false, defaultValue="1") int currentPage
+		, @RequestParam(value="searchType", required=false) String searchType
+		, @RequestParam(value="searchWord", required=false) String searchWord
+		, @RequestParam(value="minDate", required=false) String minDate
+		, @RequestParam(value="maxDate", required=false) String maxDate
+//		, @ModelAttribute("searchVO") SearchVO searchVO
+	) {
+		PagingVO<BoardVO> pagingVO = new PagingVO<>(7, 5);
 		pagingVO.setCurrentPage(currentPage);
-		
+		// 검색 조건
 		Map<String, Object> searchMap = new HashMap<>();
 		searchMap.put("searchType", searchType);
 		searchMap.put("searchWord", searchWord);
 		searchMap.put("minDate", minDate);
 		searchMap.put("maxDate", maxDate);
-		
 		pagingVO.setSearchMap(searchMap);
+		
+//		pagingVO.setSimpleSearch(searchVO);
 		
 		int totalRecord = service.retrieveBoardCount(pagingVO);
 		pagingVO.setTotalRecord(totalRecord);
 		
-		List<BoardVO> boardList = service.retrieveBoardList(pagingVO);
-		// 썸네일 보여주기.
+		List<BoardVO> boardList = 
+				service.retrieveBoardList(pagingVO);
 		for(BoardVO tmp : boardList) {
-			String thumbnail = null;
-			thumbnail = req.getContextPath()+"/images/1.jfif";
 			String source = tmp.getBo_content();
 			if(source == null) {
-				tmp.setThumbnail(thumbnail);
 				continue;
 			}
-			// dom 트리구조가 만들어진다.
 			Document dom = Jsoup.parse(source);
 			Elements imgs = dom.getElementsByTag("img");
+			String thumbnail = application.getContextPath() + "/images/cat1.jpg";
 			if(!imgs.isEmpty()) {
-				// 존재한다면 첫번째를 썸네일로 하자
 				Element img = imgs.get(0);
 				thumbnail = img.attr("src");
 			}
@@ -157,7 +215,6 @@ public class BoardReadController {
 		
 		pagingVO.setDataList(boardList);
 		
-		req.setAttribute("pagingVO", pagingVO);
-		return "/board/boardList";
+		return pagingVO;
 	}
 }

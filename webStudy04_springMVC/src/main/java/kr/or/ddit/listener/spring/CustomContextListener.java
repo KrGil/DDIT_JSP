@@ -1,5 +1,7 @@
 package kr.or.ddit.listener.spring;
 
+import java.util.LinkedHashSet;
+
 import javax.servlet.ServletContext;
 
 import org.slf4j.Logger;
@@ -8,6 +10,9 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
+
+import kr.or.ddit.Constants;
+import kr.or.ddit.vo.MemberVO;
 
 @Component
 public class CustomContextListener {
@@ -18,6 +23,8 @@ public class CustomContextListener {
 				(WebApplicationContext) event.getApplicationContext();
 		ServletContext application =  root.getServletContext();
 		application.setAttribute("cPath", application.getContextPath());
+		application.setAttribute(Constants.SESSIONCOUNTATTRNAME, 0);
+		application.setAttribute(Constants.USERLISTATTRNAME, new LinkedHashSet<MemberVO>());
 		logger.info("컨텍스트 시작");
 	}
 }

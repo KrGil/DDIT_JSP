@@ -1,11 +1,14 @@
 package kr.or.ddit.vo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.or.ddit.validator.BoardInsertGroup;
 import kr.or.ddit.validator.DeleteGroup;
@@ -56,6 +59,22 @@ public class BoardVO implements Serializable{
 	
 	private int startAttNo;
 	private List<AttatchVO> attatchList;
+	private MultipartFile[] bo_files;
+	public void setBo_files(MultipartFile[] bo_files) {
+		this.bo_files = bo_files;
+		// 첨부파일검증
+		if(bo_files!=null) {
+			List<AttatchVO> attatchList = new ArrayList<>();
+			for(MultipartFile file : bo_files) {
+				// file.isEmpty()로 검증 파일이 없더라도 파트는 생성되기에
+				if(file.isEmpty()) continue;
+				attatchList.add(new AttatchVO(file));
+			}
+			if(attatchList.size()>0)
+				this.attatchList = attatchList;
+		}
+	}
+	
 	private List<Reply2VO> replyList;
 	
 	private int[] delAttNos;

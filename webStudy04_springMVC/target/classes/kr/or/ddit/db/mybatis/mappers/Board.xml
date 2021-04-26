@@ -185,6 +185,19 @@
 		    , BO_DELETE='Y'
 		    DELETE WHERE D.CNT = 0
 	</delete>
+	
+	<update id="updateRecommand" parameterType="BoardVO">
+		<selectKey resultType="int" keyProperty="bo_rec" >
+				SELECT BO_REC
+				FROM BOARD
+				WHERE BO_NO=#{bo_no,jdbcType=NUMERIC}
+		</selectKey>
+		UPDATE BOARD
+		SET
+			BO_REC = #{bo_rec,jdbcType=NUMERIC}+1
+		WHERE BO_NO=#{bo_no,jdbcType=NUMERIC}
+
+	</update>
 </mapper>
 
 	

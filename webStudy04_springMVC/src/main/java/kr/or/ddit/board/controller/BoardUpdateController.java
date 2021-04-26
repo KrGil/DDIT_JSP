@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +24,7 @@ import kr.or.ddit.enumpkg.ServiceResult;
 import kr.or.ddit.utils.RegexUtils;
 import kr.or.ddit.validator.BoardInsertGroup;
 import kr.or.ddit.validator.CommonValidator;
+import kr.or.ddit.validator.UpdateGroup;
 import kr.or.ddit.vo.AttatchVO;
 import kr.or.ddit.vo.BoardVO;
 
@@ -35,36 +37,27 @@ public class BoardUpdateController {
 	@RequestMapping("/board/boardUpdate.do")
 	public String form(
 			@RequestParam("what") int bo_no
-			, HttpServletRequest req) {
+			, Model model
+			) {
 		BoardVO board = service.retrieveBoard(BoardVO.builder().bo_no(bo_no).build());
-		req.setAttribute("board", board);
+		model.addAttribute("board", board);
+		// 수정폼으로 전달
 		return "board/boardForm";
 	}
 	@RequestMapping(value="/board/boardUpdate.do", method=RequestMethod.POST)
 	public String update(
 			@ModelAttribute("board") BoardVO board
-			, @RequestPart(value="bo_files", required=false) MultipartFile[] bo_files
-			, HttpServletRequest req
+			, Model model
 			) {
-		// 첨부파일검증
-		if(bo_files!=null) {
-			List<AttatchVO> attatchList = new ArrayList<>();
-			for(MultipartFile file : bo_files) {
-				// file.isEmpty()로 검증 파일이 없더라도 파트는 생성되기에
-				if(file.isEmpty()) continue;
-				attatchList.add(new AttatchVO(file));
-			}
-			if(attatchList.size()>0)
-				board.setAttatchList(attatchList);
-		}
 		
 		Map<String, List<String>> errors = new LinkedHashMap<>();
-		req.setAttribute("errors", errors);
-		
+		model.addAttribute("errors", errors);
 		// 검증 시 groupType 넘기기. groupHint를 적용한 검증.
-		Class<?> groupHint = (Class<?>) req.getAttribute("groupHint");
-		if(groupHint==null)groupHint=BoardInsertGroup.class;
-		boolean valid = new CommonValidator<BoardVO>().validate(board, errors, groupHint);
+//		Class<?> groupHint = (Class<?>) model.getAttribute("groupHint");
+//		if(groupHint==null)groupHint=BoardInsertGroup.class;
+//		boolean valid = new CommonValidator<BoardVO>().validate(board, errors, groupHint);
+		boolean valid = new CommonValidator<BoardVO>()
+				.validate(board, errors, UpdateGroup.class);
 		
 		String view = null;
 		String message = null;
@@ -89,7 +82,7 @@ public class BoardUpdateController {
 			view = "board/boardForm";
 		}
 		
-		req.setAttribute("message", message);
+		model.addAttribute("message", message);
 		return view;
 	}
 }

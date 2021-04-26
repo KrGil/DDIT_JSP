@@ -41,6 +41,8 @@ import kr.or.ddit.example.service.IExampleService;
  * 		*** init-method 는 필요한 주입이 모두 끝난 후에 호출됨.
  * 
  */		
+
+
 public class SpringBeanContainerDesc {
 	public static void main(String[] args) {
 		ConfigurableApplicationContext container
