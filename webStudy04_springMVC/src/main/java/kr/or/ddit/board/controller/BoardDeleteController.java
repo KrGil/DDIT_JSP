@@ -1,26 +1,20 @@
 package kr.or.ddit.board.controller;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import kr.or.ddit.board.service.BoardServiceImpl;
 import kr.or.ddit.board.service.IBoardService;
 import kr.or.ddit.enumpkg.ServiceResult;
-import kr.or.ddit.validator.CommonValidator;
 import kr.or.ddit.validator.DeleteGroup;
 import kr.or.ddit.vo.BoardVO;
 
@@ -32,18 +26,21 @@ public class BoardDeleteController {
 	
 	@RequestMapping(value="/board/boardDelete.do", method=RequestMethod.POST)
 	public String delete(
-		@ModelAttribute("board")BoardVO board	
+		@Validated(DeleteGroup.class) @ModelAttribute("board")BoardVO board	
+		, BindingResult errors
 		, Model model
 		, RedirectAttributes redirectAttributes
 	) {
 		logger.info(board.getBo_pass());
-		Map<String, List<String>> errors = new LinkedHashMap<>();
-		model.addAttribute("errors", errors);
+//		Map<String, List<String>> errors = new LinkedHashMap<>();
+//		model.addAttribute("errors", errors);
 		
 		// delete group hint 를 적용한 검증
-		boolean valid = new CommonValidator<BoardVO>()
-						.validate(board, errors, DeleteGroup.class);
+//		boolean valid = new CommonValidator<BoardVO>()
+//						.validate(board, errors, DeleteGroup.class);
 		String view = null;
+		boolean valid = !errors.hasErrors();
+		
 		if(valid) {
 			ServiceResult result = service.removeBoard(board);
 			if(ServiceResult.OK.equals(result)) {

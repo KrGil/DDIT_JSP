@@ -1,3 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="kr.or.ddit.board.dao.IReplyDAO"></mapper>
+<mapper namespace="kr.or.ddit.board.dao.IReplyDAO">
+	<select id="selectReplyList" resultType="Reply2VO">
+		select * 
+		from REPLY2
+	</select>
+	
+	<insert id="insertReply" parameterType="Reply2VO">
+		<selectKey resultType="int" keyProperty="rep_no" order="BEFORE">
+			SELECT REPLY_SEQ.NEXTVAL
+			FROM DUAL
+		</selectKey>
+		INSERT INTO REPLY2
+		(
+			BO_NO,REP_NO,REP_WRITER,
+			REP_PASS,REP_CONTENT,REP_DATE
+		)
+		VALUES
+		(
+			#{bo_no}, REPLY_SEQ.CURRVAL, #{rep_writer}, 
+			#{rep_pass}, #{rep_content}, SYSDATE
+		)
+	</insert>
+</mapper>

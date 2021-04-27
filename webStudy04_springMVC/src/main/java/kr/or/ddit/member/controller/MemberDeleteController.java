@@ -1,40 +1,38 @@
 package kr.or.ddit.member.controller;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import kr.or.ddit.enumpkg.ServiceResult;
 import kr.or.ddit.member.service.IMemberService;
-import kr.or.ddit.member.service.MemberServiceImpl;
-import kr.or.ddit.mvc.annotation.Controller;
-import kr.or.ddit.mvc.annotation.RequestMapping;
-import kr.or.ddit.mvc.annotation.RequestMethod;
-import kr.or.ddit.mvc.annotation.resolvers.RequestParam;
 import kr.or.ddit.vo.MemberVO;
 
 //@WebServlet("/member/memberDelete.do")
-@Controller
+//@Controller
 public class MemberDeleteController{
-	IMemberService service = new MemberServiceImpl();
+	@Inject
+	IMemberService service;
+	
 	private void addCommandAttribute(HttpServletRequest req) {
 		req.setAttribute("command", "update");
 	}
+	
 	@RequestMapping(value="/member/memberDelete.do", method=RequestMethod.POST)
 	public String delete(
 			@RequestParam(value="password") String password,
 			HttpSession session,
-			HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+			HttpServletResponse resp) throws ServletException, IOException {
 
 		// session에 담긴 값 가져오기
 		MemberVO authMember = (MemberVO) session.getAttribute("authMember");
@@ -68,7 +66,6 @@ public class MemberDeleteController{
 //		} else {
 //			req.getRequestDispatcher(view).forward(req, resp);
 //		}
-
 	}
 	private boolean validate(String authPass, String pass, Map<String, String> errors) {
 		boolean valid = true;

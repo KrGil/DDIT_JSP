@@ -1,35 +1,33 @@
 package kr.or.ddit.member.controller;
 
-import java.io.IOException;
 import java.util.List;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import kr.or.ddit.member.service.IMemberService;
 import kr.or.ddit.member.service.MemberServiceImpl;
-import kr.or.ddit.mvc.annotation.Controller;
-import kr.or.ddit.mvc.annotation.RequestMapping;
-import kr.or.ddit.mvc.annotation.resolvers.ModelAttribute;
-import kr.or.ddit.mvc.annotation.resolvers.RequestParam;
 import kr.or.ddit.vo.MemberVO;
 import kr.or.ddit.vo.PagingVO;
 import kr.or.ddit.vo.SearchVO;
 
 //@WebServlet("/member/memberList.do")
-@Controller
+//@Controller
 public class MemberListController {
-	IMemberService service = new MemberServiceImpl();
+	@Inject
+	IMemberService service;
 	
 	@RequestMapping(value="/member/memberView.do")
 	public String view(
 						@RequestParam(value="who") String who,
 						HttpServletRequest req) {
-		String view = null;
 		MemberVO member = service.retrieveMember(who);
 		req.setAttribute("member", member);
 		return "member/mypage";
@@ -39,7 +37,7 @@ public class MemberListController {
 	public String MemberList(
 			@ModelAttribute(value="search") SearchVO searchVO,
 			@RequestParam(value="page", required=false, defaultValue="1") int currentPage,
-			HttpServletRequest req, HttpServletResponse resp){
+			Model model ){
 		
 		PagingVO<MemberVO> pagingVO = new PagingVO(7, 2);
 		pagingVO.setCurrentPage(currentPage);
@@ -52,7 +50,7 @@ public class MemberListController {
 		List<MemberVO> memberList =  service.retrieveMemberList(pagingVO);
 		pagingVO.setDataList(memberList);
 		
-		req.setAttribute("pagingVO", pagingVO);
+		model.addAttribute("pagingVO", pagingVO);
 		
 		String view = "member/memberList";
 		return view;

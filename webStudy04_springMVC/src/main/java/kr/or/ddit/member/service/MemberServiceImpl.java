@@ -1,20 +1,29 @@
 package kr.or.ddit.member.service;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import org.apache.commons.beanutils.BeanUtils;
+import javax.inject.Inject;
 
 import kr.or.ddit.enumpkg.ServiceResult;
 import kr.or.ddit.member.UserNotFoundException;
 import kr.or.ddit.member.dao.IMemberDAO;
-import kr.or.ddit.member.dao.MemberDAOImpl;
 import kr.or.ddit.vo.MemberVO;
 import kr.or.ddit.vo.PagingVO;
 
 public class MemberServiceImpl implements IMemberService {
-	private IMemberDAO dao = MemberDAOImpl.getInstance();
-	private IAuthenticateService authService = new AuthenticateServiceImpl();
+	
+	private IMemberDAO dao;
+	@Inject
+	public void setDao(IMemberDAO dao) {
+		this.dao = dao;
+	}
+	
+	private IAuthenticateService authService;
+	
+	@Inject
+	public void setAuthService(IAuthenticateService authService) {
+		this.authService = authService;
+	}
 	
 //	private static MemberServiceImpl self;
 //	private MemberServiceImpl() {}

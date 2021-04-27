@@ -7,6 +7,7 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <jsp:include page="/includee/preScript.jsp" />
+<script type="text/javascript" src="${cPath }/js/ckeditor/ckeditor.js"></script>
 <c:if test="${not empty message }">
 	<script type="text/javascript">
 		alert("${message}");
@@ -73,6 +74,38 @@
 			<th>내용</th>
 			<td>${board.bo_content}</td>
 		</tr>
+		
+		<tr>
+			<th>덧글작성</th>
+			<td>
+			<form id="replyForm">
+				<table>
+					<tr>
+						<th>작성자</th>
+						<td><input type="text"></td>
+					</tr>
+					<tr>
+						<th>비밀번호</th>
+						<td><input type="text"></td>
+					</tr>
+					<tr>
+						<th>내용</th>
+						<td>
+							<textarea class="form-control" rows="5" cols="100" name="re_content" 
+								id="re_content"></textarea>
+						</td>
+					</tr>
+					<tr>
+						<th></th>
+						<td style="float: right;">
+							<input id="repWriteBtn" onclick="repWriteBtn()" type="button" value="작성하기" class="btn btn-primary">
+							
+						</td>
+					</tr>
+				</table>
+			</form>
+			</td>
+		</tr>
 		<tr>
 			<td colspan="2">
 				<c:url value="/board/boardList.do" var="listURL" />
@@ -123,60 +156,131 @@
 	</form>
     </div>
   </div>
-</div>	
-	<script type="text/javascript">
-		$("#deleteFormModal").on("hidden.bs.modal", function(){
-			$(this).find("[name='bo_pass']").val("");
+</div>
+				<table>
+					<tr>
+						<th>내용</th>
+						<th>작성자</th>
+						<th>작성일</th>
+						<th>컨트롤러</th>
+					</tr>
+					<c:if test="${not empty reply }">
+						<c:forEach items="${reply }" var="reply">
+							<tr>
+								<th>작성자</th>
+								<td>${reply.rep_writer }</td>
+							</tr>
+							<tr>
+								<th>작성일</th>
+								<td>${reply.rep_date }</td>
+							</tr>
+							<tr>
+								<th>내용</th>
+								<td>${reply.rep_content }</td>
+							</tr>
+							<tr>
+								<td>
+									<input id="repUpdateBtn" onclick="repUpdateBtn()" type="button" value="수정하기" class="btn btn-primary">
+									<input id="repDelBtn" onclick="repDelBtn()" type="button" value="삭제하기" class="btn btn-primary">
+								</td>
+							</tr>
+						</c:forEach>
+					</c:if>
+				</table>
+<script type="text/javascript">
+	CKEDITOR.replace("re_content", {
+		filebrowserImageUploadUrl : '${cPath}/board/boardImage.do?type=Images'
+	})
+	
+	// reply
+	function repWriteBtn(){
+		$("#replyForm").ajaxForm({
+			url : "${cPath}/reply/${board.bo_no}.do",
+			method : post,
+			dataType: "json",
+			success:function(resp){
+				alert("성공");
+			}, 
+			error:function(xhr, error, msg){
+				console.log(xhr);
+				console.log(error);
+				console.log(msg);
+			}
+		alert("덧글작성");
+		$("#replyForm").submit() ;
+	}
+	function repUpdateBtn(){
+		$.ajax({
+			url : "${cPath}/reply/${board.bo_no}/${re}.do",
+			method : ,
+			data : ,
+			dataType: "",
+			success:function(resp){
+				
+			}, 
+			error:function(xhr, error, msg){
+				console.log(xhr);
+				console.log(error);
+				console.log(msg);
+			}
 		});
-		$(".goBtn").on("click", function(){
-			let url = $(this).data("gopage");
-			if(url)
-				location.href = url;
-		});
-		$("#rcmdBtn").on("click", function(){
-			$.ajax({
-				url : "${cPath}/board/recommend.do",
-				data : {
-					what : ${board.bo_no}
-				},
-				dataType : "json", // Accept/Content-Type
-				success : function(resp) {
-					if(resp.success){
-						$("#rcmdArea").html(resp.recommend);
-					}else{
-						alert(resp.message);
-					}
-				},
-				error : function(xhr, error, msg) {
-					console.log(xhr);
-					console.log(error);
-					console.log(msg);
+	}
+	function repDelBtn(){
+		alert("덧글삭제");
+	}
+	
+	$("#deleteFormModal").on("hidden.bs.modal", function(){
+		$(this).find("[name='bo_pass']").val("");
+	});
+	$(".goBtn").on("click", function(){
+		let url = $(this).data("gopage");
+		if(url)
+			location.href = url;
+	});
+	$("#rcmdBtn").on("click", function(){
+		$.ajax({
+			url : "${cPath}/board/recommend.do",
+			data : {
+				what : ${board.bo_no}
+			},
+			dataType : "json", // Accept/Content-Type
+			success : function(resp) {
+				if(resp.success){
+					$("#rcmdArea").html(resp.recommend);
+				}else{
+					alert(resp.message);
 				}
-			});
+			},
+			error : function(xhr, error, msg) {
+				console.log(xhr);
+				console.log(error);
+				console.log(msg);
+			}
 		});
-		$("#rptBtn").on("click", function(){
-			$.ajax({
-				url : "${cPath}/board/report.do",
-				data : {
-					what:${board.bo_no}
-				},
-				dataType : "json",
-				success : function(resp) {
-					if(resp.success){
-						$("#rptArea").html(resp.report);
-					}else{
-						alert(resp.message);
-					}
-				},
-				error : function(xhr, error, msg) {
-					console.log(xhr);
-					console.log(error);
-					console.log(msg);
+	});
+	$("#rptBtn").on("click", function(){
+		$.ajax({
+			url : "${cPath}/board/report.do",
+			data : {
+				what:${board.bo_no}
+			},
+			dataType : "json",
+			success : function(resp) {
+				if(resp.success){
+					$("#rptArea").html(resp.report);
+				}else{
+					alert(resp.message);
 				}
-			});
+			},
+			error : function(xhr, error, msg) {
+				console.log(xhr);
+				console.log(error);
+				console.log(msg);
+			}
 		});
-	</script>
-	<jsp:include page="/includee/postScript.jsp" />
+	});
+</script>
+<jsp:include page="/includee/postScript.jsp" />
 </body>
 </html>
 

@@ -1,44 +1,31 @@
 package kr.or.ddit.member.controller;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.exception.BadRequestException;
 import kr.or.ddit.member.service.IMemberService;
-import kr.or.ddit.member.service.MemberServiceImpl;
-import kr.or.ddit.mvc.annotation.Controller;
-import kr.or.ddit.mvc.annotation.RequestMapping;
-import kr.or.ddit.mvc.annotation.RequestMethod;
-import kr.or.ddit.mvc.annotation.resolvers.BadRequestException;
-import kr.or.ddit.mvc.annotation.resolvers.ModelAttribute;
-import kr.or.ddit.mvc.annotation.resolvers.RequestPart;
-import kr.or.ddit.mvc.filter.wrapper.MultipartFile;
-import kr.or.ddit.validator.CommonValidator;
 import kr.or.ddit.validator.InsertGroup;
 import kr.or.ddit.vo.MemberVO;
 
-@Controller
+//@Controller
 public class MemberInsertController {
-	private IMemberService service = new MemberServiceImpl();
+	@Inject
+	private IMemberService service;
 	
 	@RequestMapping("/member/memberInsert.do")
 	public String form()  {
@@ -48,9 +35,10 @@ public class MemberInsertController {
 
 	@RequestMapping(value = "/member/memberInsert.do", method =RequestMethod.POST)
 	public String process(
-			@ModelAttribute("member") MemberVO member,
-			@RequestPart(value="mem_image", required=false) MultipartFile mem_image,
-			HttpServletRequest req, 
+			@Validated(InsertGroup.class) @ModelAttribute("member") MemberVO member
+			, Errors errors
+			,@RequestPart(value="mem_image", required=false) MultipartFile mem_image,
+			Model model, 
 			HttpServletResponse resp) throws ServletException, IOException {
 //		Locale.setDefault(Locale.ENGLISH);
 //		1. 요청 접수
@@ -67,11 +55,11 @@ public class MemberInsertController {
 		}
 		
 //		2. 검증( 데이터의 목적, 경로에 따라 방법이 달라져야 한다.)
-		Map<String, List<String>> errors = new LinkedHashMap<>();
-		req.setAttribute("errors", errors);
+//		Map<String, List<String>> errors = new LinkedHashMap<>();
+//		req.setAttribute("errors", errors);
 		
-		boolean valid = new CommonValidator<MemberVO>().validate(member, errors, InsertGroup.class);
-		//boolean valid = validate(member, errors);
+		
+		boolean valid =!errors.hasErrors();
 		
 		String view = null;
 		String message = null;
@@ -96,7 +84,7 @@ public class MemberInsertController {
 			view = "member/memberForm";
 		}
 
-		req.setAttribute("message", message);
+		model.addAttribute("message", message);
 
 		return view;
 	}

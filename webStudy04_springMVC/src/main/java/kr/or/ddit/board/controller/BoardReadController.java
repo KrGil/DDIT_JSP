@@ -27,16 +27,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.WebApplicationContext;
 
+import kr.or.ddit.board.dao.IReplyDAO;
 import kr.or.ddit.board.service.IBoardService;
+import kr.or.ddit.board.service.IReplyService;
 import kr.or.ddit.exception.BadRequestException;
 import kr.or.ddit.vo.BoardVO;
 import kr.or.ddit.vo.PagingVO;
+import kr.or.ddit.vo.Reply2VO;
 
 @Controller
 public class BoardReadController {
 	public static final String BOARDAUTH = "board.authenticated";
 	@Inject
 	private IBoardService service;
+	@Inject
+	private IReplyService repService;
 	@Inject
 	private WebApplicationContext container;
 	private ServletContext application;
@@ -74,6 +79,7 @@ public class BoardReadController {
 	) {
 		search.setBo_no(bo_no);
 		BoardVO board = service.retrieveBoard(search);
+		List<Reply2VO> reply = repService.retrieveListReply();
 		
 		boolean valid = true;
 		if("Y".equals(board.getBo_sec())) {
@@ -87,6 +93,7 @@ public class BoardReadController {
 		String view = null;
 		if(valid) {
 			model.addAttribute("board", board);
+			model.addAttribute("reply", reply);
 			view = "board/boardView";
 		}else {
 			view = "board/passwordForm";
@@ -205,7 +212,7 @@ public class BoardReadController {
 			}
 			Document dom = Jsoup.parse(source);
 			Elements imgs = dom.getElementsByTag("img");
-			String thumbnail = application.getContextPath() + "/images/cat1.jpg";
+			String thumbnail = application.getContextPath() + "/images/1.jfif";
 			if(!imgs.isEmpty()) {
 				Element img = imgs.get(0);
 				thumbnail = img.attr("src");

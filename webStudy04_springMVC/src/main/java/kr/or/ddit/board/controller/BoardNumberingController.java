@@ -22,7 +22,6 @@ public class BoardNumberingController {
 	@Inject
 	private IBoardService service;
 	
-	
 	@RequestMapping(value="{numeringType}.do"
 					, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody

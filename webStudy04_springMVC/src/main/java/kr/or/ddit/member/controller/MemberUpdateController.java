@@ -1,48 +1,41 @@
 package kr.or.ddit.member.controller;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.exception.BadRequestException;
 import kr.or.ddit.member.service.IMemberService;
-import kr.or.ddit.member.service.MemberServiceImpl;
-import kr.or.ddit.mvc.annotation.Controller;
-import kr.or.ddit.mvc.annotation.RequestMapping;
-import kr.or.ddit.mvc.annotation.RequestMethod;
-import kr.or.ddit.mvc.annotation.resolvers.BadRequestException;
-import kr.or.ddit.mvc.annotation.resolvers.ModelAttribute;
-import kr.or.ddit.mvc.annotation.resolvers.RequestPart;
-import kr.or.ddit.mvc.filter.wrapper.MultipartFile;
-import kr.or.ddit.validator.CommonValidator;
 import kr.or.ddit.validator.UpdateGroup;
 import kr.or.ddit.vo.MemberVO;
 
 //@WebServlet("/member/memberUpdate.do")
-@Controller
+//@Controller
 public class MemberUpdateController {
-	IMemberService service = new MemberServiceImpl();
-	private void addCommandAttribute(HttpServletRequest req) {
-		req.setAttribute("command", "update");
+	@Inject
+	IMemberService service;
+	private void addCommandAttribute(Model model) {
+		model.addAttribute("command", "update");
 	}
 	@RequestMapping("/member/memberUpdate.do")
 	public String doGet(
 				@ModelAttribute("member") MemberVO member,
-				
 				HttpSession session,
-				HttpServletRequest req, HttpServletResponse resp){
-		addCommandAttribute(req);
+				Model model){
+		addCommandAttribute(model);
 		
 		// logincheckServlet  에서....
 		MemberVO authMember = (MemberVO) session.getAttribute("authMember");
@@ -52,7 +45,7 @@ public class MemberUpdateController {
 		
 		String view = "member/memberForm";
 		// 자기자신의 정보가 필요하다
-		req.setAttribute("member", member);
+		model.addAttribute("member", member);
 		
 		// memberForm.jsp 재활용 수정으로 사용
 //		req.getRequestDispatcher(view).forward(req, resp);
@@ -61,15 +54,17 @@ public class MemberUpdateController {
 	
 	@RequestMapping(value="/member/memberUpdate.do", method=RequestMethod.POST)
 	public String doPost(
-				@ModelAttribute("member") MemberVO member,
+				@Validated(UpdateGroup.class) @ModelAttribute("member") MemberVO member,
+				Errors errors,
 				@RequestPart(value="mem_image", required=false) MultipartFile mem_image,
 				HttpSession session,
-				HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		addCommandAttribute(req);
+				Model model, 
+				HttpServletResponse resp) throws IOException {
+		addCommandAttribute(model);
 		
 //		req.setCharacterEncoding("utf-8");
 //		1. 요청 접수
-		req.setAttribute("member", member); //문제 생길까바 미리 집어넣음.
+		model.addAttribute("member", member); //문제 생길까바 미리 집어넣음.
 		
 		// logincheckServlet  에서....
 		MemberVO authMember = (MemberVO) session.getAttribute("authMember");
@@ -89,10 +84,7 @@ public class MemberUpdateController {
 //		member.setMem_id(req.getParameter("mem_id"));
 		
 //		2. 검증( 데이터의 목적, 경로에 따라 방법이 달라져야 한다.)
-		Map<String, List<String>> errors = new LinkedHashMap<>();
-		req.setAttribute("errors", errors);
-		
-		boolean valid = new CommonValidator<MemberVO>().validate(member, errors, UpdateGroup.class);
+		boolean valid = !errors.hasErrors();
 		
 		String view = null;
 		String message = null;
@@ -118,7 +110,7 @@ public class MemberUpdateController {
 			view = "member/memberForm";
 		}
 
-		req.setAttribute("message", message);
+		model.addAttribute("message", message);
 		return view;
 	}
 }

@@ -186,17 +186,23 @@
 		    DELETE WHERE D.CNT = 0
 	</delete>
 	
-	<update id="updateRecommand" parameterType="BoardVO">
-		<selectKey resultType="int" keyProperty="bo_rec" >
-				SELECT BO_REC
-				FROM BOARD
-				WHERE BO_NO=#{bo_no,jdbcType=NUMERIC}
-		</selectKey>
+	<update id="incrementHit" parameterType="int" >
 		UPDATE BOARD
 		SET
-			BO_REC = #{bo_rec,jdbcType=NUMERIC}+1
-		WHERE BO_NO=#{bo_no,jdbcType=NUMERIC}
-
+		BO_HIT = BO_HIT + 1
+		WHERE BO_NO = #{bo_no}
+	</update>
+	<update id="incrementRcmd" parameterType="int" >
+		UPDATE BOARD
+		SET
+		BO_REC = BO_REC + 1
+		WHERE BO_NO = #{bo_no}
+	</update>
+	<update id="incrementRpt" parameterType="int" >
+		UPDATE BOARD
+		SET
+		BO_REP = BO_REP + 1
+		WHERE BO_NO = #{bo_no}
 	</update>
 </mapper>
 

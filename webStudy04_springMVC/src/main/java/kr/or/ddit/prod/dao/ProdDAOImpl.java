@@ -2,12 +2,11 @@ package kr.or.ddit.prod.dao;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import kr.or.ddit.db.mybatis.CustomSqlSessionFactoryBuilder;
-import kr.or.ddit.member.dao.IMemberDAO;
-import kr.or.ddit.vo.MemberVO;
 import kr.or.ddit.vo.PagingVO;
 import kr.or.ddit.vo.ProdVO;
 
@@ -19,8 +18,8 @@ public class ProdDAOImpl implements IProdDAO{
 		if(self == null) self = new ProdDAOImpl();
 		return self;
 	}
-	private SqlSessionFactory sessionFactory = 
-				CustomSqlSessionFactoryBuilder.getSessionFactory();
+	@Inject
+	private SqlSessionFactory sessionFactory;
 	
 	@Override
 	public ProdVO selectProd(String prod_id) {

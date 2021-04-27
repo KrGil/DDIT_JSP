@@ -3,10 +3,11 @@ package kr.or.ddit.prod.dao;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import kr.or.ddit.db.mybatis.CustomSqlSessionFactoryBuilder;
 import kr.or.ddit.vo.BuyerVO;
 
 public class OthersDAOImpl implements IOthersDAO{
@@ -17,8 +18,8 @@ public class OthersDAOImpl implements IOthersDAO{
 		if(self == null) self = new OthersDAOImpl();
 		return self;
 	}
-	private SqlSessionFactory sessionFactory = 
-			CustomSqlSessionFactoryBuilder.getSessionFactory();
+	@Inject
+	private SqlSessionFactory sessionFactory;
 
 	@Override
 	public List<Map<String, Object>> selectLprodList() {

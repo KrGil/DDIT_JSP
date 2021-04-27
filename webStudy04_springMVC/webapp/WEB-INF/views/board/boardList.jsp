@@ -81,7 +81,8 @@
 	<tfoot>
 		<tr>
 			<td colspan="8">
-				<form id="searchForm" action="${cPath }/board/boardList.do">
+				<form id="searchForm" action="${cPath }/board/boardList.do" method="post">
+					<input type="hidden" name="_method" value="delete"/>
 					<input type="hidden" name="searchType" value="${pagingVO.searchMap.searchType }"/>
 					<input type="hidden" name="searchWord" value="${pagingVO.searchMap.searchWord }"/>
 					<input type="hidden" name="minDate" value="${pagingVO.searchMap.minDate }"/>
