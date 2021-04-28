@@ -5,40 +5,26 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
 
 import kr.or.ddit.vo.BuyerVO;
 
-public class OthersDAOImpl implements IOthersDAO{
-	// singleton
-	private OthersDAOImpl(){}
-	private static OthersDAOImpl self;
-	public static OthersDAOImpl getInstance() {
-		if(self == null) self = new OthersDAOImpl();
-		return self;
-	}
+@Repository
+public class OthersDAOImpl implements IOthersDAO {
 	@Inject
-	private SqlSessionFactory sessionFactory;
+	private SqlSessionTemplate template;
 
 	@Override
 	public List<Map<String, Object>> selectLprodList() {
-		try(
-			SqlSession session = sessionFactory.openSession();
-		){
-			IOthersDAO mapper = session.getMapper(IOthersDAO.class);
-			return mapper.selectLprodList();
-		}
+		IOthersDAO mapper = template.getMapper(IOthersDAO.class);
+		return mapper.selectLprodList();
 	}
 
 	@Override
 	public List<BuyerVO> selectBuyerList(String buyer_lgu) {
-		try(
-				SqlSession session = sessionFactory.openSession();
-			){
-				IOthersDAO mapper = session.getMapper(IOthersDAO.class);
-				return mapper.selectBuyerList(buyer_lgu);
-			}
+		IOthersDAO mapper = template.getMapper(IOthersDAO.class);
+		return mapper.selectBuyerList(buyer_lgu);
 	}
 
 }

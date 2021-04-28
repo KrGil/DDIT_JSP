@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+	<bean id="loggingAdvice" class="kr.or.ddit.example.advice.LoggingAdvice"/>
+		
+		<!-- annotation으로 모든 설정 변경 -->
+		<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+		
+<!-- 		<aop:config> -->
+<!-- 			<aop:pointcut expression="execution(* kr.or.ddit.example..service.*.*(..))" id="pointcut"/> -->
+<!-- 			<aop:aspect ref="loggingAdvice"> -->
+<!-- 				<aop:before method="beforeAdvice" pointcut-ref="pointcut"/> -->
+<!-- 				<aop:after-returning method="afterAdvice" pointcut-ref="pointcut" returning="retValue"/> -->
+<!-- 				<aop:after-throwing method="afterThrowingAdvice" pointcut-ref="pointcut" throwing="e"/> -->
+<!-- 					<aop:around method="aroundAdvice" pointcut-ref="pointcut"/> -->
+<!-- 			</aop:aspect> -->
+<!-- 		</aop:config> -->
+		
+	
+</beans>

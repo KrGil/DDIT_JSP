@@ -79,7 +79,6 @@ public class BoardReadController {
 	) {
 		search.setBo_no(bo_no);
 		BoardVO board = service.retrieveBoard(search);
-		List<Reply2VO> reply = repService.retrieveListReply();
 		
 		boolean valid = true;
 		if("Y".equals(board.getBo_sec())) {
@@ -93,7 +92,6 @@ public class BoardReadController {
 		String view = null;
 		if(valid) {
 			model.addAttribute("board", board);
-			model.addAttribute("reply", reply);
 			view = "board/boardView";
 		}else {
 			view = "board/passwordForm";

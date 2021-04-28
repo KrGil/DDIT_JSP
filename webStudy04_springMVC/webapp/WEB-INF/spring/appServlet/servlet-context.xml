@@ -43,6 +43,21 @@
 	<beans:bean id="BNVR" class="org.springframework.web.servlet.view.BeanNameViewResolver"
 		p:order="1"
 	/>
+	<!-- tiles로 나오는 녀석 resolver로 새로 등록하기 -->
+	<beans:bean id="TVR" class="org.springframework.web.servlet.view.tiles3.TilesViewResolver"
+		p:order="2"
+	/>
+	
+<!-- tiles에 쓰는 동적인 녀석 빈으로 등록하기 -->
+<!--  어노테이션 하나 만ㄷ들어서 작성함. -->
+<!-- 	<beans:bean id="boardViewPreparer" class="kr.or.ddit.board.preparer.BoardViewPreparer"></beans:bean> -->
+	
+	<!-- tiles xml파일 등록 -->	
+	<beans:bean class="org.springframework.web.servlet.view.tiles3.TilesConfigurer"
+		p:definitions="/WEB-INF/tiles/*-definitions.xml"
+		p:preparerFactoryClass="org.springframework.web.servlet.view.tiles3.SpringBeanPreparerFactory"
+	/>
+	
 	<beans:bean id="downloadView" class="kr.or.ddit.board.view.DownloadView" />
 	
 <!-- 	파일업로드 시 파일이 정상적으로 올라가지 않다면 이 녀석을 등록해야한다. -->
@@ -55,6 +70,8 @@
 			expression="org.springframework.stereotype.Controller"/>
 		<context:include-filter type="annotation" 
 			expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+		<context:include-filter type="annotation" 
+			expression="kr.or.ddit.annotation.ViewPreparer"/>
 	</context:component-scan>
 	
 	

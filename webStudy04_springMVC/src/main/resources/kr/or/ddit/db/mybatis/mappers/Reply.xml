@@ -1,25 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.board.dao.IReplyDAO">
-	<select id="selectReplyList" resultType="Reply2VO">
-		select * 
-		from REPLY2
-	</select>
 	
 	<insert id="insertReply" parameterType="Reply2VO">
 		<selectKey resultType="int" keyProperty="rep_no" order="BEFORE">
-			SELECT REPLY_SEQ.NEXTVAL
-			FROM DUAL
+			SELECT NVL(MAX(REP_NO), 0) + 1 
+			FROM REPLY2
 		</selectKey>
 		INSERT INTO REPLY2
 		(
-			BO_NO,REP_NO,REP_WRITER,
-			REP_PASS,REP_CONTENT,REP_DATE
+			REP_NO,		    REP_WRITER,		    REP_DATE,
+		    REP_PASS,		    REP_CONTENT,		    BO_NO
 		)
 		VALUES
 		(
-			#{bo_no}, REPLY_SEQ.CURRVAL, #{rep_writer}, 
-			#{rep_pass}, #{rep_content}, SYSDATE
+			  #{rep_no,jdbcType=NUMERIC},	#{rep_writer,jdbcType=VARCHAR},   SYSDATE,
+		    #{rep_pass,jdbcType=VARCHAR},	#{rep_content,jdbcType=VARCHAR},	#{bo_no,jdbcType=NUMERIC}
 		)
 	</insert>
+	<sql id="whereClause">
+		WHERE BO_NO = #{detailSearch.bo_no}
+	</sql>
+	<select id="selectReplyCount" parameterType="PagingVO" resultType="int">
+		SELECT COUNT(*) FROM REPLY2
+		<include refid="whereClause" />	
+	</select>	
+	
+	<select id="selectReplyList" parameterType="PagingVO" resultType="Reply2VO">
+		SELECT B.*
+		FROM (
+			SELECT A.*, ROWNUM RNUM
+			FROM (
+				<![CDATA[
+					SELECT
+						REP_NO,	REP_WRITER,	REP_DATE
+						, REP_CONTENT	, BO_NO
+					FROM REPLY2
+				]]>
+				<include refid="whereClause"/>
+				ORDER BY REP_NO DESC
+			) A
+		) B
+		WHERE RNUM BETWEEN #{startRow} AND #{endRow}
+	</select>
+	<update id="updateReply" parameterType="Reply2VO">
+		UPDATE REPLY2
+		SET
+			REP_CONTENT = #{rep_content}
+		WHERE REP_NO = #{rep_no} AND REP_PASS = #{rep_pass}
+	</update>
+
+	<delete id="deleteReply" parameterType="Reply2VO">
+		DELETE FROM REPLY2
+		WHERE REP_NO = #{rep_no} AND REP_PASS = #{rep_pass}
+	</delete>
 </mapper>
+
+
+
+
+
+
+
+
+
+
+

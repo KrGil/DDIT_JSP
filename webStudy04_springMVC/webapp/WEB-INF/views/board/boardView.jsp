@@ -1,20 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>	
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-<jsp:include page="/includee/preScript.jsp" />
 <script type="text/javascript" src="${cPath }/js/ckeditor/ckeditor.js"></script>
-<c:if test="${not empty message }">
-	<script type="text/javascript">
-		alert("${message}");
-	</script>
-</c:if>
-</head>
-<body>
+
 	<table class="table table-bordered">
 		<tr>
 			<th>게시판종류</th>
@@ -74,38 +62,6 @@
 			<th>내용</th>
 			<td>${board.bo_content}</td>
 		</tr>
-		
-		<tr>
-			<th>덧글작성</th>
-			<td>
-			<form id="replyForm">
-				<table>
-					<tr>
-						<th>작성자</th>
-						<td><input type="text"></td>
-					</tr>
-					<tr>
-						<th>비밀번호</th>
-						<td><input type="text"></td>
-					</tr>
-					<tr>
-						<th>내용</th>
-						<td>
-							<textarea class="form-control" rows="5" cols="100" name="re_content" 
-								id="re_content"></textarea>
-						</td>
-					</tr>
-					<tr>
-						<th></th>
-						<td style="float: right;">
-							<input id="repWriteBtn" onclick="repWriteBtn()" type="button" value="작성하기" class="btn btn-primary">
-							
-						</td>
-					</tr>
-				</table>
-			</form>
-			</td>
-		</tr>
 		<tr>
 			<td colspan="2">
 				<c:url value="/board/boardList.do" var="listURL" />
@@ -157,132 +113,155 @@
     </div>
   </div>
 </div>
-				<table>
-					<tr>
-						<th>내용</th>
-						<th>작성자</th>
-						<th>작성일</th>
-						<th>컨트롤러</th>
-					</tr>
-					<c:if test="${not empty reply }">
-						<c:forEach items="${reply }" var="reply">
-							<tr>
-								<th>작성자</th>
-								<td>${reply.rep_writer }</td>
-							</tr>
-							<tr>
-								<th>작성일</th>
-								<td>${reply.rep_date }</td>
-							</tr>
-							<tr>
-								<th>내용</th>
-								<td>${reply.rep_content }</td>
-							</tr>
-							<tr>
-								<td>
-									<input id="repUpdateBtn" onclick="repUpdateBtn()" type="button" value="수정하기" class="btn btn-primary">
-									<input id="repDelBtn" onclick="repDelBtn()" type="button" value="삭제하기" class="btn btn-primary">
-								</td>
-							</tr>
-						</c:forEach>
-					</c:if>
-				</table>
+<!-- 덧글 등록용 form -->
+<form method="post" class="form-inline" id="replyInsertForm"
+	action="${cPath }/reply/${board.bo_no }">
+	<input type="hidden" name="rep_no" />
+	<input type="hidden" name="bo_no" value="${board.bo_no }"/>
+	<table class="col-md-10">
+		<tr>
+			<td class="d-flex justify-content-around">
+				<input type="text" class="form-control mb-2" name="rep_writer" placeholder="작성자" maxlength="15"/>
+				<input type="text" class="form-control mb-2" name="rep_pass" placeholder="비밀번호"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="input-group">
+				<textarea class="form-control mb-2 mr-2" rows="2" placeholder="내용 200자 이내"maxlength="200" name="rep_content"></textarea>
+				</div>
+			</td>
+			<td colspan="3">
+				<input type="submit" value="전송" class="btn btn-primary" />
+			</td>
+		</tr>
+	</table>
+</form>
+<table id="replyTable" class="table table-bordered">
+	<thead class="table-dark">
+		<tr class="d-flex">	
+			<th class="text-center col-6">내용</th>
+			<th class="text-center col-2">작성자</th>
+			<th class="text-center col-2">작성일</th>
+			<th class="text-center col-2">컨트롤버튼</th>
+		</tr>
+	</thead>
+	<tbody id="listBody">
+	
+	</tbody>
+</table>
+
+
+<div id="pagingArea"></div>
+
+<!-- 덧글 페이징 처리용 form -->
+<form id="searchForm" action="${cPath }/reply/${board.bo_no }" method="get">
+	<input type="hidden" name="what" value="${board.bo_no }" />
+	<input type="hidden" name="page"  />
+</form>
+
+<!-- 덧글 수정용 modal form -->
+<div class="modal fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
+ <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="replyModalLabel">댓글 수정</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form data-action="${cPath }/reply/${board.bo_no}" method="post">
+      	<input type="hidden" name="_method" value="put">
+      	<input type="hidden" name="rep_no" required/>
+      	<input type="hidden" name="bo_no"  required value="${board.bo_no }"/>
+	      <div class="modal-body">
+	      	<table class="table form-inline">
+	      		<tr>
+	      			<td>
+	      				<input type="text" required name="rep_writer" class="form-control" placeholder="작성자" />
+	      			</td>
+	      			<td>
+	      				<input type="text" required name="rep_pass" class="form-control" placeholder="비밀번호"/>
+	      			</td>
+	      		</tr>
+	      		<tr>
+	      			<td colspan="2">
+						<div class="input-group">
+						<textarea class="form-control mb-2 mr-2" rows="2" placeholder="내용 200자 이내"maxlength="200" name="rep_content"></textarea>
+						</div>
+					</td>
+	      		</tr>
+	      	</table>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="submit" class="btn btn-primary">수정</button>
+	        <button type="reset" class="btn btn-warning" data-bs-dismiss="modal">취소</button>
+	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+	      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 덧글 삭제용 form -->
+<form id="replyDeleteForm" data-action="${cPath }/reply/${board.bo_no}" method="post">
+	<input type="hidden" name="_method" value="delete" />
+	<input type="hidden" name="rep_no" required/>
+   	<input type="hidden" name="bo_no"  required value="${board.bo_no }"/>
+   	<input type="hidden" name="rep_pass"  required/>
+</form>	
+<script type="text/javascript" src="${cPath }/js/board/reply.js"></script>
 <script type="text/javascript">
-	CKEDITOR.replace("re_content", {
-		filebrowserImageUploadUrl : '${cPath}/board/boardImage.do?type=Images'
-	})
-	
-	// reply
-	function repWriteBtn(){
-		$("#replyForm").ajaxForm({
-			url : "${cPath}/reply/${board.bo_no}.do",
-			method : post,
-			dataType: "json",
-			success:function(resp){
-				alert("성공");
-			}, 
-			error:function(xhr, error, msg){
-				console.log(xhr);
-				console.log(error);
-				console.log(msg);
+
+$(".goBtn").on("click", function(){
+	let url = $(this).data("gopage");
+	if(url)
+		location.href = url;
+});
+$("#deleteFormModal").on("hidden.bs.modal", function(){
+	$(this).find("[name='bo_pass']").val("");
+});
+$("#rcmdBtn").on("click", function(){
+	$.ajax({
+		url : "${cPath}/board/recommend.do",
+		data : {
+			what : ${board.bo_no}
+		},
+		dataType : "json", // Accept/Content-Type
+		success : function(resp) {
+			if(resp.success){
+				$("#rcmdArea").html(resp.recommend);
+			}else{
+				alert(resp.message);
 			}
-		alert("덧글작성");
-		$("#replyForm").submit() ;
-	}
-	function repUpdateBtn(){
-		$.ajax({
-			url : "${cPath}/reply/${board.bo_no}/${re}.do",
-			method : ,
-			data : ,
-			dataType: "",
-			success:function(resp){
-				
-			}, 
-			error:function(xhr, error, msg){
-				console.log(xhr);
-				console.log(error);
-				console.log(msg);
+		},
+		error : function(xhr, error, msg) {
+			console.log(xhr);
+			console.log(error);
+			console.log(msg);
+		}
+	});
+});
+$("#rptBtn").on("click", function(){
+	$.ajax({
+		url : "${cPath}/board/report.do",
+		data : {
+			what:${board.bo_no}
+		},
+		dataType : "json",
+		success : function(resp) {
+			if(resp.success){
+				$("#rptArea").html(resp.report);
+			}else{
+				alert(resp.message);
 			}
-		});
-	}
-	function repDelBtn(){
-		alert("덧글삭제");
-	}
-	
-	$("#deleteFormModal").on("hidden.bs.modal", function(){
-		$(this).find("[name='bo_pass']").val("");
+		},
+		error : function(xhr, error, msg) {
+			console.log(xhr);
+			console.log(error);
+			console.log(msg);
+		}
 	});
-	$(".goBtn").on("click", function(){
-		let url = $(this).data("gopage");
-		if(url)
-			location.href = url;
-	});
-	$("#rcmdBtn").on("click", function(){
-		$.ajax({
-			url : "${cPath}/board/recommend.do",
-			data : {
-				what : ${board.bo_no}
-			},
-			dataType : "json", // Accept/Content-Type
-			success : function(resp) {
-				if(resp.success){
-					$("#rcmdArea").html(resp.recommend);
-				}else{
-					alert(resp.message);
-				}
-			},
-			error : function(xhr, error, msg) {
-				console.log(xhr);
-				console.log(error);
-				console.log(msg);
-			}
-		});
-	});
-	$("#rptBtn").on("click", function(){
-		$.ajax({
-			url : "${cPath}/board/report.do",
-			data : {
-				what:${board.bo_no}
-			},
-			dataType : "json",
-			success : function(resp) {
-				if(resp.success){
-					$("#rptArea").html(resp.report);
-				}else{
-					alert(resp.message);
-				}
-			},
-			error : function(xhr, error, msg) {
-				console.log(xhr);
-				console.log(error);
-				console.log(msg);
-			}
-		});
-	});
+}); 
 </script>
-<jsp:include page="/includee/postScript.jsp" />
-</body>
-</html>
 
 
 

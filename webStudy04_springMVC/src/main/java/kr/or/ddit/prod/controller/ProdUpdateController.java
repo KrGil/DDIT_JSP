@@ -1,112 +1,94 @@
 package kr.or.ddit.prod.controller;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.inject.Inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.HandlerMapping;
 
 import kr.or.ddit.enumpkg.ServiceResult;
 import kr.or.ddit.prod.dao.IOthersDAO;
-import kr.or.ddit.prod.dao.OthersDAOImpl;
 import kr.or.ddit.prod.service.IProdService;
-import kr.or.ddit.prod.service.ProdServiceImpl;
-import kr.or.ddit.validator.CommonValidator;
 import kr.or.ddit.validator.UpdateGroup;
 import kr.or.ddit.vo.BuyerVO;
 import kr.or.ddit.vo.ProdVO;
 
-// /prod/prodUpdate.do
 @Controller
+@RequestMapping("/prod/prodUpdate.do")
 public class ProdUpdateController {
-	private static final Logger logger = LoggerFactory.getLogger(HandlerMapping.class);
-	IProdService service = ProdServiceImpl.getInstance();
-	private IOthersDAO othersDAO = OthersDAOImpl.getInstance();
+	@Inject
+	private IProdService service;
+	@Inject
+	private IOthersDAO othersDAO;
 	
-	private void addAttribute(HttpServletRequest req) {
-		List<Map<String, Object>> lprodList = othersDAO.selectLprodList();
-		List<BuyerVO> buyerList =  othersDAO.selectBuyerList(null);
-		
-		req.setAttribute("lprodList", lprodList);
-		req.setAttribute("buyerList", buyerList);
+	private void addAttribute(Model model) {
+		List<Map<String, Object>> lprodList 
+			= othersDAO.selectLprodList();
+		List<BuyerVO> buyerList 
+			= othersDAO.selectBuyerList(null);
+		model.addAttribute("lprodList", lprodList);
+		model.addAttribute("buyerList", buyerList);
 	}
-	private void addCommandAttribute(HttpServletRequest req) {
-		req.setAttribute("command", "update");
-	}
-	@RequestMapping("/prod/prodUpdate.do")
+	
+	@RequestMapping
 	public String updateForm(
-			@RequestParam("what") String prod_id,
-			HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		addAttribute(req);
-		addCommandAttribute(req);
-		
-		ProdVO prod =  service.retrieveProd(prod_id);
-		req.setAttribute("prod", prod);
-		String view = "prod/prodForm";
-		return view;
+			@RequestParam("what") String prod_id
+			, Model model
+	){
+		addAttribute(model);
+		ProdVO prod = service.retrieveProd(prod_id);
+		model.addAttribute("prod", prod);
+		return "prod/prodForm";
 	}
-	@RequestMapping(value="/prod/prodUpdate.do", method=RequestMethod.POST)
-	public String updateProcess(
-			// commandObject라고 부른다. 요 녀석을
-			// @ModelAttribute는 commandobject를 만들어 주기 위한 녀석.
-			@ModelAttribute("prod") ProdVO prod,
-			@RequestPart(value="prod_image", required=false) MultipartFile prod_image,
-			HttpServletRequest req) throws IOException{
-
-		req.setAttribute("prod", prod);
-		
-		// 2. 검증( 데이터의 목적, 경로에 따라 방법이 달라져야 한다.)
-		// 누가 통과 못했는지, 검증결과 메시지
-		Map<String, List<String>> errors = new LinkedHashMap<>();
-		req.setAttribute("errors", errors);
-		
-		String saveFolderUrl = "/prodImages";
-		File saveFolder = new File(
-				req.getServletContext().getRealPath(saveFolderUrl));
-		if(prod_image!=null && !prod_image.isEmpty()) {
-			prod_image.saveTo(saveFolder);
-			prod.setProd_img(prod_image.getUniqueSaveName());
-		}
-		
-		boolean valid = new CommonValidator<ProdVO>()
-							.validate(prod, errors, UpdateGroup.class);
+	
+	@RequestMapping(method=RequestMethod.POST)
+	
+	public String update(
+		@Validated(UpdateGroup.class) @ModelAttribute("prod") ProdVO prod
+		 	, BindingResult errors
+			, Model model
+	) throws IOException{
+//		if(prod_image!=null && !prod_image.isEmpty()) {
+//			prod_image.saveTo(saveFolder);
+//			prod.setProd_img(prod_image.getUniqueSaveName());
+//		}
 		
 		String view = null;
 		String message = null;
-		// 검증 통과 후
-		if (valid) {
-			// sql문 실행
+		if(!errors.hasErrors()) {
 			ServiceResult result = service.modifyProd(prod);
-			switch (result) {
-				case OK:
-					view = "redirect:/prod/prodView.do?what="+prod.getProd_id();
-					break;
-				default:
-					message = "서버 오류, 잠시 후 다시 시도해주세요.";
-					view = "prod/prodForm";
-					break;
+			if(ServiceResult.OK.equals(result)) {
+				view = "redirect:/prod/prodView.do?what="+prod.getProd_id();
+			}else {
+				message = "서버 오류";
+				view = "prod/prodForm";
 			}
-		} else {
-			// 검증 불통
+		}else {
 			view = "prod/prodForm";
 		}
 		
-		req.setAttribute("message", message);
+		model.addAttribute("message", message);
+		
 		return view;
 	}
 }
+
+
+
+
+
+
+
+
+
+
+

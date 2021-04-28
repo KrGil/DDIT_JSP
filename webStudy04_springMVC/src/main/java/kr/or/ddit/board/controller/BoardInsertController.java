@@ -1,11 +1,13 @@
 package kr.or.ddit.board.controller;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,6 +32,13 @@ public class BoardInsertController {
 	
 	@Inject
 	private IBoardService service ;
+	
+	@PostConstruct
+	public void init() {
+		logger.info("주입된 service : {}", service.getClass().getName());
+		// true면 proxy 가짜 객체
+		logger.info("프록시 여부 : {} ", AopUtils.isAopProxy(service));
+	}
 	
 	@RequestMapping("/board/noticeInsert.do")
 	public String noticeForm(@ModelAttribute("board") BoardVO board) {

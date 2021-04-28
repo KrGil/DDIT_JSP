@@ -4,13 +4,6 @@
 <%@page import="kr.or.ddit.vo.MemberVO"%>
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix = "c"%>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
 <h4>Welcome Page~</h4>
 <pre>
 	누적 방문자수 : <%=application.getAttribute(Constants.SESSIONCOUNTATTRNAME) %>
@@ -42,5 +35,3 @@
 <%
 	}
 %>
-</body>
-</html>

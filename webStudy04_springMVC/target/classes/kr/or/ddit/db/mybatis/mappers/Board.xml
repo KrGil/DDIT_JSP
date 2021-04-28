@@ -75,6 +75,7 @@
 			WHERE BO_SORT = 1 OR RNUM >= #{startRow} AND RNUM <= #{endRow}
 		]]>
 	</select>
+	
 	<resultMap type="BoardVO" id="boardMap" autoMapping="true">
 		<id property="bo_no" column="BONO"/>
 		<collection property="attatchList" ofType="AttatchVO" autoMapping="true">

@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -24,7 +26,9 @@ import kr.or.ddit.vo.BoardVO;
 
 @Controller
 public class BoardUpdateController {
-	IBoardService service = new BoardServiceImpl();
+	@Inject
+	IBoardService service;
+	
 	private String[] filteringTokens = new String[] {"말미잘", "해삼"};
 	private static final Logger logger = LoggerFactory.getLogger(BoardUpdateController.class);
 	

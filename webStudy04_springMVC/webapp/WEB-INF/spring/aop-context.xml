@@ -8,7 +8,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
-
+<!-- annotation으로 모든 설정 변경 -->
 <!-- beans, c, p, aop, tx(트랜잭션) -->
 	<aop:aspectj-autoproxy />
 	<tx:annotation-driven />

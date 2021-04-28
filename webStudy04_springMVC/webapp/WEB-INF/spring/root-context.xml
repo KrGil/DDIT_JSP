@@ -14,6 +14,8 @@
 	<context:component-scan base-package="kr.or.ddit" use-default-filters="false">
 		<context:include-filter type="annotation" 
 			expression="org.springframework.stereotype.Component"/>
+		<context:include-filter type="annotation" 
+			expression="org.aspectj.lang.annotation.Aspect"/>
 		<context:exclude-filter type="annotation" 
 			expression="org.springframework.stereotype.Controller"/>
 		<context:exclude-filter type="annotation" 

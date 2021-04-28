@@ -1,26 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>    
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-<jsp:include page="/includee/preScript.jsp" />
 <style type="text/css">
 	.thumbnail{
 		width : 50px;
 		height: 50px;
 	} 
 </style>
-<c:if test="${not empty message }">
-	<script type="text/javascript">
-		alert("${message}");
-	</script>
-	<c:remove var="message" scope="session"/>
-</c:if>
-</head>
-<body>
 <h4>게시글 목록 조회</h4>
 <table class="table table-bordered">
 	<thead>
@@ -238,10 +224,6 @@
 		});
 	});
 </script>
-
-<jsp:include page="/includee/postScript.jsp" />
-</body>
-</html>
 
 
 

@@ -79,8 +79,8 @@ public class BoardServiceImpl implements IBoardService {
 			
 			try {
 				for(AttatchVO attatch : attatchList) {
-//					if(1==1)
-//						throw new RuntimeException("강제 발생 예외"); 
+					if(1==1)
+						throw new RuntimeException("강제 발생 예외"); 
 					attatch.saveTo(saveFolder);
 				}
 			} catch (IOException e) {
@@ -107,6 +107,7 @@ public class BoardServiceImpl implements IBoardService {
 		return cnt;
 	}
 	// 선언적 프로그래밍
+	
 	@Transactional
 	@Override
 	public ServiceResult createBoard(BoardVO board) {
@@ -168,7 +169,7 @@ public class BoardServiceImpl implements IBoardService {
 		return result;
 	}
 
-	@Transactional
+//	@Transactional
 	@Override
 	public ServiceResult removeBoard(BoardVO search) {
 			ServiceResult result = ServiceResult.FAIL;

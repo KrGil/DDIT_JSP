@@ -2,21 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>    
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-<jsp:include page="/includee/preScript.jsp" />
 <script type="text/javascript" src="${cPath }/js/ckeditor/ckeditor.js"></script>
-<c:if test="${not empty message }">
-	<script type="text/javascript">
-		alert("${message}");
-	</script>
-	<c:remove var="message" scope="session"/>
-</c:if>
-</head>
-<body>
 <form:form modelAttribute="board" id="boardForm" method="post" enctype="multipart/form-data">
 	<input type="hidden" name="bo_no" value="${board.bo_no }" />
 	<input type="hidden" name="bo_type" value="${board.bo_type }">
@@ -131,6 +117,3 @@
 			location.href = url;
 	});
 </script>
-<jsp:include page="/includee/postScript.jsp" />
-</body>
-</html>
