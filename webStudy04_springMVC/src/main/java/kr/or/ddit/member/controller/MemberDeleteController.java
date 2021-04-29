@@ -22,10 +22,10 @@ public class MemberDeleteController{
 			@RequestParam("password") String password
 			, HttpSession session
 			, RedirectAttributes redirectAttributes
-	){
+	){ 
 		MemberVO authMember = (MemberVO) session.getAttribute("authMember");
 		String authId = authMember.getMem_id();
-		ServiceResult result =
+		ServiceResult result = 
 				service.removeMember(new MemberVO(authId, password));
 		String view = null;
 		switch (result) {

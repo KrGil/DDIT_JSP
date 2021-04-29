@@ -21,26 +21,14 @@ import kr.or.ddit.validator.InsertGroup;
 import kr.or.ddit.vo.BuyerVO;
 import kr.or.ddit.vo.ProdVO;
 
-@Controller
-@RequestMapping("/prod/prodInsert.do")
+//@Controller
+//@RequestMapping("/prod/prodInsert.do")
 public class ProdInsertController{
 	@Inject
 	private IProdService service;
-	@Inject
-	private IOthersDAO othersDAO;
-	
-	private void addAttribute(Model model) {
-		List<Map<String, Object>> lprodList 
-			= othersDAO.selectLprodList();
-		List<BuyerVO> buyerList 
-			= othersDAO.selectBuyerList(null);
-		model.addAttribute("lprodList", lprodList);
-		model.addAttribute("buyerList", buyerList);
-	}
 	
 	@RequestMapping
 	public String form(Model model){
-		addAttribute(model);
 		return "prod/prodForm";
 	}
 	
@@ -50,7 +38,6 @@ public class ProdInsertController{
 		, Errors errors
 		, Model model
 	) throws IOException{
-		addAttribute(model);
 		
 //		if(!prod_image.isEmpty()) {
 //			prod_image.saveTo(saveFolder);

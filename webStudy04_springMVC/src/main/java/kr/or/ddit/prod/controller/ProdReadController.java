@@ -27,30 +27,17 @@ import kr.or.ddit.vo.ProdVO;
 public class ProdReadController{
 	@Inject
 	private IProdService service;
-	@Inject
-	private IOthersDAO othersDAO;
 	
-	private void addAttribute(Model model) {
-		List<Map<String, Object>> lprodList 
-			= othersDAO.selectLprodList();
-		List<BuyerVO> buyerList 
-			= othersDAO.selectBuyerList(null);
-		model.addAttribute("lprodList", lprodList);
-		model.addAttribute("buyerList", buyerList);
-	}
 	
 	@RequestMapping("/prod/prodList.do")
 	public String list(
 		@ModelAttribute("detailSearch") ProdVO detailSearch
 		, @RequestParam(value="page", required=false, defaultValue="1") int currentPage
-		, Model model
-		, HttpServletResponse resp) throws ServletException, IOException {
-		
-		addAttribute(model);
+		, Model model) {
 		
 		PagingVO<ProdVO> pagingVO = list(detailSearch, currentPage);
 		
-		model.addAttribute("pagingVO", pagingVO);
+		model.addAttribute("pagingVO", pagingVO); 
 		
 		return "prod/prodList";
 	}
@@ -79,10 +66,10 @@ public class ProdReadController{
 	
 	@RequestMapping("/prod/prodView.do")
 	public String view(
-			@RequestParam(value="what", required=true, defaultValue="1") String prod_id
-			, HttpServletRequest req){
+			@RequestParam(value="what", required=true) String prod_id
+			, Model model){
 		ProdVO prod =  service.retrieveProd(prod_id);
-		req.setAttribute("prod", prod);
+		model.addAttribute("prod", prod);
 		return "prod/prodView";		
 	}
 }

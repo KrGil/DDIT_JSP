@@ -15,7 +15,7 @@ import kr.or.ddit.vo.MemberVO;
 import kr.or.ddit.vo.PagingVO;
 import kr.or.ddit.vo.SearchVO;
 
-@Controller
+//@Controller
 public class MemberListController{
 	@Inject
 	private IMemberService service;

@@ -22,29 +22,17 @@ import kr.or.ddit.validator.UpdateGroup;
 import kr.or.ddit.vo.BuyerVO;
 import kr.or.ddit.vo.ProdVO;
 
-@Controller
-@RequestMapping("/prod/prodUpdate.do")
-public class ProdUpdateController {
+//@Controller
+//@RequestMapping("/prod/prodUpdate.do")
+public class ProdUpdateController { 
 	@Inject
 	private IProdService service;
-	@Inject
-	private IOthersDAO othersDAO;
-	
-	private void addAttribute(Model model) {
-		List<Map<String, Object>> lprodList 
-			= othersDAO.selectLprodList();
-		List<BuyerVO> buyerList 
-			= othersDAO.selectBuyerList(null);
-		model.addAttribute("lprodList", lprodList);
-		model.addAttribute("buyerList", buyerList);
-	}
 	
 	@RequestMapping
 	public String updateForm(
 			@RequestParam("what") String prod_id
 			, Model model
 	){
-		addAttribute(model);
 		ProdVO prod = service.retrieveProd(prod_id);
 		model.addAttribute("prod", prod);
 		return "prod/prodForm";

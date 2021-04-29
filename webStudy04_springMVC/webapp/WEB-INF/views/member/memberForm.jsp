@@ -3,6 +3,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -39,7 +40,8 @@
 				<th>회원이름</th>
 				<td><input type="text" name="mem_id" 
 					value="${member.mem_id }" />
-					<span class="error">${errors.mem_id}></span>
+					<span class="error">${errors.mem_id}</span>
+					<form:errors path="mem_id" element="span" cssClass="error"/>
 					<button type="button" id="idCheck" >아이디중복체크</button>
 				</td>
 			</tr>

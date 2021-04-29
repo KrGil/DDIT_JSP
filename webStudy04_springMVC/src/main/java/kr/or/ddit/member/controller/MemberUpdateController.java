@@ -16,7 +16,7 @@ import kr.or.ddit.member.service.IMemberService;
 import kr.or.ddit.validator.UpdateGroup;
 import kr.or.ddit.vo.MemberVO;
 
-@Controller
+//@Controller
 public class MemberUpdateController{
 	@Inject
 	private IMemberService service;

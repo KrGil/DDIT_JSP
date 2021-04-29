@@ -1,0 +1,52 @@
+select * 
+from REPLY2
+where bo_no=;
+
+SELECT REPLY_SEQ.NEXTVAL
+FROM DUAL;
+insert into reply2
+(
+BO_NO,REP_NO,REP_WRITER,
+REP_PASS,REP_CONTENT,REP_DATE
+)
+values
+(
+1924, REPLY_SEQ.CURRVAL, 'A', '123', 'AAAA', SYSDATE
+);
+commit;
+CREATE SEQUENCE REPLY_SEQ 
+INCREMENT BY 1 
+START WITH 1 
+MINVALUE 1;
+
+SELECT B.*
+FROM (
+    SELECT A.*, ROWNUM RNUM
+    FROM (
+            SELECT
+                REP_NO,	REP_WRITER,	REP_DATE
+                , REP_CONTENT, BO_NO
+            FROM REPLY2
+            WHERE BO_NO = 1925
+            ORDER BY REP_NO DESC
+        ) A
+    ) B
+WHERE RNUM BETWEEN 1 AND 5;
+
+--board.bo_title=글제목
+select LOWER(TABLE_NAME)||'.'||
+    LOWER(COLUMN_NAME)||'='||
+    COLUMN_NAME
+FROM USER_COL_COMMENTS
+WHERE TABLE_NAME = 'BOARD';
+
+--프로시져 호출하기--
+DECLARE
+    n NUMBER;
+BEGIN
+    MEMBERDELETEPROC(n);
+    DBMS_OUTPUT.PUT_LINE(n);
+END;
+/
+rollback;
+commit;

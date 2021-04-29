@@ -6,7 +6,7 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,13 +24,13 @@ public class MemberInsertController{
 
 	@RequestMapping("/member/memberInsert.do")
 	public String form(){
-		return "member/memberForm";
+		return "member/memberForm"; 
 	}
 
 	@RequestMapping(value="/member/memberInsert.do", method=RequestMethod.POST)
 	public String process(
 			@Validated(InsertGroup.class) @ModelAttribute("member") MemberVO member
-			, BindingResult errors
+			, Errors errors
 			, Model model) throws IOException {
 		String view = null;
 		String message = null;
@@ -58,5 +58,4 @@ public class MemberInsertController{
 
 		return view;
 	}
-
 }

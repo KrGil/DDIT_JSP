@@ -19,6 +19,8 @@
 		<config>src/main/resources/kr/or/ddit/container/conf/hierarchy/root-context.xml</config>
 		<config>src/main/resources/kr/or/ddit/container/conf/hierarchy/child-context.xml</config>
 		<config>src/main/resources/kr/or/ddit/example/conf/aop-context.xml</config>
+		<config>src/main/resources/kr/or/ddit/task/task-context.xml</config>
+		<config>src/main/resources/kr/or/ddit/task/root-context.xml</config>
 	</configs>
 	<autoconfigs>
 	</autoconfigs>

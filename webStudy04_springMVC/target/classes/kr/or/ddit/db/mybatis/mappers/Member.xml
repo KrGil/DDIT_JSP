@@ -137,6 +137,10 @@
 		FROM MEMBER
 		<include refid="searchFrag" />
 	</select>
-
-
+<!-- 	Batch Job -->
+	<select id="realDeleteMembers" parameterType="map" statementType="CALLABLE">
+		{
+			CALL MEMBERDELETEPROC(#{delcount,mode=OUT,javaType=java.lang.Integer,jdbcType=NUMERIC})
+		}
+	</select>
 </mapper>

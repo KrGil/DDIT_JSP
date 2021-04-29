@@ -23,7 +23,7 @@ public class MemberServiceImpl implements IMemberService {
 	@Override
 	public MemberVO retrieveMember(String mem_id){
 		MemberVO savedMember = dao.selectMemberDetail(mem_id);
-		if(savedMember==null) {
+		if(savedMember==null) { 
 			// custom exception 발생
 			throw new UserNotFoundException("아이디에 해당하는 회원이 존재하지 않음.");
 		}
