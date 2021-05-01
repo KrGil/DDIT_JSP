@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+		default-lazy-init="true"
+	>
+	
+	<bean depends-on="vo2" lazy-init="true" id="vo1" class="kr.or.ddit.container.various.VariousDIVO"	
+		p:str="문자열"
+		p:number="123"
+		p:dblNumber="12.3"
+		p:boolData="false"
+		p:ch="a"
+		
+		p:cpr="classpass:log4j2.xml"
+		p:fsr="file://D:/contents/오래된 노래_utf8.txt"
+		p:urlr="https://www.google.com//logos/doodles/2021/earth-day-2021-6753651837108909-vacta.gif"
+	/>
+	<bean id="vo2" class="kr.or.ddit.container.various.VariousDIVO" 
+		c:str="문자열이지롱"
+		c:number="144"
+		c:dblNumber="13.3"
+		c:boolData="true"
+		c:ch="a"
+		
+		c:cpr="classpass:log4j2.xml"
+		c:fsr="file://D:/contents/오래된 노래_utf8.txt"
+		c:urlr="https://www.google.com//logos/doodles/2021/earth-day-2021-6753651837108909-vacta.gif"
+	/>
+</beans>
