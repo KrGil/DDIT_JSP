@@ -16,12 +16,11 @@ import javax.servlet.http.Part;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import kr.or.ddit.mvc.annotation.Controller;
-import kr.or.ddit.mvc.annotation.RequestMapping;
-import kr.or.ddit.mvc.annotation.RequestMethod;
-import kr.or.ddit.mvc.annotation.resolvers.BadRequestException;
-import kr.or.ddit.mvc.annotation.resolvers.RequestParam;
+import kr.or.ddit.exception.BadRequestException;
 
 //@Controller
 public class FileUploadController_bak {

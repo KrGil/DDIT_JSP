@@ -17,11 +17,12 @@ import kr.or.ddit.vo.MemberVO;
 @Component
 public class CustomContextListener {
 	private static final Logger logger = LoggerFactory.getLogger(CustomContextListener.class);
+	
 	@EventListener(classes = ContextRefreshedEvent.class)
 	public void init(ContextRefreshedEvent event) {
 		WebApplicationContext root = 
 				(WebApplicationContext) event.getApplicationContext();
-		ServletContext application =  root.getServletContext();
+		ServletContext application = root.getServletContext();
 		application.setAttribute("cPath", application.getContextPath());
 		application.setAttribute(Constants.SESSIONCOUNTATTRNAME, 0);
 		application.setAttribute(Constants.USERLISTATTRNAME, new LinkedHashSet<MemberVO>());

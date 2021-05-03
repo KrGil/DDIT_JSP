@@ -44,7 +44,6 @@ public class BoardDeleteController {
 		if(valid) {
 			ServiceResult result = service.removeBoard(board);
 			if(ServiceResult.OK.equals(result)) {
-				view = "redirect:/board/boardList.do";
 			}else {
 				redirectAttributes.addFlashAttribute("message", "비밀번호 오류");
 				view= "redirect:/board/boardView.do?what="+board.getBo_no(); 

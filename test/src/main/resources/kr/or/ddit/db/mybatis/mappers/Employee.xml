@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.login.dao.IEmployeeDAO">
+	<select id="selectEmployeeForAuth" parameterType="EmployeeVO" resultType="EmployeeVO">
+		SELECT 
+			EMPLOYEE_ID,
+			EMPLOYEE_PWD,
+			EMPLOYEE_NAME,
+			EMPLOYEE_PHONE,
+			EMPLOYEE_EMAIL,
+			EMPLOYEE_AUTHORITY,
+			EMPLOYEE_PICTURE
+		FROM EMPLOYEE
+		WHERE EMPLOYEE_ID=#{employee_id}	
+	</select>
+</mapper>
