@@ -1,0 +1,33 @@
+1. request 
+   ---> filter --> interceptor 
+        --> controller throws 예외처리들  --> service1 throws 예외처리들
+                                                                                      ㄴ service2 throws 예외처리들 - dao2 throws SQLException
+                                                                                      ㄴ service3 throws 예외처리들 - dao3 throws SQLException
+                                                         
+2. request 
+   ---> filter --> interceptor 
+        --> controller throws 예외처리들 
+              --> service1 throws 예외처리들 
+                                        ㄴ service2 - dao2 throws SQLException
+                                        ㄴ service3 - dao3 throws SQLException
+              --> service4  throws 예외처리들
+                                        ㄴ service5 throws 예외처리들 - dao5 throws SQLException
+                                        ㄴ service6 throws 예외처리들 - dao6 throws SQLException                                                       
+
+3. controller 역할 
+   1) 파라미터 조회 (client로 부터 받은 자료 + session 자료) 
+   2) 주요파라미터 검증(접수번호, 제품가격)
+   3) 서비스호출(1개 이상은 트랜잭션 고려)
+   4) 응답 데이터 구성, 응답페이지 설정
+   
+
+
+
+
+
+
+
+
+
+
+
