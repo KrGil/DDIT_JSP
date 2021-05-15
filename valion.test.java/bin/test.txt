@@ -1,0 +1,10 @@
+1. try-catch-finally
+2. Map -> Map<String, Object> : key(String), value(Object)
+3. ParamMap -> Map<String,Object>
+
+4. ResultMap -> Map<String,Object> : DB -> java : TEST_VALUE -> testValue : key입력 자동화
+   1) underbar -> carmelcase 변환 모듈
+5. 동적파라미터 (특정 데이터를 0개이상 동적으로 처리하고자 할 때 )
+   1) Map 담는다. : 속성을 동적활용
+   2) 동적 파라미터
+6. 반환타입 : 사용자에 맞는 타입을 동적으로 반환하기 위한 함수 
