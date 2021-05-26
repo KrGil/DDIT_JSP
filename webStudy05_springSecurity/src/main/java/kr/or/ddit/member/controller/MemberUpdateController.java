@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import kr.or.ddit.enumpkg.ServiceResult;
 import kr.or.ddit.member.service.IMemberService;
 import kr.or.ddit.validator.UpdateGroup;
+import kr.or.ddit.vo.MemberUserDetails;
 import kr.or.ddit.vo.MemberVO;
 
 @Controller
@@ -29,7 +30,6 @@ public class MemberUpdateController{
 	
 	@RequestMapping("/member/memberUpdate.do")
 	public String updateForm(
-//			@AuthenticationPrincipal(expression="adaptee") MemberVO username
 			@AuthenticationPrincipal(expression="username") String username
 			, Model model){
 		addCommandAttribute(model);
@@ -42,12 +42,14 @@ public class MemberUpdateController{
 	public String doPost(
 			@Validated(UpdateGroup.class) @ModelAttribute("member") MemberVO member
 			, Errors errors
+//			, Authentication authentication
 			, @AuthenticationPrincipal(expression="username") String authId
-			, HttpSession session
 			, Model model
 	){
 		
 		addCommandAttribute(model);
+//		MemberVO authMember = 
+//				((MemberUserDetails) authentication.getPrincipal()).getAdaptee();
 //		1. 요청 접수
 //		String authId = authMember.getMem_id();
 		member.setMem_id(authId);

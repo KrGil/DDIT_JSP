@@ -13,6 +13,7 @@
 		<config>webapp/WEB-INF/spring/datasource-context.xml</config>
 		<config>webapp/WEB-INF/spring/task-context.xml</config>
 		<config>webapp/WEB-INF/spring/security-context.xml</config>
+		<config>webapp/WEB-INF/spring/appServlet/websocket-context.xml</config>
 	</configs>
 	<autoconfigs>
 	</autoconfigs>

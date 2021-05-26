@@ -249,15 +249,16 @@
 		</dependency>
 		<!-- access control : spring security -->
 		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->
+		<!-- security taglib -->
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-taglibs</artifactId>
-			<version>4.2.13.RELEASE</version>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-taglibs</artifactId>
+		    <version>4.2.13.RELEASE</version>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-			<version>4.2.13.RELEASE</version>
+		<dependency><!-- container 설정을 위해,. -->
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-config</artifactId>
+		    <version>4.2.13.RELEASE</version>
 		</dependency>
 	</dependencies>
 </project>

@@ -18,8 +18,18 @@ public class PasswordEncoderTest {
 	@Test
 	public void testEncoder() {
 		String plain = "java";
-		
 		String encoded = encoder.encodePassword(plain, null);
 		System.out.println(encoded);
 	}
 }
+
+
+
+
+
+
+
+
+
+
+

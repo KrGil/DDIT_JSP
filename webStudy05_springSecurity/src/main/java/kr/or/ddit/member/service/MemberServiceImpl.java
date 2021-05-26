@@ -2,10 +2,12 @@ package kr.or.ddit.member.service;
 
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.WebSocketSession;
 
 import kr.or.ddit.enumpkg.ServiceResult;
 import kr.or.ddit.member.UserNotFoundException;
@@ -33,7 +35,10 @@ public class MemberServiceImpl implements IMemberService {
 		}
 		return savedMember;
 	}
-
+	
+	@Resource(name = "userList")
+	private List<WebSocketSession> userList;
+	
 	@Override
 	public ServiceResult createMember(MemberVO member) {
 		ServiceResult result = null;
@@ -45,6 +50,9 @@ public class MemberServiceImpl implements IMemberService {
 				int rowcnt = dao.insertMember(member);
 				if(rowcnt>0) {
 					result = ServiceResult.OK;
+					// 회원 가입이 ok 되면 
+					// List for문 돌려서 userList에 등록되어있는 모든user들에게 새로운 맴버가 등록되었다고
+					// 메시지를 돌릴 수 있다.
 				}else {
 					result = ServiceResult.FAIL;
 				}// if~else~end

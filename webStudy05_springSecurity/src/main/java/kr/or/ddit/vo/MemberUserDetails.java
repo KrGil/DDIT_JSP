@@ -13,6 +13,6 @@ public class MemberUserDetails extends User{
 	public MemberUserDetails(MemberVO adaptee) {
 		super(adaptee.getMem_id(), adaptee.getMem_pass(), 
 				AuthorityUtils.createAuthorityList(adaptee.getMem_role()));
-		
 	}
+
 }

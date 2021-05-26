@@ -12,7 +12,7 @@
 
 	<annotation-driven validator="validator">
 		<argument-resolvers>
-			<beans:bean class="org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver"/>
+			<beans:bean class="org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver"></beans:bean>
 		</argument-resolvers>
 	</annotation-driven>
 	

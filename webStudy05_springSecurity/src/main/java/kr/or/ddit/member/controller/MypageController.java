@@ -1,7 +1,6 @@
 package kr.or.ddit.member.controller;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -33,8 +32,8 @@ public class MypageController{
 	public String mypagePost(
 			@RequestParam("mem_pass") String mem_pass
 			, Authentication authentication
-			, RedirectAttributes redirectAttributes
 			, Model model
+			, RedirectAttributes redirectAttributes
 	){
 		
 		MemberVO authMember = 
@@ -50,7 +49,6 @@ public class MypageController{
 			model.addAttribute("member", detailMember);
 			view = "member/mypage";
 		}else {
-			
 			redirectAttributes.addFlashAttribute("message", "비번 오류");
 			view = "redirect:/mypage.do";
 		}

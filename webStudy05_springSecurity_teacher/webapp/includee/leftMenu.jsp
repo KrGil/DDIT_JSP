@@ -11,8 +11,8 @@
 
  <!-- Sidebar -->
  <div class="sidebar">
- 	<security:authorize access="isAuthenticated()">
- 		<security:authentication property="principal.username" var="authUsername"/>
+ <security:authorize access="isAuthenticated()">
+ 	<security:authentication property="principal.username" var="authUsername"/>
    <!-- Sidebar user (optional) -->
    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
      <div class="image">
@@ -26,7 +26,7 @@
      <div class="info">
 	   <form name="logoutForm" method="post" action="<%=request.getContextPath() %>/login/logout.do"></form>
        <a href="${cPath }/mypage.do" class="d-block">${authMember.mem_name }</a>
-	   <a href="#" onclick="clickHandler(event);" class="d-block">${authUsername } 로그아웃</a>
+	   <a href="#" onclick="clickHandler(event);" class="d-block">${authUsername }로그아웃</a>
    	   <script type="text/javascript">
 			function clickHandler(event){
 				event.preventDefault();
@@ -36,8 +36,8 @@
 	   </script>
      </div>
    </div>
-  </security:authorize>
-  <security:authorize access="isAnonymous()">
+   </security:authorize>
+   <security:authorize access="isAnonymous()">
 	   <!-- Sidebar user (optional) -->
 	   <div class="user-panel mt-3 pb-3 mb-3 d-flex">
 		   <div class="info">

@@ -24,7 +24,7 @@ public class AuthenticateServiceImpl implements IAuthenticateService, UserDetail
 			LoggerFactory.getLogger(AuthenticateServiceImpl.class);
 	@Inject
 	private IMemberDAO dao;
-
+	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		MemberVO savedMember = dao.selectMemberForAuth(username);
