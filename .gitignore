@@ -31,3 +31,4 @@ HelloWorld_01/HelloWorld/WebContent/mp4/main.mp4
 *.mp3
 *.mp4
 *.ogv
+.DS_Store
