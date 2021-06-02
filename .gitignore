@@ -1,33 +1,7 @@
-
-# Eclipse
-
-test01/Server
-*.pydevproject
-.metadata
-bin/**
-tmp/**
-tmp/**/*
-*.tmp
-*.bak
-*.swp
-*~.nib
-.classpath
-.settings/
-.loadpath
-/src/main/resources/rebel.xml
-# External tool builders
-.externalToolBuilders/
-# Locally stored "Eclipse launch configurations"
-*.launch
-# CDT-specific
-.cproject
-# PDT-specific
-.buildpath
-HelloWorld_01/HelloWorld/WebContent/mp4/경주월드.mp4
-HelloWorld_01/HelloWorld/WebContent/mp4/황리단길.mp4
-HelloWorld_01/HelloWorld/WebContent/mp4/firstPage.mp4
-HelloWorld_01/HelloWorld/WebContent/mp4/firstPage01.mp4
-HelloWorld_01/HelloWorld/WebContent/mp4/main.mp4
-*.mp3
-*.mp4
-*.ogv
+/.metadata/
+/Servers/
+*/target/
+gaia/src/main/resources/best/gaia/db/dbinfo.properties
+/.svn/
+**/.DS_Store
+webStudy05_springSecurity/src/main/resources/kr/or/ddit/db/dbInfo.properties

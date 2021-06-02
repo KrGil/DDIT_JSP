@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.board.dao.IBoardDAO">
+	<sql id="searchFrag">
+		<trim prefix="WHERE" prefixOverrides="AND" suffixOverrides="OR"> 
+			BO_SORT = 1 OR 1 = 1
+			<trim prefix="AND (" suffix=")">
+				<if test="searchMap!=null and @org.apache.commons.lang3.StringUtils@isNotBlank(searchMap.searchWord)">
+					<choose>
+						<when test="searchMap.searchType eq 'title'">
+							INSTR(BO_TITLE, #{searchMap.searchWord}) > 0
+						</when>
+						<when test="searchMap.searchType eq 'writer'">
+							INSTR(BO_WRITER, #{searchMap.searchWord}) > 0
+						</when>
+						<when test="searchMap.searchType eq 'content'">
+							INSTR(BO_CONTENT, #{searchMap.searchWord}) > 0
+						</when>
+						<when test="searchMap.searchType eq 'type'">
+							BO_TYPE = #{searchMap.searchWord}
+						</when>
+						<otherwise>
+							INSTR(BO_TITLE, #{searchMap.searchWord}) > 0
+							OR 
+							INSTR(BO_WRITER, #{searchMap.searchWord}) > 0
+							OR
+							INSTR(BO_CONTENT, #{searchMap.searchWord}) > 0
+							OR
+							BO_TYPE = #{searchMap.searchWord}
+						</otherwise>
+					</choose>
+				</if>
+			</trim>
+			<trim prefix="AND (" suffix=")" prefixOverrides="AND">
+				<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchMap.minDate)">
+					AND BO_DATE >= TO_DATE(#{searchMap.minDate}, 'YYYY-MM-DD') 
+				</if>
+				<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchMap.maxDate)">
+					<![CDATA[
+					AND BO_DATE <= TO_DATE(#{searchMap.maxDate}, 'YYYY-MM-DD')
+					]]> 
+				</if>
+			</trim>	
+		</trim>
+	</sql>
+	<select id="selectBoardCount" parameterType="PagingVO" resultType="int">
+		SELECT COUNT(*)
+		FROM BOARDVIEW
+		<include refid="searchFrag" />
+	</select>
+	<select id="selectBoardList" parameterType="PagingVO" resultType="BoardVO">
+		SELECT B.*
+		FROM (
+		    SELECT ROWNUM-3 RNUM, A.*
+		    FROM(
+		        SELECT
+		            BO_SORT, BO_TYPE, BO_NO
+		            , LEVEL
+		            <![CDATA[
+		            , LPAD('   re:', 12*(LEVEL-1), '&nbsp;') 
+		            	|| DECODE(BO_SEC, 'Y', '비밀글임', BO_TITLE) BO_TITLE
+		            ]]>
+		            , BO_WRITER
+		            , BO_HIT, BO_REC
+		            , TO_CHAR(BO_DATE, 'YYYY-MM-DD HH:MI') BO_DATE
+		            , BO_SEC
+		            , BO_CONTENT
+		        FROM BOARDVIEW
+		        <include refid="searchFrag" />
+		        START WITH BO_PARENT IS NULL
+		        CONNECT BY PRIOR BO_NO = BO_PARENT
+		        ORDER SIBLINGS BY BO_SORT ASC, BO_NO DESC
+		    ) A
+		) B
+		<![CDATA[
+			WHERE BO_SORT = 1 OR RNUM >= #{startRow} AND RNUM <= #{endRow}
+		]]>
+	</select>
+	<resultMap type="BoardVO" id="boardMap" autoMapping="true">
+		<id property="bo_no" column="BONO"/>
+		<collection property="attatchList" ofType="AttatchVO" autoMapping="true">
+			<id property="att_no" column="ATT_NO"/>
+		</collection>
+	</resultMap>
+	<select id="selectBoard" parameterType="BoardVO" 
+		resultMap="boardMap">
+		SELECT
+		    BO_SORT,    BO_TYPE,    A.BO_NO BONO
+		    , BO_TITLE,    BO_WRITER,    BO_PASS
+		    , BO_CONTENT
+		    , TO_CHAR(BO_DATE, 'YYYY-MM-DD HH:MI') BO_DATE
+		    , BO_HIT,    BO_REC,    BO_REP
+		    , BO_SEC
+		    , BO_PARENT
+		    , B.ATT_NO, B.ATT_FILENAME
+		    , B.ATT_CONTENTTYPE
+		FROM    BOARDVIEW A LEFT OUTER JOIN ATTATCH B 
+				ON(A.BO_NO = B.BO_NO)
+		WHERE A.BO_NO = #{bo_no}
+	</select>
+	<insert id="insertBoard" parameterType="BoardVO">
+		<selectKey resultType="int" keyProperty="bo_no" order="BEFORE">
+			SELECT BO_SEQ.NEXTVAL
+			FROM DUAL
+		</selectKey>
+		INSERT INTO 
+		<choose>
+			<when test="bo_type eq 'BOARD'">
+			BOARD
+			</when>
+			<when test="bo_type eq 'NOTICE'">
+			NOTICE
+			</when>
+		</choose>
+		 (
+		    BO_NO
+		    , BO_TITLE
+		    , BO_CONTENT
+		    <if test="bo_type eq 'BOARD'">
+			    , BO_WRITER
+			    , BO_PASS
+			    <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(bo_sec)">
+			    , BO_SEC
+			    </if>
+			    <if test="bo_parent!=null and bo_parent gt 0">
+			    , BO_PARENT
+			    </if>
+		    </if>
+		) VALUES (
+		    #{bo_no}
+		    , #{bo_title,jdbcType=VARCHAR}
+		    , #{bo_content,jdbcType=CLOB}
+		    <if test="bo_type eq 'BOARD'">
+			    , #{bo_writer,jdbcType=VARCHAR}
+			    , #{bo_pass,jdbcType=VARCHAR}
+			    <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(bo_sec)">
+			    , #{bo_sec,jdbcType=CHAR}
+			    </if>
+			    <if test="bo_parent!=null and bo_parent gt 0">
+			    , #{bo_parent,jdbcType=NUMERIC}
+			    </if>
+		    </if>
+		)
+	</insert>
+	
+	<update id="updateBoard" parameterType="BoardVO">
+		UPDATE BOARD
+		    SET
+		    BO_TITLE 		= #{bo_title,jdbcType=VARCHAR}
+		    , BO_WRITER 	= #{bo_writer,jdbcType=VARCHAR}
+		    , BO_CONTENT 	= #{bo_content,jdbcType=CLOB}
+		    <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(bo_sec)">
+		    , BO_SEC 		= #{bo_sec,jdbcType=CHAR}
+		    </if>
+		WHERE BO_NO = #{bo_no,jdbcType=NUMERIC}
+			AND BO_PASS = #{bo_pass,jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="deleteBoard" parameterType="BoardVO">
+		MERGE INTO BOARD C
+		USING (
+		    SELECT BO_NO, (
+		        SELECT COUNT(*) - 1
+		        FROM BOARD B
+		        START WITH BO_NO = A.BO_NO
+		        CONNECT BY PRIOR BO_NO = BO_PARENT
+		    ) CNT
+		    FROM BOARD A
+		) D
+		ON(C.BO_NO = #{bo_no} AND C.BO_NO = D.BO_NO)
+		WHEN MATCHED THEN
+		    UPDATE SET 
+		    BO_TITLE = '삭제된 글의 제목'
+		    , BO_CONTENT = '삭제된 글의 내용'
+		    , BO_DELETE = 'Y'
+		    DELETE WHERE D.CNT = 0
+	</delete>
+	
+	<update id="incrementHit" parameterType="int" >
+		UPDATE BOARD
+		SET
+		BO_HIT = BO_HIT + 1
+		WHERE BO_NO = #{bo_no}
+	</update>
+	<update id="incrementRcmd" parameterType="int" >
+		UPDATE BOARD
+		SET
+		BO_REC = BO_REC + 1
+		WHERE BO_NO = #{bo_no}
+	</update>
+	<update id="incrementRpt" parameterType="int" >
+		UPDATE BOARD
+		SET
+		BO_REP = BO_REP + 1
+		WHERE BO_NO = #{bo_no}
+	</update>
+</mapper>
+
+	
+
+
+
+
+
+
+
+
+
+

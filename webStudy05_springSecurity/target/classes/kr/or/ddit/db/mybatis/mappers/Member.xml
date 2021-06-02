@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.member.dao.IMemberDAO">
+
+	<select id="selectMemberForAuth" parameterType="string" resultType="MemberVO">
+		SELECT MEM_ID, MEM_PASS, MEM_NAME
+				, MEM_MAIL   
+				, MEM_ROLE
+				, MEM_IMG
+		FROM MEMBER                                      
+		WHERE MEM_ID = #{mem_id}  AND MEM_DELETE IS NULL
+	</select>
+	
+	<resultMap type="MemberVO" id="memberMap" autoMapping="true">
+		<id property="mem_id" column="MEM_ID"/>
+		<collection property="prodList" ofType="ProdVO" 
+				javaType="java.util.Set"
+					autoMapping="true">
+			<id property="prod_id" column="PROD_ID" />
+			
+			<association property="buyer" javaType="BuyerVO" 
+							autoMapping="true" />
+		</collection>
+	</resultMap>
+	
+	<select id="selectMemberDetail" parameterType="string" 
+		resultMap="memberMap">
+		WITH CARTPROD AS (
+			SELECT DISTINCT CART_MEMBER, CART_PROD
+			FROM CART
+		), PRODALL AS (
+			SELECT
+				PROD.*
+				, LPROD_NM
+				, BUYER.*
+			FROM PROD INNER JOIN LPROD ON (PROD_LGU = LPROD_GU)
+			 		  INNER JOIN BUYER ON (PROD_BUYER = BUYER_ID)
+		)
+		SELECT                                                       
+		    MEM_ID,    MEM_PASS,    MEM_NAME,                          
+		    MEM_REGNO1,    MEM_REGNO2,                                 
+		    TO_CHAR(MEM_BIR, 'YYYY-MM-DD') MEM_BIR,                    
+		    MEM_ZIP,    MEM_ADD1,    MEM_ADD2,                         
+		    MEM_HOMETEL,    MEM_COMTEL,    MEM_HP,                     
+		    MEM_MAIL,    MEM_JOB,    MEM_LIKE,                         
+		    MEM_MEMORIAL,                                              
+		    TO_CHAR(MEM_MEMORIALDAY, 'YYYY-MM-DD') MEM_MEMORIALDAY,    
+		    MEM_MILEAGE, MEM_DELETE
+		    , MEM_ROLE 
+		    , MEM_IMG 
+		    , PROD_ID, PROD_NAME
+		    , PROD_COST, PROD_PRICE, PROD_MILEAGE  
+		    , LPROD_NM
+		    , BUYER_NAME, BUYER_ADD1                                
+		FROM    MEMBER LEFT OUTER JOIN  CARTPROD ON(MEM_ID = CART_MEMBER)
+		 				LEFT OUTER JOIN	PRODALL ON(CART_PROD = PROD_ID)                                             
+		WHERE MEM_ID = #{mem_id}     
+	</select>
+	<update id="updateMember" parameterType="MemberVO">
+		UPDATE MEMBER            
+	    SET                      
+	        MEM_NAME 	=	#{mem_name,jdbcType=VARCHAR},         
+	        MEM_BIR		=	TO_DATE(#{mem_bir,jdbcType=DATE}, 'YYYY-MM-DD'),          
+	        MEM_ZIP		=	#{mem_zip,jdbcType=VARCHAR},          
+	        MEM_ADD1	=	#{mem_add1,jdbcType=VARCHAR},         
+	        MEM_ADD2	=	#{mem_add2,jdbcType=VARCHAR},         
+	        MEM_HOMETEL	=	#{mem_hometel,jdbcType=VARCHAR},      
+	        MEM_COMTEL	=	#{mem_comtel,jdbcType=VARCHAR},       
+	        MEM_HP		=	#{mem_hp,jdbcType=VARCHAR},           
+	        MEM_MAIL	=	#{mem_mail,jdbcType=VARCHAR},         
+	        MEM_JOB		=	#{mem_job,jdbcType=VARCHAR},          
+	        MEM_LIKE	=	#{mem_like,jdbcType=VARCHAR},         
+	        MEM_MEMORIAL	=	#{mem_memorial,jdbcType=VARCHAR},     
+	        MEM_MEMORIALDAY	=	TO_DATE(#{mem_memorialday,jdbcType=DATE}, 'YYYY-MM-DD')
+	        <if test="mem_img!=null">
+	        , MEM_IMG = #{mem_img,jdbcType=BLOB}
+	        </if>
+		WHERE   MEM_ID		=	#{mem_id}        
+	</update>
+	<insert id="insertMember" parameterType="MemberVO">
+		INSERT INTO MEMBER (                                      
+		    MEM_ID,    MEM_PASS,    MEM_NAME,                     
+		    MEM_REGNO1,    MEM_REGNO2,    
+		    MEM_BIR,                
+		    MEM_ZIP,    MEM_ADD1,    MEM_ADD2,                    
+		    MEM_HOMETEL,    MEM_COMTEL,    MEM_HP,                
+		    MEM_MAIL,    MEM_JOB,    MEM_LIKE,                    
+		    MEM_MEMORIAL,    
+		    MEM_MEMORIALDAY,    
+		    MEM_MILEAGE  
+		    , MEM_ROLE 
+		    , MEM_IMG   
+		) VALUES (                                                
+			#{mem_id,jdbcType=VARCHAR},    #{mem_pass,jdbcType=VARCHAR},    #{mem_name,jdbcType=VARCHAR},                     
+		    #{mem_regno1,jdbcType=VARCHAR},    #{mem_regno2,jdbcType=VARCHAR},    
+		    TO_DATE(#{mem_bir,jdbcType=DATE}, 'YYYY-MM-DD'),                
+		    #{mem_zip,jdbcType=VARCHAR},    #{mem_add1,jdbcType=VARCHAR},    #{mem_add2,jdbcType=VARCHAR},                    
+		    #{mem_hometel,jdbcType=VARCHAR},    #{mem_comtel,jdbcType=VARCHAR},    #{mem_hp,jdbcType=VARCHAR},                
+		    #{mem_mail,jdbcType=VARCHAR},    #{mem_job,jdbcType=VARCHAR},    #{mem_like,jdbcType=VARCHAR},                    
+		    #{mem_memorial,jdbcType=VARCHAR},    
+		    TO_DATE(#{mem_memorialday,jdbcType=DATE}, 'YYYY-MM-DD'),    
+		    3000  
+		    , 'ROLE_USER'
+		    , #{mem_img,jdbcType=BLOB}
+		)	
+	</insert>
+	<delete id="deleteMember" parameterType="string">
+		UPDATE MEMBER  
+		SET MEM_DELETE = 'Y' 
+		WHERE MEM_ID = #{mem_id}    
+	</delete>
+	
+	<sql id="searchFrag">
+		<where> 
+			<if test="simpleSearch!=null and @org.apache.commons.lang3.StringUtils@isNotBlank(simpleSearch.searchWord)">
+				<choose>
+					<when test="simpleSearch.searchType eq 'name'">
+						INSTR(MEM_NAME, #{simpleSearch.searchWord}) > 0
+					</when>
+					<when test="simpleSearch.searchType eq 'address'">
+						INSTR(MEM_ADD1, #{simpleSearch.searchWord}) > 0
+					</when>
+					<otherwise>
+						INSTR(MEM_NAME, #{simpleSearch.searchWord}) > 0
+						OR
+						INSTR(MEM_ADD1, #{simpleSearch.searchWord}) > 0
+					</otherwise>
+				</choose>
+			</if>
+		</where>
+	</sql>
+	
+	<select id="selectMemberList" resultType="MemberVO"
+		parameterType="PagingVO"
+	>
+		SELECT B.*
+		FROM (
+			SELECT A.*, ROWNUM RNUM
+			FROM(
+				SELECT ROWID RID, MEM_ID, MEM_NAME, MEM_MAIL                 
+				, MEM_HP, MEM_MILEAGE, MEM_DELETE    
+				, MEM_ADD1             
+				FROM MEMBER
+				<include refid="searchFrag" />
+				ORDER BY RID DESC
+			) A   
+		) B  
+		<![CDATA[
+			WHERE RNUM >= #{startRow} AND RNUM <=#{endRow}
+		]]>                                 
+	</select>
+	
+	<select id="selectTotalRecord" resultType="int"
+		parameterType="PagingVO"
+	>
+		SELECT COUNT(*)
+		FROM MEMBER
+		<include refid="searchFrag" />
+	</select>
+	
+	<select id="realDeleteMembers" parameterType="map" statementType="CALLABLE">
+		{
+			CALL MEMBERDELETEPROC(#{delcount,mode=OUT,javaType=java.lang.Integer,jdbcType=NUMERIC})
+		}
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
